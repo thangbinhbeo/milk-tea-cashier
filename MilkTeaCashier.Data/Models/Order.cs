@@ -2,6 +2,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace MilkTeaCashier.Data.Models;
 
@@ -11,23 +12,27 @@ public partial class Order
 
     public int EmployeeId { get; set; }
 
+    [Range(0, double.MaxValue, ErrorMessage = "Total amount must be a positive value.")]
     public double TotalAmount { get; set; }
 
-    public string Status { get; set; }
+    public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
+    [Required(ErrorMessage = "Customer name is required.")]
+    [StringLength(50)]
     public string CustomerName { get; set; }
 
-    public bool? IsStay { get; set; }
+    public bool? IsStay { get; set; } = true;
 
+    [StringLength(200)]
     public string Note { get; set; }
 
     public int? NumberTableCard { get; set; }
 
-    public string PaymentMethod { get; set; }
+    public PaymentMethodType PaymentMethod { get; set; } = PaymentMethodType.Cash;
 
-    public DateTime? CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public DateTime? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
 
     public int? CustomerId { get; set; }
 
@@ -36,4 +41,18 @@ public partial class Order
     public virtual Employee Employee { get; set; }
 
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+}
+
+public enum OrderStatus
+{
+    Pending,
+    Completed,
+    Canceled
+}
+
+public enum PaymentMethodType
+{
+    Cash,
+    Card,
+    Online
 }

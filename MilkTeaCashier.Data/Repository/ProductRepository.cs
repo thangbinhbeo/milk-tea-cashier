@@ -1,4 +1,5 @@
-﻿using MilkTeaCashier.Data.Base;
+﻿using Microsoft.EntityFrameworkCore;
+using MilkTeaCashier.Data.Base;
 using MilkTeaCashier.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,10 @@ namespace MilkTeaCashier.Data.Repository
         public ProductRepository(PRN212_MilkTeaCashierContext context)
         {
             _context = context;
+        }
+        public async Task<IEnumerable<Product>> GetProductsByCategoryIdAsync(int categoryId)
+        {
+            return await _dbSet.Where(p => p.CategoryId == categoryId).ToListAsync();
         }
     }
 }

@@ -17,19 +17,23 @@ namespace MilkTeaCashier.Data.Base
         public GenericRepository()
         {
             _context ??= new PRN212_MilkTeaCashierContext();
-
         }
-
-        #region Separating asign entity and save operators
 
         public GenericRepository(PRN212_MilkTeaCashierContext context)
         {
             _context = context;
         }
 
+        #region Separating assign entity and save operators
+
         public void PrepareCreate(T entity)
         {
             _context.Add(entity);
+        }
+
+        public async Task AddAsync(T entity)
+        {
+            await _context.Set<T>().AddAsync(entity); // Add entity asynchronously
         }
 
         public void PrepareUpdate(T entity)
@@ -53,7 +57,7 @@ namespace MilkTeaCashier.Data.Base
             return await _context.SaveChangesAsync();
         }
 
-        #endregion Separating asign entity and save operators
+        #endregion Separating assign entity and save operators
 
         public IEnumerable<T> FindByCondition(Expression<Func<T, bool>> expression)
         {
@@ -64,10 +68,12 @@ namespace MilkTeaCashier.Data.Base
         {
             return await _context.Set<T>().Where(expression).AsNoTracking().ToListAsync();
         }
+
         public List<T> GetAll()
         {
             return _context.Set<T>().ToList();
         }
+
         public async Task<List<T>> GetAllAsync()
         {
             return await _context.Set<T>().ToListAsync();
@@ -92,6 +98,7 @@ namespace MilkTeaCashier.Data.Base
             }
             return await query.ToListAsync();
         }
+
         public void Create(T entity)
         {
             _context.Add(entity);
@@ -100,7 +107,7 @@ namespace MilkTeaCashier.Data.Base
 
         public async Task<int> CreateAsync(T entity)
         {
-            _context.AddAsync(entity);
+            await _context.AddAsync(entity);
             return await _context.SaveChangesAsync();
         }
 
@@ -154,3 +161,4 @@ namespace MilkTeaCashier.Data.Base
         }
     }
 }
+
