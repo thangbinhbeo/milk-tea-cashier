@@ -47,6 +47,7 @@ public partial class PRN212_MilkTeaCashierContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Configure Category entity
         modelBuilder.Entity<Category>(entity =>
         {
             entity.HasKey(e => e.CategoryId).HasName("PK__Categori__19093A2B15295A0B");
@@ -64,6 +65,7 @@ public partial class PRN212_MilkTeaCashierContext : DbContext
                 .HasColumnType("datetime");
         });
 
+        // Configure Customer entity
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.CustomerId).HasName("PK__Customer__A4AE64D81FEDEE5C");
@@ -81,6 +83,7 @@ public partial class PRN212_MilkTeaCashierContext : DbContext
             entity.Property(e => e.UpdatedBy).HasMaxLength(50);
         });
 
+        // Configure Employee entity
         modelBuilder.Entity<Employee>(entity =>
         {
             entity.HasKey(e => e.EmployeeId).HasName("PK__Employee__7AD04FF1ED48728A");
@@ -111,6 +114,7 @@ public partial class PRN212_MilkTeaCashierContext : DbContext
                 .HasMaxLength(50);
         });
 
+        // Configure Order entity with enum mapping
         modelBuilder.Entity<Order>(entity =>
         {
             entity.HasKey(e => e.OrderId).HasName("PK__Orders__C3905BAF4878F5D3");
@@ -121,13 +125,25 @@ public partial class PRN212_MilkTeaCashierContext : DbContext
                 .HasColumnType("datetime");
             entity.Property(e => e.CustomerName).HasMaxLength(100);
             entity.Property(e => e.EmployeeId).HasColumnName("EmployeeID");
-            entity.Property(e => e.PaymentMethod).HasMaxLength(20);
-            entity.Property(e => e.Status)
-                .IsRequired()
-                .HasMaxLength(50);
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+
+            // Configure enum-to-string conversion for Status
+            entity.Property(e => e.Status)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (OrderStatus)Enum.Parse(typeof(OrderStatus), v)
+                )
+                .HasMaxLength(50);
+
+            // Configure enum-to-string conversion for PaymentMethod
+            entity.Property(e => e.PaymentMethod)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (PaymentMethodType)Enum.Parse(typeof(PaymentMethodType), v)
+                )
+                .HasMaxLength(20);
 
             entity.HasOne(d => d.Customer).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.CustomerId)
@@ -139,6 +155,7 @@ public partial class PRN212_MilkTeaCashierContext : DbContext
                 .HasConstraintName("FK__Orders__Employee__4AB81AF0");
         });
 
+        // Configure OrderDetail entity
         modelBuilder.Entity<OrderDetail>(entity =>
         {
             entity.HasKey(e => e.OrderDetailId).HasName("PK__OrderDet__D3B9D30CC4686DBF");
@@ -160,6 +177,7 @@ public partial class PRN212_MilkTeaCashierContext : DbContext
                 .HasConstraintName("FK__OrderDeta__Produ__5165187F");
         });
 
+        // Configure Product entity
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.ProductId).HasName("PK__Products__B40CC6ED6FA86827");
@@ -189,6 +207,7 @@ public partial class PRN212_MilkTeaCashierContext : DbContext
                 .HasConstraintName("FK__Products__Catego__403A8C7D");
         });
 
+        // Configure TableCard entity
         modelBuilder.Entity<TableCard>(entity =>
         {
             entity.HasKey(e => e.NumberTableCard).HasName("PK__TableCar__43BE068F5750F243");
