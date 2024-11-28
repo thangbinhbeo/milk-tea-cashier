@@ -29,7 +29,7 @@ namespace MilkTeaCashier.Service.Services
             // Ensure proper defaults
             order.CreatedAt = DateTime.UtcNow;
             order.UpdatedAt = DateTime.UtcNow;
-            order.Status = OrderStatus.Pending;
+            order.Status = OrderStatus.Pending.ToString();
 
             // Calculate total
             order.TotalAmount = orderDetails.Sum(d => d.Quantity * d.Price);

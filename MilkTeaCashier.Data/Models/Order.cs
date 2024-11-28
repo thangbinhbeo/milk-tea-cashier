@@ -12,27 +12,23 @@ public partial class Order
 
     public int EmployeeId { get; set; }
 
-    [Range(0, double.MaxValue, ErrorMessage = "Total amount must be a positive value.")]
     public double TotalAmount { get; set; }
 
-    public OrderStatus Status { get; set; } = OrderStatus.Pending;
+    public string Status { get; set; } 
 
-    [Required(ErrorMessage = "Customer name is required.")]
-    [StringLength(50)]
     public string CustomerName { get; set; }
 
-    public bool? IsStay { get; set; } = true;
+    public bool? IsStay { get; set; }
 
-    [StringLength(200)]
     public string Note { get; set; }
 
     public int? NumberTableCard { get; set; }
 
-    public PaymentMethodType PaymentMethod { get; set; } = PaymentMethodType.Cash;
+    public string PaymentMethod { get; set; }
 
-    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? CreatedAt { get; set; } 
 
-    public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
 
     public int? CustomerId { get; set; }
 

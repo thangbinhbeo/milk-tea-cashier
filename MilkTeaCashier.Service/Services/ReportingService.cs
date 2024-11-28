@@ -24,7 +24,7 @@ namespace MilkTeaCashier.Service.Services
             var orders = await _orderRepository.FindByConditionAsync
             ( o => 
                 o.CreatedAt.Value.Date == date.Date && 
-                o.Status == OrderStatus.Completed
+                o.Status == OrderStatus.Completed.ToString()
             );
             Console.WriteLine($"Today's sales: ${orders}");
             return orders.Sum(o => o.TotalAmount);
@@ -37,7 +37,7 @@ namespace MilkTeaCashier.Service.Services
             (o =>
                 o.CreatedAt.Value.Year == year &&
                 o.CreatedAt.Value.Month == month &&
-                o.Status == OrderStatus.Completed
+                o.Status == OrderStatus.Completed.ToString()
             );
             Console.WriteLine($"This Month's sales: ${orders}");
             return orders.Sum(o => (double)o.TotalAmount);
@@ -48,7 +48,7 @@ namespace MilkTeaCashier.Service.Services
             var orders = await _orderRepository.FindByConditionAsync
             (o =>
                 o.CreatedAt.Value.Year == year &&
-                o.Status == OrderStatus.Completed
+                o.Status == OrderStatus.Completed.ToString()
             );
             Console.WriteLine($"This Year's sales: ${orders}");
             return orders.Sum(o => (double)o.TotalAmount);
@@ -63,7 +63,7 @@ namespace MilkTeaCashier.Service.Services
         // Get all orders by status (e.g., Pending, Completed, Canceled)
         public async Task<IEnumerable<Order>> GetOrdersByStatusAsync(OrderStatus status)
         {
-            return await _orderRepository.FindByConditionAsync(o => o.Status == status);
+            return await _orderRepository.FindByConditionAsync(o => o.Status == status.ToString());
         }
 
     }
