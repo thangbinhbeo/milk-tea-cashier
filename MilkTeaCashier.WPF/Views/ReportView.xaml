@@ -1,0 +1,45 @@
+﻿<Window x:Class="MilkTeaCashier.WPF.Views.ReportView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sales Reporting" Height="600" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
+            <DatePicker SelectedDate="{Binding SelectedStartDate}" />
+            <TextBlock Text="to" Margin="5" VerticalAlignment="Center" />
+            <DatePicker SelectedDate="{Binding SelectedEndDate}" />
+            <Button Content="Load Reports" Command="{Binding LoadReportsCommand}" Margin="10,0" />
+        </StackPanel>
+
+        <TabControl Grid.Row="1">
+            <TabItem Header="Revenue Reports">
+                <DataGrid ItemsSource="{Binding RevenueReports}" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Date" Binding="{Binding ReportDate}" />
+                        <DataGridTextColumn Header="Total Revenue" Binding="{Binding TotalRevenue}" />
+                        <DataGridTextColumn Header="Completed Orders" Binding="{Binding CompletedOrders}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Top Selling Products">
+                <DataGrid ItemsSource="{Binding TopSellingProducts}" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}" />
+                        <DataGridTextColumn Header="Quantity Sold" Binding="{Binding QuantitySold}" />
+                        <DataGridTextColumn Header="Revenue" Binding="{Binding Revenue}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+            <Button Content="Export to CSV" Command="{Binding ExportToCSVCommand}" />
+            <Button Content="Export to PDF" Command="{Binding ExportToPDFCommand}" Margin="5,0" />
+        </StackPanel>
+    </Grid>
+</Window>
