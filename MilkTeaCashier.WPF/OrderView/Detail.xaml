@@ -1,0 +1,73 @@
+﻿<Window x:Class="MilkTeaCashier.WPF.OrderView.Detail"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MilkTeaCashier.WPF.OrderView"
+        mc:Ignorable="d"
+        Title="Order Details" Height="550" Width="850" 
+        Background="#f8f8f8" FontFamily="Segoe UI">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Text="Order Details" FontSize="24" FontWeight="Bold" Foreground="#333" Margin="0,0,0,20" />
+
+        <!-- Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Order Info -->
+            <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                <TextBlock Text="Order ID:" FontWeight="Bold" />
+                <TextBlock Name="OrderIDTextBlock" Margin="0,5,0,15" Foreground="#555" />
+
+                <TextBlock Text="Customer Name:" FontWeight="Bold" />
+                <TextBlock Name="CustomerNameTextBlock" Margin="0,5,0,15" Foreground="#555" />
+
+                <TextBlock Text="Status:" FontWeight="Bold" />
+                <TextBlock Name="StatusTextBlock" Margin="0,5,0,15" Foreground="#555" />
+
+                <TextBlock Text="Total Amount:" FontWeight="Bold" />
+                <TextBlock Name="TotalAmountTextBlock" Margin="0,5,0,15" Foreground="#555" />
+
+                <TextBlock Text="Is Stay (Dine-in):" FontWeight="Bold" />
+                <TextBlock Name="IsStayTextBlock" Margin="0,5,0,15" Foreground="#555" />
+
+                <TextBlock Text="Table Number:" FontWeight="Bold" />
+                <TextBlock Name="NumberTableCardTextBlock" Margin="0,5,0,15" Foreground="#555" />
+
+                <TextBlock Text="Payment Method:" FontWeight="Bold" />
+                <TextBlock Name="PaymentMethodTextBlock" Margin="0,5,0,15" Foreground="#555" />
+
+                <TextBlock Text="Note:" FontWeight="Bold" />
+                <TextBlock Name="NoteTextBlock" Margin="0,5,0,15" Foreground="#555" />
+            </StackPanel>
+
+            <!-- Order Details -->
+            <DataGrid Grid.Column="1" Name="OrderDetailsDataGrid" AutoGenerateColumns="False"
+                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,10"
+                      RowBackground="#fff" AlternatingRowBackground="#f2f2f2" GridLinesVisibility="Horizontal"
+                      BorderBrush="#ddd" BorderThickness="1">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Product" Binding="{Binding ProductName}" Width="*" />
+                    <DataGridTextColumn Header="Size" Binding="{Binding Size}" Width="100" />
+                    <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="100" />
+                    <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="100" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <!-- Footer -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="Close" Width="100" Margin="5" Padding="5" Click="CloseButton_Click" />
+        </StackPanel>
+    </Grid>
+</Window>
