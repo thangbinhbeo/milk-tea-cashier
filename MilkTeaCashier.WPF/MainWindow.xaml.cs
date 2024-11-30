@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using MilkTeaCashier.WPF.ViewModels;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,6 +20,14 @@ namespace MilkTeaCashier.WPF
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MainWindowViewModel viewModel)
+            {
+                viewModel.OpenReportViewCommand.Execute(null);
+            }
         }
     }
 }
