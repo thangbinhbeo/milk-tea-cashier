@@ -1,0 +1,33 @@
+﻿<Window x:Class="MilkTeaCashier.WPF.Views.CategoryManagement"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
+        mc:Ignorable="d"
+        Title="CategoryManagement" Height="300" Width="800">
+    <Canvas>
+        <DataGrid x:Name="CategoryDataGrid" 
+          AutoGenerateColumns="False" 
+          IsReadOnly="True"
+                  Width="800"
+                  Height="113" HorizontalAlignment="Center" VerticalAlignment="Top">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding CategoryId}" Width="25"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding CategoryName}" Width="200"/>
+                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
+                <DataGridTextColumn Header="Created At" Binding="{Binding CreatedAt}" Width="100"/>
+            </DataGrid.Columns>
+
+        </DataGrid>
+        <Label Content="Category Name:" Canvas.Left="10" Canvas.Top="118" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <TextBox x:Name="CategoryNameTextBox" Canvas.Left="111" TextWrapping="Wrap" Text="Input" Canvas.Top="122" Width="271" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Label Content="Description:" Canvas.Left="10" Canvas.Top="154" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <TextBox x:Name="DescriptionTextBox" Canvas.Left="111" TextWrapping="Wrap" Text="Input" Canvas.Top="158" Width="271" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <Button Content="Create" Canvas.Left="10" Canvas.Top="202" Click="Button_Click"/>
+
+
+    </Canvas>
+
+</Window>
