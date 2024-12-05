@@ -7,18 +7,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
+using System.Drawing.Printing;
 
 namespace MilkTeaCashier.Service.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly GenericRepository<Order> _orderRepository;
-        private readonly GenericRepository<OrderDetail> _orderDetailRepository;
+        private readonly UnitOfWork _unitOfWork;
 
-        public OrderService(GenericRepository<Order> orderRepository, GenericRepository<OrderDetail> orderDetailRepository)
+        public OrderService()
         {
-            _orderRepository = orderRepository;
-            _orderDetailRepository = orderDetailRepository;
+            _unitOfWork ??= new UnitOfWork();
         }
 
         public async Task PlaceOrderAsync(Order order, List<OrderDetail> orderDetails)
@@ -35,31 +35,44 @@ namespace MilkTeaCashier.Service.Services
             order.TotalAmount = orderDetails.Sum(d => d.Quantity * d.Price);
 
             // Add order and order details
-            await _orderRepository.AddAsync(order);
+            await _unitOfWork.OrderRepository.AddAsync(order);
             foreach (var detail in orderDetails)
             {
                 detail.OrderId = order.OrderId;
-                await _orderDetailRepository.AddAsync(detail);
+                await _unitOfWork.OrderDetailRepository.AddAsync(detail);
             }
 
             // Save changes
-            await _orderRepository.SaveAsync();
+            await _unitOfWork.OrderRepository.SaveAsync();
         }
 
 
         public async Task<IEnumerable<Order>> GetOrdersByDateAsync(DateTime date)
         {
-            return await _orderRepository.FindByConditionAsync(o => o.CreatedAt.Value == date.Date);
+            return await _unitOfWork.OrderRepository.FindByConditionAsync(o => o.CreatedAt.Value == date.Date);
         }
 
         public async Task<Order> GetOrderByIdAsync(int orderId)
         {
-            return await _orderRepository.GetByIdAsync(orderId);
+            return await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
         }
 
         public double CalculateTotalAmount(List<OrderDetail> orderDetails)
         {
             return orderDetails.Sum(detail => detail.Quantity * detail.Price);
+        }
+
+        public async Task PrintBillToPrinter(int orderId)
+        {
+            try
+            {
+
+
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
     }
 
