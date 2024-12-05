@@ -1,4 +1,5 @@
-﻿using MilkTeaCashier.Data.Base;
+﻿using Microsoft.EntityFrameworkCore;
+using MilkTeaCashier.Data.Base;
 using MilkTeaCashier.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,17 @@ namespace MilkTeaCashier.Data.Repository
         public OrderRepository(PRN212_MilkTeaCashierContext context)
         {
             _context = context;
+        }
+
+        public IQueryable<Order> GetOrderDetail()
+        {
+            return _context.Orders
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Product)
+                .Include(o => o.OrderDetails)
+                .Include(o => o.NumberTableCard)
+                .Include(o => o.Customer)
+                .Include(o => o.Employee);
         }
     }
 }

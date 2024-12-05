@@ -1,4 +1,5 @@
 ﻿using MilkTeaCashier.WPF.ViewModels;
+using MilkTeaCashier.WPF.Views;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,6 +29,13 @@ namespace MilkTeaCashier.WPF
             {
                 viewModel.OpenReportViewCommand.Execute(null);
             }
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            CategoryManagement categoryWindow = new CategoryManagement();
+
+            categoryWindow.Show();
         }
     }
 }
