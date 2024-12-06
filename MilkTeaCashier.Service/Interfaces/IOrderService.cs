@@ -1,4 +1,5 @@
-﻿using MilkTeaCashier.Data.Models;
+﻿using MilkTeaCashier.Data.DTOs.OrderDTO;
+using MilkTeaCashier.Data.Models;
 using System;
 using System.Threading.Tasks;
 
@@ -6,9 +7,9 @@ namespace MilkTeaCashier.Service.Interfaces
 {
     public interface IOrderService
     {
-        Task PlaceOrderAsync(Order order, List<OrderDetail> orderDetails);
+        Task PlaceOrderAsync(CreateNewOrderDto order);
         Task<IEnumerable<Order>> GetOrdersByDateAsync(DateTime date);
-        Task<Order> GetOrderByIdAsync(int orderId);
+        Task<OrderDto> GetOrderByIdAsync(int orderId);
         double CalculateTotalAmount(List<OrderDetail> orderDetails);
     }
 }

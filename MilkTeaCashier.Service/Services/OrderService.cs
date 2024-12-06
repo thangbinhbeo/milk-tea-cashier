@@ -1,4 +1,5 @@
 ﻿using MilkTeaCashier.Data.Base;
+using MilkTeaCashier.Data.DTOs.OrderDTO;
 using MilkTeaCashier.Data.Models;
 using MilkTeaCashier.Data.UnitOfWork;
 using MilkTeaCashier.Service.Interfaces;
@@ -14,32 +15,48 @@ namespace MilkTeaCashier.Service.Services
     {
         private readonly GenericRepository<Order> _orderRepository;
         private readonly GenericRepository<OrderDetail> _orderDetailRepository;
+		private readonly UnitOfWork _unitOfWork;
 
-        public OrderService(GenericRepository<Order> orderRepository, GenericRepository<OrderDetail> orderDetailRepository)
+		public OrderService(GenericRepository<Order> orderRepository, GenericRepository<OrderDetail> orderDetailRepository, UnitOfWork unitOfWork)
         {
             _orderRepository = orderRepository;
             _orderDetailRepository = orderDetailRepository;
+            _unitOfWork = unitOfWork;
         }
 
-        public async Task PlaceOrderAsync(Order order, List<OrderDetail> orderDetails)
+        public async Task PlaceOrderAsync(CreateNewOrderDto model)
         {
-            if (order == null || orderDetails == null || !orderDetails.Any())
+            if (model == null || model.orderDetails == null || !model.orderDetails.Any())
                 throw new ArgumentException("Order or OrderDetails cannot be null or empty.");
 
-            // Ensure proper defaults
-            order.CreatedAt = DateTime.UtcNow;
-            order.UpdatedAt = DateTime.UtcNow;
-            order.Status = OrderStatus.Pending.ToString();
-
+            Order order = new Order
+            {
+                CustomerName = model.CustomerName,
+                NumberTableCard = model.NumberTableCard,
+                IsStay = model.IsStay,
+                Note = model.Note,
+                PaymentMethod = model.PaymentMethod,
+                CreatedAt = DateTime.UtcNow,
+                Status = OrderStatus.Pending.ToString()
+            };
             // Calculate total
-            order.TotalAmount = orderDetails.Sum(d => d.Quantity * d.Price);
+            order.TotalAmount = model.orderDetails.Sum(d => d.Quantity * d.Price);
 
             // Add order and order details
-            await _orderRepository.AddAsync(order);
-            foreach (var detail in orderDetails)
+            await _unitOfWork.OrderRepository.AddAsync(order);
+
+            foreach (var detail in model.orderDetails)
             {
-                detail.OrderId = order.OrderId;
-                await _orderDetailRepository.AddAsync(detail);
+                OrderDetail orderDetail = new OrderDetail 
+                {
+					OrderId = order.OrderId,
+				    ProductId = detail.ProductId,
+                    Size = detail.Size,
+                    Quantity = detail.Quantity,
+                    Price = detail.Price,
+                    Status = "Pending",
+			    };
+                await _unitOfWork.OrderDetailRepository.AddAsync(orderDetail);
             }
 
             // Save changes
@@ -52,9 +69,35 @@ namespace MilkTeaCashier.Service.Services
             return await _orderRepository.FindByConditionAsync(o => o.CreatedAt.Value == date.Date);
         }
 
-        public async Task<Order> GetOrderByIdAsync(int orderId)
+        public async Task<OrderDto> GetOrderByIdAsync(int orderId)
         {
-            return await _orderRepository.GetByIdAsync(orderId);
+            Order order = await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
+			OrderDto model = new OrderDto
+			{
+                CustomerName = order.CustomerName,
+                NumberTableCard = order.NumberTableCard,
+                IsStay = order.IsStay,
+                Note = order.Note,
+                PaymentMethod = order.PaymentMethod,
+            };
+
+            var orderDetails = await _unitOfWork.OrderDetailRepository.GetAllAsync();
+            foreach(var od in orderDetails)
+            {
+                if (od.OrderId == orderId)
+                {
+                    model.orderDetails.Add(new OrderDetailDto
+                    {
+                        ProductId = od.ProductId,
+                        ProductName = od.Product.Name,
+                        Size = od.Size,
+                        Price = od.Price,
+                        Quantity = od.Quantity,
+                    });
+                }
+            }
+
+            return model;
         }
 
         public double CalculateTotalAmount(List<OrderDetail> orderDetails)
