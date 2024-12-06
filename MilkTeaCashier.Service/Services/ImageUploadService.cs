@@ -12,11 +12,21 @@ namespace MilkTeaCashier.Service.Services
     public class ImageUploadService
     {
         private readonly string _bucketName = "student-management-c2fb4.appspot.com";
+        private readonly string _appName = "MilkTeaCashier";
 
-        public async Task<string> UploadImageAsync(string filePath, string fileName)
+        public static string GenerateFileName(string appName, string fileExtension)
+        {
+            string uniqueId = Guid.NewGuid().ToString();
+            string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+
+            return $"{appName}_{timestamp}_{uniqueId}{fileExtension}";
+        }
+
+        public async Task<string> UploadImageAsync(string filePath, string fileExtension)
         {
             try
             {
+                string fileName = GenerateFileName(_appName, fileExtension);
                 FirebaseStorageConfig.InitializeFirebase();
 
                 var stream = File.OpenRead(filePath);

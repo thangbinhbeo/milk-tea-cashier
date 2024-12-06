@@ -1,4 +1,5 @@
-﻿using MilkTeaCashier.Data.Models;
+﻿using MilkTeaCashier.Data.DTOs;
+using MilkTeaCashier.Data.Models;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,7 +9,7 @@ namespace MilkTeaCashier.Service.Interfaces
     {
         Task<IEnumerable<Product>> GetAllProductsAsync();
         Task<Product> GetProductByIdAsync(int productId);
-        Task AddProductAsync(Product product);
+        Task<string> AddProductAsync(CreateProductModel product);
         Task UpdateProductAsync(Product product);
         Task DeleteProductAsync(int productId);
     }
