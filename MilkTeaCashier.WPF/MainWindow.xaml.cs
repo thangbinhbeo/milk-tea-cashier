@@ -1,4 +1,6 @@
-﻿using MilkTeaCashier.WPF.ViewModels;
+﻿using Microsoft.Win32;
+using MilkTeaCashier.Service.Services;
+using MilkTeaCashier.WPF.ViewModels;
 using MilkTeaCashier.WPF.Views;
 using System.Text;
 using System.Windows;
@@ -33,9 +35,10 @@ namespace MilkTeaCashier.WPF
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            CategoryManagement categoryWindow = new CategoryManagement();
+            Product categoryWindow = new Product();
 
             categoryWindow.Show();
         }
+
     }
 }
