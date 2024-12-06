@@ -14,11 +14,18 @@ namespace MilkTeaCashier.Data.Configuration
 
         public static void InitializeFirebase()
         {
+            string jsonPath = Environment.GetEnvironmentVariable("FIREBASE_JSON_PATH");
+
+            if (string.IsNullOrEmpty(jsonPath))
+            {
+                throw new Exception("Environment variable 'FIREBASE_JSON_PATH' is not set.");
+            }
+
             if (!_isInitialized)
             {
                 FirebaseApp.Create(new AppOptions()
                 {
-                    Credential = GoogleCredential.FromFile("firebase-adminsdk.json")
+                    Credential = GoogleCredential.FromFile(jsonPath)
                 });
                 _isInitialized = true;
             }
