@@ -17,8 +17,8 @@ namespace MilkTeaCashier.WPF.ViewModels
     {
 
         #region ___FIELDS AND PROPERTIES___
-        public const string SALE_REPORT_CSV_FILE_NAME = "SalesReport.csv";
-        public const string SALE_REPORT_PDF_FILE_NAME = "SalesReport.pdf";
+        public const string SALE_REPORT_CSV_FILE_NAME = "SaleReport.csv";
+        public const string SALE_REPORT_PDF_FILE_NAME = "SaleReport.pdf";
         private readonly IReportingService _reportingService;
         private readonly IFileExportService _fileExportService;
 
