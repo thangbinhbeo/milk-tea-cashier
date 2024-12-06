@@ -1,4 +1,6 @@
-﻿using MilkTeaCashier.Service.Helper;
+﻿using Firebase.Storage;
+using MilkTeaCashier.Data.Configuration;
+using MilkTeaCashier.Service.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,19 +11,32 @@ namespace MilkTeaCashier.Service.Services
 {
     public class ImageUploadService
     {
-        private readonly FirebaseStorageHelper _firebaseHelper;
+        private readonly string _bucketName = "student-management-c2fb4.appspot.com";
 
-        public ImageUploadService()
+        public async Task<string> UploadImageAsync(string filePath, string fileName)
         {
-            string jsonPath = "firebase-adminsdk.json";
-            string bucketName = "student-management-c2fb4.appspot.com";
+            try
+            {
+                FirebaseStorageConfig.InitializeFirebase();
 
-            _firebaseHelper = new FirebaseStorageHelper(jsonPath, bucketName);
-        }
+                var stream = File.OpenRead(filePath);
 
-        public string UploadImage(string localFilePath, string firebaseStoragePath)
-        {
-            return _firebaseHelper.UploadFile(localFilePath, firebaseStoragePath);
+                var task = new FirebaseStorage(_bucketName)
+                    .Child("images")
+                    .Child(fileName)
+                    .PutAsync(stream);
+
+                await task;
+
+                return await new FirebaseStorage(_bucketName)
+                    .Child("images")
+                    .Child(fileName)
+                    .GetDownloadUrlAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Upload failed: " + ex.Message);
+            }
         }
 
     }

@@ -14,6 +14,9 @@
                 VerticalAlignment="Center"
                 Command="{Binding OpenReportViewCommand}" />
         <Button Content="Category" HorizontalAlignment="Left" Margin="102,72,0,0" VerticalAlignment="Top" Height="53" Width="72" Click="Button_Click_1"/>
+        <Button Content="Select and Upload Image" HorizontalAlignment="Left" Margin="76,32,0,0" VerticalAlignment="Top" Click="SelectAndUploadImage_Click"/>
+        <TextBlock Name="ResultText" HorizontalAlignment="Left" Margin="126,161,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
+
     </Grid>
 </Window>
 
