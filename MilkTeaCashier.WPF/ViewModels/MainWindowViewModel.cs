@@ -29,9 +29,9 @@ namespace MilkTeaCashier.WPF.ViewModels
         }
         private void OpenReportView(object parameter)
         {
-            var reportingService = new ReportingService(new UnitOfWork()); // Replace with DI if available
-            var fileExportService = new FileExportService();
-
+            var dialogService = new DialogHelper();
+            var fileExportService = new FileExportService(dialogService, dialogService);
+            var reportingService = new ReportingService(new UnitOfWork());
             var reportViewModel = new ReportViewModel(reportingService, fileExportService);
 
             var reportWindow = new ReportView
@@ -43,32 +43,6 @@ namespace MilkTeaCashier.WPF.ViewModels
             };
 
             reportWindow.ShowDialog();
-        }
-
-        private async Task OpenSalesReportAsync()
-        {
-            try
-            {
-                await Task.Delay(100);
-
-                var reportingService = new ReportingService(new UnitOfWork()); // Replace with actual DI if available
-                var fileExportService = new FileExportService();
-
-                var reportViewModel = new ReportViewModel(reportingService, fileExportService);
-
-                var reportWindow = new ReportView
-                {
-                    DataContext = reportViewModel,
-                    Width = 1024,
-                    Height = 768,
-                    WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen
-                };
-                reportWindow.ShowDialog();
-            }
-            catch (Exception ex)
-            {
-                HandleError(ex);
-            }
         }
 
         private bool CanOpenSalesReport()
