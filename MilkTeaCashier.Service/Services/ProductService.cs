@@ -75,6 +75,16 @@ namespace MilkTeaCashier.Service.Services
             _unitOfWork.ProductRepository.PrepareRemove(product);
             await _unitOfWork.ProductRepository.SaveAsync();
         }
-    }
+		public async Task<IEnumerable<Product>> SearchProductsAsync(string searchText)
+		{
+			if (string.IsNullOrEmpty(searchText))
+			{
+				return await GetAllProductsAsync(); // Return all products if search text is empty
+			}
 
+			// Filter by product name only (case-insensitive search)
+			var products = await _unitOfWork.ProductRepository.GetAllAsync();
+			return products.Where(p => p.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
+		}
+	}
 }

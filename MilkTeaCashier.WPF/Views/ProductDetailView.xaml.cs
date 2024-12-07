@@ -70,12 +70,15 @@ namespace MilkTeaCashier.WPF.Views
 
 		private void FillElements(Product product)
 		{
-			ProductIdTextBox.Text = product.ProductId.ToString();
-			CategoryComboBox.SelectedValue = product.CategoryId;
-			NameTextBox.Text = product.Name;
-			SizeTextBox.Text = product.Size;
-			PriceTextBox.Text = product.Price.ToString();
-			StatusTextBox.Text = product.Status;
+			if(product != null)
+			{
+				ProductIdTextBox.Text = product.ProductId.ToString();
+				CategoryComboBox.SelectedValue = product.CategoryId;
+				NameTextBox.Text = product.Name;
+				SizeTextBox.Text = product.Size;
+				PriceTextBox.Text = product.Price.ToString();
+				StatusTextBox.Text = product.Status;
+			}
 		}
 
 		private void FillComboBox()

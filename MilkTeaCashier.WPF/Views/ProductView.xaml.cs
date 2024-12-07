@@ -46,6 +46,10 @@ namespace MilkTeaCashier.WPF.Views
 				};
 				productDetailView.ShowDialog();
 			}
+			else
+			{
+				MessageBox.Show("Please select a product to edit.", "Edit Product", MessageBoxButton.OK, MessageBoxImage.Warning);
+			}
 		}
 
 		private async void DeleteProduct_Click(object sender, RoutedEventArgs e)
@@ -53,20 +57,38 @@ namespace MilkTeaCashier.WPF.Views
 			var selectedProduct = ProductsDataGrid.SelectedItem as Product;
 			if (selectedProduct != null)
 			{
-				var result = MessageBox.Show("Are you sure you want to delete this product?", "Delete Product", MessageBoxButton.YesNo);
+				var result = MessageBox.Show("Are you sure you want to delete this product?", "Delete Product", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 				if (result == MessageBoxResult.Yes)
 				{
-					await _service.DeleteProductAsync(selectedProduct.ProductId);
-					LoadProducts(); // Refresh the data grid after deletion
+					try
+					{
+						await _service.DeleteProductAsync(selectedProduct.ProductId);
+						LoadProducts(); // Refresh the data grid after deletion
+					}
+					catch (Exception ex)
+					{
+						MessageBox.Show($"An error occurred while deleting the product: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					}
 				}
+			}
+			else
+			{
+				MessageBox.Show("Please select a product to delete.", "Delete Product", MessageBoxButton.OK, MessageBoxImage.Warning);
 			}
 		}
 
 		private async void SearchButton_Click(object sender, RoutedEventArgs e)
 		{
 			var searchText = SearchTextBox.Text;
-			var products = await _service.SearchProductsAsync(searchText);
-			ProductsDataGrid.ItemsSource = products;
+			if (!string.IsNullOrWhiteSpace(searchText))
+			{
+				var products = await _service.SearchProductsAsync(searchText);
+				ProductsDataGrid.ItemsSource = products;
+			}
+			else
+			{
+				LoadProducts(); // Load all products if search text is empty
+			}
 		}
 
 		private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -76,8 +98,15 @@ namespace MilkTeaCashier.WPF.Views
 
 		private async void LoadProducts()
 		{
-			var products = await _service.GetAllProductsAsync();
-			ProductsDataGrid.ItemsSource = products;
+			try
+			{
+				var products = await _service.GetAllProductsAsync();
+				ProductsDataGrid.ItemsSource = products;
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"An error occurred while loading products: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
 		}
 	}
 }
