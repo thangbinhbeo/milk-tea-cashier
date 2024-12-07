@@ -5,41 +5,53 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
         mc:Ignorable="d"
-        Title="CustomerInfoWindow" Height="500" Width="800" FontFamily="Tahoma" FontSize="13"
-        Background= "Purple" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Loaded="Window_Loaded" >
+        Title="CustomerInfoWindow" Height="750" Width="920" FontFamily="Tahoma" FontSize="13"
+        Background= "Purple" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" >
     <Grid>
         <GroupBox Header="Search funtion" HorizontalAlignment="Center" VerticalAlignment="Top" Height="100" Width="580" Margin="0,29,0,0" >
             <Grid>
                 <Label Content="Customer Name" HorizontalAlignment="Left" Margin="10,0,0,0" Height="35" Width="110"/>
                 <TextBox x:Name="txtCustomerName" Width="150" HorizontalAlignment="Left" Margin="120,30,0,30" TextWrapping="Wrap" />
-                <Label Content="Phone" HorizontalAlignment="Left" Margin="383,0,0,0" VerticalAlignment="Center"/>
+                <Label Content="Phone number" HorizontalAlignment="Left" Margin="349,0,0,0" VerticalAlignment="Center"/>
                 <TextBox HorizontalAlignment="Left" Margin="448,0,0,0" TextWrapping="Wrap" x:Name="txtPhone" VerticalAlignment="Center" Width="120"/>
-                <Button x:Name="btnSearch" Content="Search" Click="BtnSearch_click" HorizontalAlignment="Left" Margin="494,58,0,0" Height="19" VerticalAlignment="Top"/>
-
+                <Button Content="Search" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="100" Click="SearchButton_Click" Margin="0,52,10,0"/>
             </Grid>
         </GroupBox>
-        <DataGrid x:Name="dgCustomer" Margin="30,142,60,142" AutoGenerateColumns="False">
+        <DataGrid x:Name="dgCustomer" Margin="30,142,60,142" AutoGenerateColumns="False" ItemsSource="{Binding Customers}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Customer Id" Binding="{Binding CustomerId}" />
                 <DataGridTextColumn Header="Customer Name" Binding="{Binding Name}" />
-                <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" />
+                <DataGridTextColumn Header="Phone Number" Binding="{Binding Phone}" />
                 <DataGridTextColumn Header="Gender" Binding="{Binding Gender}"/>
-                <DataGridTextColumn Header="Order Id" Binding="{Binding Order.OrderId}" />
-                <DataGridTextColumn Header="Table card number" Binding="{Binding Order.NumberTableCard}" />
-                <DataGridTextColumn Header="Payment " Binding="{Binding Order.PaymentMethod}" />
-                <DataGridTextColumn Header="TotalAmount" Binding="{Binding Order.TotalAmount}" />
-                <DataGridTextColumn Header="Status" Binding="{Binding Order.Status}"/>
-                <DataGridTextColumn Header="Staying" Binding="{Binding Order.IsStay}" />
-                <DataGridTextColumn Header="Note" Binding="{Binding Order.Note}" />
-                <DataGridTextColumn Header="TotalAmount" Binding="{Binding Order.TotalAmount}" />
-                <DataGridTextColumn Header="TotalAmount" Binding="{Binding Order.TotalAmount}" />
+                <DataGridTextColumn Header="Score" Binding="{Binding Score}" />
+                <DataGridTextColumn Header="Created At" Binding="{Binding CreatedAt}" />
+                <DataGridTextColumn Header="Created by" Binding="{Binding CreatedBy}" />
+                <DataGridTextColumn Header="Updated At" Binding="{Binding UpdatedAt}" />
+                <DataGridTextColumn Header="Updated by" Binding="{Binding UpdatedBy}" />
             </DataGrid.Columns>
-        </DataGrid>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,80,65">
-            <Button x:Name="btnAdd" Content="Add" Click="BtnAdd_click" Margin="5"  />
-            <Button x:Name="btnUpdate" Content="Update" Click="BtnUpdate_click" Margin="5" />
-            <Button x:Name="btnDelete" Content="Delete" Click="BtnDelete_click" Margin="5" RenderTransformOrigin="0.734,0.401" Width="54" />
 
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <DataGrid ItemsSource="{Binding Orders}" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Order Id" Binding="{Binding OrderId}" />
+                            <DataGridTextColumn Header="Table card number" Binding="{Binding NumberTableCard}" />
+                            <DataGridTextColumn Header="Payment" Binding="{Binding PaymentMethod}" />
+                            <DataGridTextColumn Header="Total Amount" Binding="{Binding TotalAmount}" />
+                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
+                            <DataGridTextColumn Header="Staying" Binding="{Binding IsStay}" />
+                            <DataGridTextColumn Header="Note" Binding="{Binding Note}" />
+                            <DataGridTextColumn Header="Employee Id" Binding="{Binding EmployeeId}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+        </DataGrid>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,600,0,0">
+            <Button Content="Create" Width="100" Margin="5" Background="#0078D7" Foreground="White" FontWeight="Bold" Click="CreateButton_Click"/>
+            <Button Content="Update" Width="100" Margin="5" Background="#32CD32" Foreground="White" FontWeight="Bold" Click="UpdateButton_Click"/>
+            <Button Content="Delete" Width="100" Margin="5" Background="#FF6347" Foreground="White" FontWeight="Bold" Click="DeleteButton_Click"/>
         </StackPanel>
 
     </Grid>

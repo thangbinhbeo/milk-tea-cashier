@@ -16,12 +16,12 @@ namespace MilkTeaCashier.Data.Repository
         {
             _context = context;
         }
-        public async Task<IEnumerable<Customer>> GetCustomersAsync()
-        {
-            var ListCustomer = new List<Customer>();
-            using var dbContext = new PRN212_MilkTeaCashierContext();
-            ListCustomer = await dbContext.Customers.Include(c => c.Orders).ToListAsync();
-            return ListCustomer;
-        }
+        //public async Task<IEnumerable<Customer>> GetCustomersAsync()
+        //{
+        //    var ListCustomer = new List<Customer>();
+        //    using var dbContext = new PRN212_MilkTeaCashierContext();
+        //    ListCustomer = await dbContext.Customers.Include(c => c.Orders).ToListAsync();
+        //    return ListCustomer;
+        //}
     }
 }

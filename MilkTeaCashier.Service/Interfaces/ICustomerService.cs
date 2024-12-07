@@ -10,10 +10,14 @@ namespace MilkTeaCashier.Service.Interfaces
 {
     public interface ICustomerService
     {
-        Task CreateCustomerAsync(CreateCustomerDto customerDto, int currentEmployeeId);
-        Task DeleteCustomerAsync(int customerId);
+
         Task<IEnumerable<Customer>> GetAllCustomersAsync();
-        Task<Customer> GetCustomerByIdAsync(int customerId); 
-        Task UpdateCustomerAsync(int customerId, UpdateCustomerDto customerDto, int currentEmployeeId); 
+        Task<Customer> AddCustomerAsync(CreateCustomerDto customerDto);
+        Task UpdateCustomerAsync(int customerId, string name = null, string phone = null, string gender = null);
+
+        Task DeleteCustomerAsync(int customerId);
+
+        Task<IEnumerable<Customer>> SearchCustomerByNameAndPhoneAsync(string name, string phone);
+
     }
 }

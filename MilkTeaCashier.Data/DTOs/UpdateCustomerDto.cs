@@ -20,6 +20,6 @@ namespace MilkTeaCashier.Data.DTOs
         [Required(ErrorMessage = "Gender is required.")]
         public string Gender { get; set; }
 
-        public long? Score { get; set; } // Optional field
+        
     }
 }

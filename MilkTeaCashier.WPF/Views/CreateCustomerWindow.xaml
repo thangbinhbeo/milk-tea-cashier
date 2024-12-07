@@ -1,0 +1,37 @@
+﻿<Window x:Class="MilkTeaCashier.WPF.Views.CreateCustomerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
+        mc:Ignorable="d"
+        Title="Customer Window" Height="350" Width="500" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Background="Aqua" > 
+    <Grid>
+        <Grid Margin="10">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <!-- Thông tin Customer -->
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <Label Content="Customer Name:" Width="150" VerticalAlignment="Center"/>
+                    <TextBox x:Name="dgName" Width="300"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <Label Content="Phone Number:" Width="150" VerticalAlignment="Center"/>
+                    <TextBox x:Name="dgPhone" Width="300"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <Label Content="Gender:" Width="150" VerticalAlignment="Center"/>
+                    <ComboBox x:Name="dgGender" Width="300" Margin="5">
+                        <ComboBoxItem Content="Male" />
+                        <ComboBoxItem Content="Female" />
+                    </ComboBox>
+                </StackPanel>
+                
+               
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                    <Button Content="Save" Width="100" Margin="5" Click="SaveButton_Click"/>
+                    <Button Content="Cancel" Width="100" Margin="5" Click="CancelButton_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

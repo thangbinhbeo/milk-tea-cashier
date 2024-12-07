@@ -19,6 +19,6 @@ namespace MilkTeaCashier.Data.DTOs
 
         [Required(ErrorMessage = "Gender is empty")]
         public string Gender { get; set; }
-        public long? Score { get; set; }
+        
     }
 }
