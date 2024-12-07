@@ -14,14 +14,14 @@ using System.Windows.Shapes;
 
 namespace MilkTeaCashier.WPF.Views
 {
-    /// <summary>
-    /// Interaction logic for ReportView.xaml
-    /// </summary>
-    public partial class ReportView : Window
-    {
-        public ReportView()
-        {
-            InitializeComponent();
-        }
-    }
+	/// <summary>
+	/// Interaction logic for ReportView.xaml
+	/// </summary>
+	public partial class ReportView : Window
+	{
+		public ReportView()
+		{
+			InitializeComponent();
+		}
+	}
 }
