@@ -1,4 +1,8 @@
-﻿using System;
+﻿using MilkTeaCashier.Data.UnitOfWork;
+using MilkTeaCashier.Service.Services;
+using MilkTeaCashier.WPF.Utilities;
+using MilkTeaCashier.WPF.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +26,10 @@ namespace MilkTeaCashier.WPF.Views
         public ReportView()
         {
             InitializeComponent();
+            var dialogService = new DialogHelper();
+            var reportingService = new ReportingService(new UnitOfWork()); // Replace with actual DI
+            var fileExportService = new FileExportService(dialogService, dialogService);
+            DataContext = new ReportViewModel(reportingService, fileExportService);
         }
     }
 }

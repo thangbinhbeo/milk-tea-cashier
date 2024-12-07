@@ -14,18 +14,9 @@ namespace MilkTeaCashier.Service.Services
     {
         #region ___FIELDS AND PROPERTIES___
         private readonly UnitOfWork _unitOfWork;
-        private readonly IFileExportService _fileExportService;
-
-        public ReportingService(UnitOfWork unitOfWork, IFileExportService fileExportService)
-        {
-            _unitOfWork = unitOfWork;
-            _fileExportService = fileExportService;
-        }
-
         public ReportingService(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _fileExportService = new FileExportService();
         }
         #endregion
 
