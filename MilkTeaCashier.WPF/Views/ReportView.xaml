@@ -13,7 +13,9 @@
             <DatePicker SelectedDate="{Binding SelectedStartDate}" />
             <TextBlock Text="to" Margin="5" VerticalAlignment="Center" />
             <DatePicker SelectedDate="{Binding SelectedEndDate}" />
-            <Button Content="Load Reports" Command="{Binding LoadReportsCommand}" Margin="10,0" />
+            <Button Content="Load Reports"
+                    Command="{Binding LoadReportsCommand}"
+                    Margin="10,0" />
         </StackPanel>
 
         <TabControl Grid.Row="1">

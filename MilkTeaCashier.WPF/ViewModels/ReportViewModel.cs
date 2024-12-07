@@ -17,8 +17,8 @@ namespace MilkTeaCashier.WPF.ViewModels
     {
 
         #region ___FIELDS AND PROPERTIES___
-        public const string SALE_REPORT_CSV_FILE_NAME = "SalesReport.csv";
-        public const string SALE_REPORT_PDF_FILE_NAME = "SalesReport.pdf";
+        public const string SALE_REPORT_CSV_FILE_NAME = "SaleReport.csv";
+        public const string SALE_REPORT_PDF_FILE_NAME = "SaleReport.pdf";
         private readonly IReportingService _reportingService;
         private readonly IFileExportService _fileExportService;
 
@@ -32,6 +32,14 @@ namespace MilkTeaCashier.WPF.ViewModels
         public RelayCommand ExportToCSVCommand { get; }
         public RelayCommand ExportToPDFCommand { get; }
 
+        private bool _isOperationInProgress;
+
+        public bool IsOperationInProgress
+        {
+            get => _isOperationInProgress;
+            set => SetProperty(ref _isOperationInProgress, value); // Use INotifyPropertyChanged or equivalent
+        }
+
         public ReportViewModel(IReportingService reportingService, IFileExportService fileExportService)
         {
             _reportingService = reportingService;
@@ -40,30 +48,42 @@ namespace MilkTeaCashier.WPF.ViewModels
             RevenueReports = new ObservableRangeCollection<RevenueReportDto>();
             TopSellingProducts = new ObservableRangeCollection<TopSellingProductDto>();
 
-            LoadReportsCommand = new RelayCommand
-            (
-                async _ => LoadReportsAsync(),
-                _ => CanLoadReports(),
-                ex => HanleException("Failed to load Report!!!", ex)
+            LoadReportsCommand = new RelayCommand(
+                async _ => await ExecuteWithState(LoadReportsAsync),
+                _ => !IsOperationInProgress && CanLoadReports(),
+                ex => HanleException("Failed to load report!", ex)
             );
 
-            ExportToCSVCommand = new RelayCommand
-            (
-                async _=> await ExportToCSVAsync(),
-                _ => CanExport(),
-                 ex => HanleException("Failed to Export Report to csv!!!", ex)
+            ExportToCSVCommand = new RelayCommand(
+                async _ => await ExecuteWithState(() => ExportToCSVAsync()),
+                _ => !IsOperationInProgress && CanExport(),
+                ex => HanleException("Failed to export to CSV!", ex)
             );
-            ExportToPDFCommand = new RelayCommand
-            (
-                async _ => await ExportToPDFAsync(),
-                _ => CanExport(),
-                 ex => HanleException("Failed to Export Report to csv!!!", ex)
+
+            ExportToPDFCommand = new RelayCommand(
+                async _ => await ExecuteWithState(() => ExportToPDFAsync()),
+                _ => !IsOperationInProgress && CanExport(),
+                ex => HanleException("Failed to export to PDF!", ex)
             );
         }
+
 
         #endregion
 
         #region ___MAIN METHODS___
+
+        private async Task ExecuteWithState(Func<Task> asyncMethod)
+        {
+            IsOperationInProgress = true;
+            try
+            {
+                await asyncMethod();
+            }
+            finally
+            {
+                IsOperationInProgress = false;
+            }
+        }
         private async Task ExportToCSVAsync()
         {
             var data = _reportingService.PrepareExportData(RevenueReports, TopSellingProducts);
@@ -75,18 +95,39 @@ namespace MilkTeaCashier.WPF.ViewModels
             await _fileExportService.ExportToPDFAsync(data, SALE_REPORT_PDF_FILE_NAME);
         }
 
-        private async void LoadReportsAsync()
+        private async Task LoadReportsAsync()
         {
             RevenueReports ??= new();
             RevenueReports.Clear();
 
             TopSellingProducts ??= new();
             TopSellingProducts.Clear();
+            // Add mock data
+            RevenueReports.Add(new RevenueReportDto
+            {
+                ReportDate = DateTime.Now,
+                TotalRevenue = 1000,
+                CompletedOrders = 5,
+                PaymentSummaries = new List<PaymentMethodSummary>
+                {
+                    new PaymentMethodSummary { PaymentMethod = "Cash", Revenue = 600 },
+                    new PaymentMethodSummary { PaymentMethod = "Card", Revenue = 400 }
+                }
+            });
+
+            TopSellingProducts.Add(new TopSellingProductDto
+            {
+                ProductName = "Milk Tea",
+                QuantitySold = 20,
+                Revenue = 500
+            });
 
             var revenueReports = await _reportingService.GetRevenueReportAsync(SelectedStartDate, SelectedEndDate);
             var topSellingProducts = await _reportingService.GetTopSellingProductsAsync(SelectedStartDate, SelectedEndDate);
             AddRevenueReports(revenueReports);
             AddTopSellingProducts(topSellingProducts);
+
+            Console.WriteLine("xxx load report!");
         }
 
         
@@ -104,8 +145,11 @@ namespace MilkTeaCashier.WPF.ViewModels
         }
         public bool CanExport()
         {
-            return RevenueReports == null ? false : (RevenueReports.Any() || TopSellingProducts.Any());
+            var canExport = RevenueReports != null && (RevenueReports.Any() || TopSellingProducts.Any());
+            Console.WriteLine($"CanExport: {canExport}");
+            return canExport;
         }
+
         public void AddRevenueReports(List<RevenueReportDto> revenueReports)
         {
             if (revenueReports == null) return;

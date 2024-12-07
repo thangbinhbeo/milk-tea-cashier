@@ -2,9 +2,7 @@
 using iTextSharp.text.pdf;
 using MilkTeaCashier.Service.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,44 +10,44 @@ namespace MilkTeaCashier.Service.Services
 {
     public class FileExportService : IFileExportService
     {
-        /// <summary>
-        /// Exports the given data to a CSV file.
-        /// </summary>
-        /// <param name="data">The data to be exported.</param>
-        /// <param name="fileName">The name of the output file.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task ExportToCSVAsync(string data, string fileName)
+        private readonly IDialogService _dialogService;
+        private readonly IFileDialogService _fileDialogService;
+        public FileExportService(IDialogService dialogService, IFileDialogService fileDialogService)
+        {
+            _dialogService = dialogService;
+            _fileDialogService = fileDialogService;
+        }
+
+        public async Task ExportToCSVAsync(string data, string defaultFileName)
         {
             try
             {
-                var filePath = $"{fileName}.csv";
+                var filePath = GetSaveFilePath($"{defaultFileName}.csv", "CSV Files|*.csv");
+                if (string.IsNullOrEmpty(filePath)) return;
+
                 using (var writer = new StreamWriter(filePath, false, Encoding.UTF8))
                 {
                     await writer.WriteAsync(data);
                 }
+
+                _dialogService.ShowMessage($"CSV file has been exported successfully to:\n{filePath}", "Export Successful");
             }
             catch (IOException ex)
             {
-                // Log the exception (optional) or handle appropriately
-                throw new IOException("Failed to export data to CSV.", ex);
+                _dialogService.ShowError("Failed to export data to CSV. Please try again.", ex);
             }
         }
 
-        /// <summary>
-        /// Exports the given data to a PDF file.
-        /// </summary>
-        /// <param name="data">The data to be exported.</param>
-        /// <param name="fileName">The name of the output file.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task ExportToPDFAsync(string data, string fileName)
+        public async Task ExportToPDFAsync(string data, string defaultFileName)
         {
             try
             {
-                var filePath = $"{fileName}.pdf";
+                var filePath = GetSaveFilePath($"{defaultFileName}.pdf", "PDF Files|*.pdf");
+                if (string.IsNullOrEmpty(filePath)) return;
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    var document = new iTextSharp.text.Document();
+                    var document = new Document();
                     PdfWriter.GetInstance(document, stream);
 
                     document.Open();
@@ -57,16 +55,21 @@ namespace MilkTeaCashier.Service.Services
                     document.Close();
                 }
 
-                await Task.CompletedTask;
+                _dialogService.ShowMessage($"PDF file has been exported successfully to:\n{filePath}", "Export Successful");
             }
             catch (DocumentException ex)
             {
-                throw new DocumentException("Failed to export data to PDF.", ex);
+                _dialogService.ShowError("Failed to export data to PDF. Please try again.", ex);
             }
             catch (IOException ex)
             {
-                throw new IOException("Failed to export data to PDF.", ex);
+                _dialogService.ShowError("Failed to export data to PDF. Please try again.", ex);
             }
+        }
+
+        private string GetSaveFilePath(string defaultFileName, string filter)
+        {
+            return _fileDialogService.GetSaveFilePath(defaultFileName, filter);
         }
     }
 }

@@ -16,57 +16,76 @@ using System.Windows.Shapes;
 
 namespace MilkTeaCashier.WPF.Views
 {
-    /// <summary>
-    /// Interaction logic for ProductDetailView.xaml
-    /// </summary>
-    public partial class ProductDetailView : Window
-    {
-        private readonly ProductService _service;
+	/// <summary>
+	/// Interaction logic for ProductDetailView.xaml
+	/// </summary>
+	public partial class ProductDetailView : Window
+	{
+		private readonly ProductService _service;
 
-        public Product EditProduct { get; set; } = null;
-        public ProductDetailView()
-        {
-            InitializeComponent();
-        }
+		public Product EditProduct { get; set; } = null;
+		public ProductDetailView()
+		{
+			InitializeComponent();
+			_service = new ProductService();
+		}
 
 		private async void SaveButton_Click(object sender, RoutedEventArgs e)
 		{
-            Product product = new Product();
-            product.ProductId = int.Parse(ProductIdTextBox.Text);
-            product.CategoryId = int.Parse(CategoryIdTextBox.Text);
-            product.Name = NameTextBox.Text;
-            product.Size = SizeTextBox.Text;
-            product.Price = double.Parse(PriceTextBox.Text);
-            product.Status = StatusTextBox.Text;
+			if (EditProduct == null)
+			{
+				var newProduct = new Product
+				{
+					ProductId = int.Parse(ProductIdTextBox.Text),
+					CategoryId = int.Parse(CategoryComboBox.SelectedValue.ToString()),
+					Name = NameTextBox.Text,
+					Size = SizeTextBox.Text,
+					Price = double.Parse(PriceTextBox.Text),
+					Status = StatusTextBox.Text
+				};
+				await _service.AddProductAsync(newProduct);
+			}
+			else
+			{
+				EditProduct.CategoryId = int.Parse(CategoryComboBox.SelectedValue.ToString());
+				EditProduct.Name = NameTextBox.Text;
+				EditProduct.Size = SizeTextBox.Text;
+				EditProduct.Price = double.Parse(PriceTextBox.Text);
+				EditProduct.Status = StatusTextBox.Text;
 
-            await _service.AddProductAsync(product);
-            this.Close();
+				await _service.UpdateProductAsync(EditProduct);
+			}
+
+			this.Close();
 		}
 
-        private void Window_Loaded (object sender, RoutedEventArgs e) 
-        {
-            FillComboBox();
-        }
-
-        private void FillElements(Product x)
-        {
-            if (x == null)
-                return;
-			ProductIdTextBox.Text = x.ProductId.ToString();
-			CategoryIdTextBox.Text = x.CategoryId.ToString();
-			NameTextBox.Text = x.Name.ToString();
-			SizeTextBox.Text = x.Size.ToString();
-			PriceTextBox.Text = x.Price.ToString();
-			StatusTextBox.Text = x.Status.ToString();
-
-
-
+		private async void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (EditProduct != null)
+			{
+				FillElements(EditProduct);
+			}
+			FillComboBox();
 		}
 
-        private void FillComboBox() 
-        {
-			CategoryComboBox.ItemsSource = _c
+		private void FillElements(Product product)
+		{
+			ProductIdTextBox.Text = product.ProductId.ToString();
+			CategoryComboBox.SelectedValue = product.CategoryId;
+			NameTextBox.Text = product.Name;
+			SizeTextBox.Text = product.Size;
+			PriceTextBox.Text = product.Price.ToString();
+			StatusTextBox.Text = product.Status;
+		}
 
+		private void FillComboBox()
+		{
+			CategoryComboBox.ItemsSource = _service.GetAllCategories();
+		}
+
+		private void CancelButton_Click(object sender, RoutedEventArgs e)
+		{
+			this.Close();
 		}
 	}
 }
