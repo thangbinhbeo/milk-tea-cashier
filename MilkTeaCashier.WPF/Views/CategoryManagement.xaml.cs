@@ -49,25 +49,29 @@ namespace MilkTeaCashier.WPF.Views
             }
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        public void CategoryDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var categoryName = CategoryNameTextBox.Text;
-            var description = DescriptionTextBox.Text;
-
-            if (string.IsNullOrWhiteSpace(categoryName) || string.IsNullOrWhiteSpace(description))
+            if (CategoryDataGrid.SelectedItem != null)
             {
-                MessageBox.Show("Please fill in all fields.");
-                return;
+                var selectedItem = CategoryDataGrid.SelectedItem;
+                this.Close();
+
+                var detailsWindow = new CategoryDetails(selectedItem);
+                detailsWindow.ShowDialog();
             }
-            var newCategory = new CreateNewCategory
-            {
-                CategoryName = categoryName,
-                Description = description
-            };
-            var result = await _service.CreateNewCategory(newCategory);
+        }
 
-            MessageBox.Show(result);
-            LoadCategories();
+        private void CreateButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+
+            var newCategory = new NewCategory();
+            newCategory.ShowDialog();
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }
