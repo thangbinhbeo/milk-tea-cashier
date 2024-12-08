@@ -14,6 +14,7 @@
                 VerticalAlignment="Center"
                 Command="{Binding OpenReportViewCommand}" />
         <Button Content="Category" HorizontalAlignment="Left" Margin="102,72,0,0" VerticalAlignment="Top" Height="53" Width="72" Click="Button_Click_1"/>
+        <Button Content="Product" HorizontalAlignment="Right" Margin="0,98,159,0" VerticalAlignment="Top" Height="54" Width="72" Click="Button_Click_2"/>
 
     </Grid>
 </Window>

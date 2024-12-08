@@ -1,7 +1,10 @@
-﻿using MilkTeaCashier.Data.Repository;
+﻿using MilkTeaCashier.Data.Models;
+using MilkTeaCashier.Data.Repository;
+using MilkTeaCashier.Service.Interfaces;
 using MilkTeaCashier.Service.Services;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,22 +32,27 @@ namespace MilkTeaCashier.WPF.Views
 			_service = new ProductService();
 		}
 
-		private async void AddProduct_Click(object sender, RoutedEventArgs e)
+		private void AddProduct_Click(object sender, RoutedEventArgs e)
 		{
 			var productDetailView = new ProductDetailView();
-			productDetailView.ShowDialog(); // Show the product detail view for adding a new product
+			var dialogResult = productDetailView.ShowDialog(); // Show the product detail view for adding a new product
+			LoadProducts();
 		}
 
-		private async void EditProduct_Click(object sender, RoutedEventArgs e)
+		private void EditProduct_Click(object sender, RoutedEventArgs e)
 		{
 			var selectedProduct = ProductsDataGrid.SelectedItem as Product;
 			if (selectedProduct != null)
 			{
 				var productDetailView = new ProductDetailView
 				{
-					EditProduct = selectedProduct // Pass the selected product to the detail view for editing
+					EditProduct = selectedProduct // Set the property
 				};
-				productDetailView.ShowDialog();
+				bool? dialogResult = productDetailView.ShowDialog(); // Open as modal dialog
+				if (dialogResult == true)
+				{
+					LoadProducts(); // Reload products if changes are made
+				}
 			}
 			else
 			{
@@ -55,25 +63,39 @@ namespace MilkTeaCashier.WPF.Views
 		private async void DeleteProduct_Click(object sender, RoutedEventArgs e)
 		{
 			var selectedProduct = ProductsDataGrid.SelectedItem as Product;
-			if (selectedProduct != null)
+
+			if (selectedProduct == null)
 			{
-				var result = MessageBox.Show("Are you sure you want to delete this product?", "Delete Product", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-				if (result == MessageBoxResult.Yes)
+				MessageBox.Show("Please select a product to delete.");
+				return;
+			}
+
+			var result = MessageBox.Show($"Are you sure you want to delete the product '{selectedProduct.Name}'?",
+										  "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+			if (result == MessageBoxResult.Yes)
+			{
+				try
 				{
-					try
+
+					bool isDeleted = await _service.DeleteProductAsync(selectedProduct.ProductId);
+
+					if (isDeleted)
 					{
-						await _service.DeleteProductAsync(selectedProduct.ProductId);
-						LoadProducts(); // Refresh the data grid after deletion
+						MessageBox.Show("Product deleted successfully.");
+						var productsList = ProductsDataGrid.ItemsSource as ObservableCollection<Product>;
+						productsList?.Remove(selectedProduct);
+						LoadProducts();
 					}
-					catch (Exception ex)
+					else
 					{
-						MessageBox.Show($"An error occurred while deleting the product: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+						MessageBox.Show("Failed to delete the product. Please try again.");
 					}
 				}
-			}
-			else
-			{
-				MessageBox.Show("Please select a product to delete.", "Delete Product", MessageBoxButton.OK, MessageBoxImage.Warning);
+				catch (Exception ex)
+				{
+					MessageBox.Show($"An error occurred while deleting the product: {ex.Message}");
+				}
 			}
 		}
 
@@ -87,25 +109,39 @@ namespace MilkTeaCashier.WPF.Views
 			}
 			else
 			{
-				LoadProducts(); // Load all products if search text is empty
+				LoadProducts();
 			}
 		}
 
-		private async void Window_Loaded(object sender, RoutedEventArgs e)
+		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			LoadProducts();
+			LoadProducts();  // Automatically load products when the window is loaded.
 		}
 
 		private async void LoadProducts()
 		{
 			try
 			{
+				ProductsDataGrid.IsEnabled = false;
+
 				var products = await _service.GetAllProductsAsync();
-				ProductsDataGrid.ItemsSource = products;
+
+				if (products != null && products.Any())
+				{
+					ProductsDataGrid.ItemsSource = products;
+				}
+				else
+				{
+					MessageBox.Show("No products available.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+				}
 			}
 			catch (Exception ex)
 			{
 				MessageBox.Show($"An error occurred while loading products: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+			finally
+			{
+				ProductsDataGrid.IsEnabled = true;
 			}
 		}
 	}

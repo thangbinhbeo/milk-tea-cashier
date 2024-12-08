@@ -35,10 +35,17 @@ namespace MilkTeaCashier.WPF
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            Product categoryWindow = new Product();
+            /*Product categoryWindow = new Product();
 
-            categoryWindow.Show();
+            categoryWindow.Show();*/
         }
 
-    }
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+		{
+			ProductView productwindow = new ProductView();
+
+			productwindow.Show();
+		}
+
+	}
 }

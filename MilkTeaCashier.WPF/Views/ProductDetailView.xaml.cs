@@ -1,4 +1,7 @@
-﻿using MilkTeaCashier.Data.Models;
+﻿using Microsoft.Win32;
+using MilkTeaCashier.Data.DTOs;
+using MilkTeaCashier.Data.Models;
+using MilkTeaCashier.Service.Interfaces;
 using MilkTeaCashier.Service.Services;
 using System;
 using System.Collections.Generic;
@@ -21,74 +24,144 @@ namespace MilkTeaCashier.WPF.Views
 	/// </summary>
 	public partial class ProductDetailView : Window
 	{
-		private readonly ProductService _service;
+		private string _selectedFilePath;
+		private string _fileExtension;
+		private readonly ImageUploadService _firebaseService;
+		private readonly ProductService _productService;
+		public Product EditProduct { get; set; }
 
-		public Product EditProduct { get; set; } = null;
 		public ProductDetailView()
 		{
 			InitializeComponent();
-			_service = new ProductService();
+			_productService = new ProductService();
+			_firebaseService = new ImageUploadService();
 		}
 
 		private async void SaveButton_Click(object sender, RoutedEventArgs e)
 		{
+			// Retrieve values from the form fields
+			string name = NameTextBox.Text;
+			int category;
+			string size = SizeTextBox.Text;
+			double price;
+			string url = "";
+
+			/*// Validate the inputs
+			if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(size) || string.IsNullOrEmpty(PriceTextBox.Text) || string.IsNullOrEmpty(CategoryTextBox.Text))
+			{
+				MessageBox.Show("Please fill in all fields.");
+				return;
+			}*/
+
+			if (!int.TryParse(CategoryTextBox.Text, out category))
+			{
+				MessageBox.Show("Invalid Category ID.");
+				return;
+			}
+
+			if (!double.TryParse(PriceTextBox.Text, out price))
+			{
+				MessageBox.Show("Invalid Price.");
+				return;
+			}
+
+			try
+			{
+				// If an image is selected, upload it
+				if (!string.IsNullOrEmpty(_selectedFilePath))
+				{
+					string fileName = System.IO.Path.GetFileName(_selectedFilePath);
+					url = await _firebaseService.UploadImageAsync(_selectedFilePath, _fileExtension);
+				}
+				else if (EditProduct == null)
+				{
+					MessageBox.Show("Please select an image.");
+					return;
+				}
+				else
+				{
+					// If editing, retain the existing image URL
+					url = EditProduct.Image;
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Error uploading image: {ex.Message}");
+				return;
+			}
+
+			// Create or update the product model with the data
 			if (EditProduct == null)
 			{
-				var newProduct = new Product
+				// Add new product (use CreateProductModel)
+				var newProduct = new CreateProductModel
 				{
-					ProductId = int.Parse(ProductIdTextBox.Text),
-					CategoryId = int.Parse(CategoryComboBox.SelectedValue.ToString()),
-					Name = NameTextBox.Text,
-					Size = SizeTextBox.Text,
-					Price = double.Parse(PriceTextBox.Text),
-					Status = StatusTextBox.Text
+					Name = name,
+					CategoryId = category,
+					Image = url,
+					Price = price,
+					Size = size,
+					Status = "Available" // If needed, you can add the status here
 				};
-				await _service.AddProductAsync(newProduct);
+
+				var result = await _productService.AddProductAsync(newProduct);  // Pass CreateProductModel to AddProductAsync
+
+				if (result != null)
+				{
+					MessageBox.Show("Product added successfully.");
+				}
+				else
+				{
+					MessageBox.Show("Failed to add product. Please try again.");
+				}
 			}
 			else
 			{
-				EditProduct.CategoryId = int.Parse(CategoryComboBox.SelectedValue.ToString());
-				EditProduct.Name = NameTextBox.Text;
-				EditProduct.Size = SizeTextBox.Text;
-				EditProduct.Price = double.Parse(PriceTextBox.Text);
-				EditProduct.Status = StatusTextBox.Text;
+				// Update the existing product
+				EditProduct.Name = name;
+				EditProduct.CategoryId = category;
+				EditProduct.Image = url;
+				EditProduct.Price = price;
+				EditProduct.Size = size;
 
-				await _service.UpdateProductAsync(EditProduct);
-			}
+				try
+				{
+					// Call the update method with the updated product
+					await _productService.UpdateProductAsync(EditProduct);
 
-			this.Close();
-		}
-
-		private async void Window_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (EditProduct != null)
-			{
-				FillElements(EditProduct);
-			}
-			FillComboBox();
-		}
-
-		private void FillElements(Product product)
-		{
-			if(product != null)
-			{
-				ProductIdTextBox.Text = product.ProductId.ToString();
-				CategoryComboBox.SelectedValue = product.CategoryId;
-				NameTextBox.Text = product.Name;
-				SizeTextBox.Text = product.Size;
-				PriceTextBox.Text = product.Price.ToString();
-				StatusTextBox.Text = product.Status;
+					MessageBox.Show("Product updated successfully.");
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show($"Failed to update product. Error: {ex.Message}");
+				}
 			}
 		}
 
-		private void FillComboBox()
-		{
-			CategoryComboBox.ItemsSource = _service.GetAllCategories();
-		}
 
 		private void CancelButton_Click(object sender, RoutedEventArgs e)
 		{
 			this.Close();
+		}
+
+		private void SelectImageButton_Click(object sender, RoutedEventArgs e)
+		{
+			OpenFileDialog openFileDialog = new OpenFileDialog();
+			openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif";
+			openFileDialog.Title = "Upload a product photo";
+
+			if (openFileDialog.ShowDialog() == true)
+			{
+				_selectedFilePath = openFileDialog.FileName;
+				_fileExtension = System.IO.Path.GetExtension(_selectedFilePath);
+
+				BitmapImage bitmap = new BitmapImage();
+				bitmap.BeginInit();
+				bitmap.UriSource = new Uri(_selectedFilePath);
+				bitmap.EndInit();
+
+				ProductImage.Source = bitmap;
+			}
 		}
 	}
 }
