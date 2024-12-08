@@ -2,6 +2,8 @@
 {
 	public class OrderDto
 	{
+		public int Id { get; set; }
+		public string Status { get; set; }
 		public string CustomerName { get; set; }
 		public int? NumberTableCard { get; set; }
 		public bool? IsStay { get; set; }

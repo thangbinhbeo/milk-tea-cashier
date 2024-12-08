@@ -27,5 +27,5 @@ namespace MilkTeaCashier.Data.Repository
                 .Include(o => o.Customer)
                 .Include(o => o.Employee);
         }
-    }
+	}
 }

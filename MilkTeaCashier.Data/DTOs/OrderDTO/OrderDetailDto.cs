@@ -1,4 +1,6 @@
-﻿namespace MilkTeaCashier.Data.DTOs.OrderDTO
+﻿using MilkTeaCashier.Data.Models;
+
+namespace MilkTeaCashier.Data.DTOs.OrderDTO
 {
 	public class OrderDetailDto
 	{
@@ -11,5 +13,7 @@
 		public int Quantity { get; set; }
 
 		public double Price { get; set; }
+
+		public string OrderDetailStatus { get; set; }
 	}
 }

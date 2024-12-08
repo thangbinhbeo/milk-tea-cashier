@@ -18,21 +18,23 @@ namespace MilkTeaCashier.Service.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly GenericRepository<Order> _orderRepository;
-        private readonly GenericRepository<OrderDetail> _orderDetailRepository;
 		private readonly UnitOfWork _unitOfWork;
 
-		public OrderService(GenericRepository<Order> orderRepository, GenericRepository<OrderDetail> orderDetailRepository, UnitOfWork unitOfWork)
+		public OrderService()
         {
-            _orderRepository = orderRepository;
-            _orderDetailRepository = orderDetailRepository;
-            _unitOfWork = unitOfWork;
-        }
+			_unitOfWork ??= new UnitOfWork();
+		}
 
-        public async Task PlaceOrderAsync(CreateNewOrderDto model)
+        public async Task<string> PlaceOrderAsync(CreateNewOrderDto model)
         {
             if (model == null || model.orderDetails == null || !model.orderDetails.Any())
                 throw new ArgumentException("Order or OrderDetails cannot be null or empty.");
+
+            var a = await _unitOfWork.TableCardRepository.FindByConditionAsync(a => a.NumberTableCard == model.NumberTableCard);
+            if (a.Any())
+            {
+                return "Please choose other TableNumber";
+            }
 
             Order order = new Order
             {
@@ -42,15 +44,26 @@ namespace MilkTeaCashier.Service.Services
                 Note = model.Note,
                 PaymentMethod = model.PaymentMethod,
                 CreatedAt = DateTime.UtcNow,
-                Status = OrderStatus.Pending.ToString()
+                UpdatedAt = DateTime.UtcNow,
+                Status = OrderStatus.Pending.ToString(),
+                EmployeeId = 7
             };
             // Calculate total
             order.TotalAmount = model.orderDetails.Sum(d => d.Quantity * d.Price);
-
-            // Add order and order details
+            
             await _unitOfWork.OrderRepository.AddAsync(order);
+			await _unitOfWork.OrderRepository.SaveAsync();
 
-            foreach (var detail in model.orderDetails)
+            if(order.NumberTableCard != null)
+            {
+				await _unitOfWork.TableCardRepository.AddAsync(new TableCard
+				{
+					NumberTableCard = (int)order.NumberTableCard
+				});
+				await _unitOfWork.TableCardRepository.SaveAsync();
+			}
+
+			foreach (var detail in model.orderDetails)
             {
                 OrderDetail orderDetail = new OrderDetail 
                 {
@@ -59,50 +72,229 @@ namespace MilkTeaCashier.Service.Services
                     Size = detail.Size,
                     Quantity = detail.Quantity,
                     Price = detail.Price,
-                    Status = "Pending",
+                    Status = model.Status,
 			    };
                 await _unitOfWork.OrderDetailRepository.AddAsync(orderDetail);
             }
 
-            // Save changes
-            await _unitOfWork.OrderRepository.SaveAsync();
+			await _unitOfWork.OrderDetailRepository.SaveAsync();
+			
+			return "Place Order Successfully!";
+		}
+
+        public async Task<string> UpdateOrderAsync(int orderId, CreateNewOrderDto model)
+        {
+            try
+            {
+                var order = await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
+
+                order.CustomerName = model.CustomerName;
+                order.IsStay = model.IsStay;
+
+				//update NumberTableCard
+				if (model.NumberTableCard != order.NumberTableCard)
+                {
+					if (model.IsStay == false && model.NumberTableCard == null)
+					{
+						var tableCard = await _unitOfWork.TableCardRepository.FindByConditionAsync(a => a.NumberTableCard == order.NumberTableCard);
+						foreach (var item in tableCard)
+						{
+							await _unitOfWork.TableCardRepository.RemoveAsync(item);
+						}
+						order.NumberTableCard = null;
+					}
+					else
+					{
+						var a = await _unitOfWork.TableCardRepository.FindByConditionAsync(a => a.NumberTableCard == model.NumberTableCard);
+						if (a.Any())
+						{
+							return "Please choose other TableNumber";
+						}
+						order.NumberTableCard = model.NumberTableCard;
+						await _unitOfWork.TableCardRepository.AddAsync(new TableCard
+						{
+							NumberTableCard = (int)order.NumberTableCard
+						});
+						await _unitOfWork.TableCardRepository.SaveAsync();
+					}
+				}
+
+                if(order.IsStay == true && order.NumberTableCard == null) 
+                {
+                    return "Please choose one TableNumberCard";
+                }
+
+                if (model.Status.Equals(OrderStatus.Canceled))
+                {
+                    var orderDetails = await _unitOfWork.OrderDetailRepository.FindByConditionAsync(o => o.OrderId == orderId);
+                    foreach (var orderDetail in orderDetails)
+                    {
+                        await _unitOfWork.OrderDetailRepository.RemoveAsync(orderDetail);
+                    }
+                }
+                else
+                {
+					// Lấy danh sách OrderDetail hiện tại trong db
+					var existingOrderDetails = await _unitOfWork.OrderDetailRepository.FindByConditionAsync(o => o.OrderId == orderId);
+
+					// Lấy danh sách OrderDetail từ model
+					var newOrderDetails = model.orderDetails ?? new List<OrderDetailDto>();
+
+					// Xóa các OrderDetail không còn tồn tại trong danh sách mới
+					foreach (var existingDetail in existingOrderDetails)
+					{
+						if (!newOrderDetails.Any(o => o.ProductId == existingDetail.ProductId))
+						{
+							await _unitOfWork.OrderDetailRepository.RemoveAsync(existingDetail);
+						}
+					}
+
+					// Thêm hoặc cập nhật OrderDetail
+					foreach (var newDetail in newOrderDetails)
+					{
+						var existingDetail = existingOrderDetails.FirstOrDefault(o => o.ProductId == newDetail.ProductId);
+						if (existingDetail != null)
+						{
+							// Cập nhật OrderDetail nếu đã tồn tại
+							existingDetail.Quantity = newDetail.Quantity;
+							existingDetail.Price = newDetail.Price;
+                            existingDetail.Status = newDetail.OrderDetailStatus;
+							await _unitOfWork.OrderDetailRepository.UpdateAsync(existingDetail);
+						}
+						else
+						{
+                            // Thêm OrderDetail mới nếu chưa tồn tại
+                            var orderDetail = new OrderDetail
+                            {
+                                OrderId = orderId,
+                                ProductId = newDetail.ProductId,
+                                Quantity = newDetail.Quantity,
+                                Price = newDetail.Price,
+                                Status = newDetail.OrderDetailStatus,
+							};
+							await _unitOfWork.OrderDetailRepository.AddAsync(orderDetail);
+						}
+					}
+				}
+                
+                order.TotalAmount = model.orderDetails.Sum(d => d.Quantity * d.Price);
+				order.Status = model.Status;
+                order.PaymentMethod = model.PaymentMethod;
+                order.Note = model.Note;
+				order.UpdatedAt = DateTime.UtcNow;
+
+                await _unitOfWork.OrderRepository.UpdateAsync(order);
+                await _unitOfWork.OrderDetailRepository.SaveAsync();
+                await _unitOfWork.OrderRepository.SaveAsync();
+
+                return "Update Order Successfully!";
+            }
+            catch (Exception ex)
+            {
+				throw new Exception("Error: ", ex);
+			}
         }
 
+        public async Task<string> DeleteOrderByIdAsync(int orderId)
+        {
+            try
+            {
+                var order = await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
 
-        public async Task<IEnumerable<Order>> GetOrdersByDateAsync(DateTime date)
+				if (order == null)
+				{
+					return "Order not found!";
+				}
+
+                var orderDetials = await _unitOfWork.OrderDetailRepository.FindByConditionAsync(o => o.OrderId == orderId);
+                foreach ( var orderDetail in orderDetials)
+                {
+                    await _unitOfWork.OrderDetailRepository.RemoveAsync(orderDetail);
+                }
+
+                var numbertable = await _unitOfWork.TableCardRepository.FindByConditionAsync(a => a.NumberTableCard == order.NumberTableCard);
+                foreach ( var card in numbertable)
+                {
+					await _unitOfWork.TableCardRepository.RemoveAsync(card);
+				}
+
+				var result = await _unitOfWork.OrderRepository.RemoveAsync(order);
+                if (result)
+                {
+					return "Delete Order Successfully!";
+				}
+                else
+                {
+					return "Failed to delete Order.";
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new Exception("Error: ", ex);
+			}
+		}
+
+        public async Task<List<OrderDto>> GetAllOrdersAsync()
+        {
+			try
+			{
+				var orders = await _unitOfWork.OrderRepository.GetAllAsync();
+				if (orders == null || orders.Count == 0)
+				{
+					return null;
+				}
+
+                var orderList = orders.Select(order => new OrderDto
+                {
+                    Id = order.OrderId,
+                    CustomerName = order.CustomerName,
+                    TotalAmount = order.TotalAmount,
+                    Status = order.Status,
+                    PaymentMethod = order.PaymentMethod,
+                    NumberTableCard = order.NumberTableCard,
+                }).ToList();
+
+				return orderList;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				throw new Exception("Error: ", ex);
+			}
+		}
+
+		public async Task<List<Product>> GetAllProductsAsync()
+        {
+            return await _unitOfWork.ProductRepository.GetAllAsync();
+        }
+
+        public async Task<List<OrderDetailDto>> GetAllOrderDetailByOrderId(int orderId)
+        {
+            var orderDetails = await _unitOfWork.OrderDetailRepository.FindByConditionAsync(a => a.OrderId == orderId);
+            List<OrderDetailDto> result = new List<OrderDetailDto>();
+			foreach (var orderDetail in orderDetails)
+            {
+                result.Add(new OrderDetailDto
+                {
+                    ProductId = orderDetail.ProductId,
+                    Price = orderDetail.Price,
+                    Quantity = orderDetail.Quantity,
+                    Size = orderDetail.Size,
+                    OrderDetailStatus = orderDetail.Status,
+                    ProductName = (await _unitOfWork.ProductRepository.GetByIdAsync(orderDetail.ProductId)).Name,
+                });
+            }
+            return result;
+        }
+
+		public async Task<IEnumerable<Order>> GetOrdersByDateAsync(DateTime date)
         {
             return await _unitOfWork.OrderRepository.FindByConditionAsync(o => o.CreatedAt.Value == date.Date);
         }
 
-        public async Task<OrderDto> GetOrderByIdAsync(int orderId)
+        public async Task<Order> GetOrderByIdAsync(int orderId)
         {
-            Order order = await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
-			OrderDto model = new OrderDto
-			{
-                CustomerName = order.CustomerName,
-                NumberTableCard = order.NumberTableCard,
-                IsStay = order.IsStay,
-                Note = order.Note,
-                PaymentMethod = order.PaymentMethod,
-            };
-
-            var orderDetails = await _unitOfWork.OrderDetailRepository.GetAllAsync();
-            foreach(var od in orderDetails)
-            {
-                if (od.OrderId == orderId)
-                {
-                    model.orderDetails.Add(new OrderDetailDto
-                    {
-                        ProductId = od.ProductId,
-                        ProductName = od.Product.Name,
-                        Size = od.Size,
-                        Price = od.Price,
-                        Quantity = od.Quantity,
-                    });
-                }
-            }
-
-            return model;
+            return await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
         }
 
         public double CalculateTotalAmount(List<OrderDetail> orderDetails)
