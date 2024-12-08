@@ -9,20 +9,20 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MilkTeaCashier.Data.Repository;
 using System.Diagnostics;
+using MilkTeaCashier.Data.UnitOfWork;
 
 namespace MilkTeaCashier.Service.Services
 {
     public class CustomerService : ICustomerService
     {
-        private readonly GenericRepository<Employee> _employeeRepository;
-        private readonly GenericRepository<Customer> _customerRepository;
+        private readonly UnitOfWork _unitOfWork;
         private readonly PRN212_MilkTeaCashierContext _context;
         public CustomerService(GenericRepository<Customer> customerRepository, GenericRepository<Employee> employeeRepository)
         {
-            _customerRepository = customerRepository;
-            _employeeRepository = employeeRepository;
+            _unitOfWork ??= new UnitOfWork();
             _context = new PRN212_MilkTeaCashierContext();
         }
+
         /// <summary>
         ///  Employee employee = await _employeeService.AuthenticateAsync(username, password);
        //  MessageBox.Show($"Welcome, {employee.FullName}!");
@@ -31,7 +31,6 @@ namespace MilkTeaCashier.Service.Services
          /// </summary>
          /// <returns></returns>
        
-
         public async Task<IEnumerable<Customer>> GetAllCustomersAsync()
         {
             var customers = await _context.Customers.Include(C => C.Orders).ToListAsync(); 
@@ -53,15 +52,15 @@ namespace MilkTeaCashier.Service.Services
                 Name = customerDto.Name,
                 Phone = customerDto.Phone,
                 Gender = customerDto.Gender,
-                //Score = customerDto.Score,
+                Score = 0,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = currentEmployee?.FullName ?? "System",
                 UpdatedAt = null,
                 UpdatedBy = null
             };
 
-            await _customerRepository.AddAsync(newCustomer);
-            await _customerRepository.SaveAsync();
+            await _unitOfWork.CustomerRepository.AddAsync(newCustomer);
+            await _unitOfWork.CustomerRepository.SaveAsync();
 
             return newCustomer;
         }
@@ -113,14 +112,14 @@ namespace MilkTeaCashier.Service.Services
 
         public async Task DeleteCustomerAsync(int customerId)
         {
-            var customer = await _customerRepository.GetByIdAsync(customerId);
+            var customer = await _unitOfWork.CustomerRepository.GetByIdAsync(customerId);
             if (customer == null)
             {
                 throw new KeyNotFoundException($"Customer with ID {customerId} not found.");
             }
 
-            _customerRepository.Remove(customer);
-            await _customerRepository.SaveAsync();
+            _unitOfWork.CustomerRepository.Remove(customer);
+            await _unitOfWork.CustomerRepository.SaveAsync();
         }
 
         public async Task<IEnumerable<Customer>> SearchCustomerByNameAndPhoneAsync(string name, string phone)
@@ -168,7 +167,7 @@ namespace MilkTeaCashier.Service.Services
         }
         public async Task<Customer> GetCustomerByIdAsync(int customerId)
         {
-            return await _customerRepository.GetByIdAsync(customerId);
+            return await _unitOfWork.CustomerRepository.GetByIdAsync(customerId);
         }
 
         public static class SessionService
