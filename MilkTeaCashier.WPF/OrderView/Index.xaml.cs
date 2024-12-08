@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
 
 namespace MilkTeaCashier.WPF.OrderView
@@ -97,6 +98,49 @@ namespace MilkTeaCashier.WPF.OrderView
 				{
 					MessageBox.Show($"Error deleting order: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 				}
+			}
+		}
+
+		private async void Button_Click(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				var searchDate = SearchDatePicker.SelectedDate;
+				var searchCustomer = SearchCustomerTextBox.Text;
+				var searchStatus = (SearchStatusComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+				var searchOrderIdText = SearchOrderIdTextBox.Text;
+
+				int.TryParse(searchOrderIdText, out int searchOrderId);
+
+				var orders = await _orderService.GetAllOrdersAsync();
+
+				if (searchDate.HasValue)
+				{
+					orders = orders.Where(o => o.CreatedAt.Value.Date == searchDate.Value.Date).ToList();
+				}
+				if (!string.IsNullOrEmpty(searchCustomer))
+				{
+					orders = orders.Where(o => o.CustomerName.Contains(searchCustomer, StringComparison.OrdinalIgnoreCase)).ToList();
+				}
+				if (!string.IsNullOrEmpty(searchStatus) && searchStatus != "All")
+				{
+					orders = orders.Where(o => o.Status.Equals(searchStatus, StringComparison.OrdinalIgnoreCase)).ToList();
+				}
+				if (searchOrderId != 0)
+				{
+					orders = orders.Where(o => o.Id == searchOrderId).ToList();
+				}
+
+				OrdersDataGrid.ItemsSource = orders;
+
+				if (!orders.Any())
+				{
+					MessageBox.Show("No orders found with the given criteria.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Error during search: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
 		}
 	}

@@ -86,9 +86,9 @@
                         <DataGridTemplateColumn Header="Status" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <ComboBox Text="{Binding OrderDetailStatus, Mode=TwoWay}" Width="120">
+                                    <ComboBox Text="{Binding OrderDetailStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="120">
                                         <ComboBoxItem Content="Pending" />
-                                        <ComboBoxItem Content="In Processing" />
+                                        <ComboBoxItem Content="Processing" />
                                         <ComboBoxItem Content="Completed" />
                                     </ComboBox>
                                 </DataTemplate>

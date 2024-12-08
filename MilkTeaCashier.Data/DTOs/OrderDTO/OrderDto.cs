@@ -10,6 +10,7 @@
 		public string Note { get; set; }
 		public string PaymentMethod { get; set; }
 		public double TotalAmount { get; set; }
+		public DateTime? CreatedAt { get; set; }
 		public List<OrderDetailDto> orderDetails { get; set; }
 	}
 }

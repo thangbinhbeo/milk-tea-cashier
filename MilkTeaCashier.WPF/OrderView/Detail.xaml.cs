@@ -175,7 +175,7 @@ namespace MilkTeaCashier.WPF.OrderView
 				}).ToList();
 
 
-				// 4. Lưu đơn hàng (gọi dịch vụ lưu đơn hàng)
+				// Lưu đơn hàng
 				var result = await _orderService.UpdateOrderAsync(OrderId, newOrder);
 
 				MessageBox.Show(result);

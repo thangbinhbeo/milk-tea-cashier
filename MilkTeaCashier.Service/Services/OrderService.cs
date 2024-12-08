@@ -72,7 +72,7 @@ namespace MilkTeaCashier.Service.Services
                     Size = detail.Size,
                     Quantity = detail.Quantity,
                     Price = detail.Price,
-                    Status = model.Status,
+                    Status = detail.OrderDetailStatus,
 			    };
                 await _unitOfWork.OrderDetailRepository.AddAsync(orderDetail);
             }
@@ -252,6 +252,7 @@ namespace MilkTeaCashier.Service.Services
                     Status = order.Status,
                     PaymentMethod = order.PaymentMethod,
                     NumberTableCard = order.NumberTableCard,
+                    CreatedAt = order.CreatedAt,
                 }).ToList();
 
 				return orderList;
@@ -286,6 +287,26 @@ namespace MilkTeaCashier.Service.Services
             }
             return result;
         }
+
+		public async Task<List<OrderDto>> SearchOrdersAsync(DateTime? date, string? customerName, string? status, int? orderId)
+		{
+			var orders = await GetAllOrdersAsync();
+
+			if (date.HasValue)
+				orders = orders.Where(o => o.CreatedAt.Value.Date == date.Value.Date).ToList();
+
+			if (!string.IsNullOrEmpty(customerName))
+				orders = orders.Where(o => o.CustomerName.Contains(customerName, StringComparison.OrdinalIgnoreCase)).ToList();
+
+			if (!string.IsNullOrEmpty(status) && status != "All")
+				orders = orders.Where(o => o.Status.Equals(status, StringComparison.OrdinalIgnoreCase)).ToList();
+
+			if (orderId.HasValue)
+				orders = orders.Where(o => o.Id == orderId).ToList();
+
+			return orders;
+		}
+
 
 		public async Task<IEnumerable<Order>> GetOrdersByDateAsync(DateTime date)
         {
