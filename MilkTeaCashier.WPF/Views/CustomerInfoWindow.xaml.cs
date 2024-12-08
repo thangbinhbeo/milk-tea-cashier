@@ -6,7 +6,7 @@ using MilkTeaCashier.Service.Services;
 using MilkTeaCashier.Data.Base;
 using MilkTeaCashier.Data.Models;
 using System.Collections.ObjectModel;
-using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace MilkTeaCashier.WPF.Views
 {
@@ -20,24 +20,24 @@ namespace MilkTeaCashier.WPF.Views
             InitializeComponent();
             _customerService = new CustomerService(new GenericRepository<Customer>(), new GenericRepository<Employee>());
             _customers = new ObservableCollection<Customer>();
-            LoadCustomers();
+            LoadCustomersAsync(); 
         }
 
-        private async void LoadCustomers()
+        private async Task LoadCustomersAsync()
         {
             try
             {
                 var customers = await _customerService.GetAllCustomersAsync();
-                _customers.Clear();
+                _customers.Clear(); 
                 foreach (var customer in customers)
                 {
                     _customers.Add(customer);
                 }
-                dgCustomer.ItemsSource = _customers;
+                dgCustomer.ItemsSource = _customers; 
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading data: {ex.Message}");
+                MessageBox.Show("Failed to load customers: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -46,24 +46,25 @@ namespace MilkTeaCashier.WPF.Views
             CreateCustomerWindow addCustomerWindow = new CreateCustomerWindow((CustomerService)_customerService);
             bool? result = addCustomerWindow.ShowDialog();
 
-            if (result == true)
+            if (result == true && addCustomerWindow.Tag is Customer newCustomer)
             {
-                if (addCustomerWindow.Tag is Customer newCustomer)
-                {
-                    _customers.Add(newCustomer); 
-                }
+                _customers.Add(newCustomer);
             }
         }
-        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+
+        private async void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
             if (dgCustomer.SelectedItem is Customer selectedCustomer)
             {
+                Debug.WriteLine($"Selected customer Id {selectedCustomer.CustomerId} and customer name to update: {selectedCustomer.Name}");
                 CreateCustomerWindow editCustomerWindow = new CreateCustomerWindow((CustomerService)_customerService, selectedCustomer);
                 bool? result = editCustomerWindow.ShowDialog();
 
                 if (result == true)
                 {
-                    LoadCustomers();
+                    await LoadCustomersAsync(); 
+                    var updatedCustomer = _customers.FirstOrDefault(c => c.CustomerId == selectedCustomer.CustomerId);
+                    Debug.WriteLine($"UpdatedBy after refresh: {updatedCustomer?.UpdatedBy}");
                 }
             }
             else
@@ -82,7 +83,7 @@ namespace MilkTeaCashier.WPF.Views
                     try
                     {
                         await _customerService.DeleteCustomerAsync(customer.CustomerId);
-                        LoadCustomers(); 
+                        await LoadCustomersAsync(); 
                     }
                     catch (Exception ex)
                     {
@@ -104,7 +105,7 @@ namespace MilkTeaCashier.WPF.Views
             try
             {
                 var customers = await _customerService.SearchCustomerByNameAndPhoneAsync(name, phone);
-                _customers.Clear();
+                _customers.Clear(); 
                 foreach (var customer in customers)
                 {
                     _customers.Add(customer);
@@ -113,7 +114,7 @@ namespace MilkTeaCashier.WPF.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error searching customers: {ex.Message}");
+                MessageBox.Show($"Error searching customers: {ex.Message}", "Search Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

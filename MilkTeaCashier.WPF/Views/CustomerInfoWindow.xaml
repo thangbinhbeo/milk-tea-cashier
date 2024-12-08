@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
         mc:Ignorable="d"
         Title="CustomerInfoWindow" Height="750" Width="920" FontFamily="Tahoma" FontSize="13"
-        Background= "Purple" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" >
+        Background= "#111951" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" >
     <Grid>
         <GroupBox Header="Search funtion" HorizontalAlignment="Center" VerticalAlignment="Top" Height="100" Width="580" Margin="0,29,0,0" >
             <Grid>

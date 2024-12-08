@@ -19,5 +19,7 @@ namespace MilkTeaCashier.Service.Interfaces
 
         Task<IEnumerable<Customer>> SearchCustomerByNameAndPhoneAsync(string name, string phone);
 
+        Task<Customer> GetCustomerByIdAsync(int customerId);
+
     }
 }

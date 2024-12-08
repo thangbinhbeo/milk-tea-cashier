@@ -3,18 +3,10 @@ using MilkTeaCashier.Data.Models;
 using MilkTeaCashier.Service.Interfaces;
 using MilkTeaCashier.Service.Services;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace MilkTeaCashier.WPF.Views
 {
@@ -45,14 +37,8 @@ namespace MilkTeaCashier.WPF.Views
         {
             dgName.Text = CurrentCustomer.Name;
             dgPhone.Text = CurrentCustomer.Phone;
-            if (CurrentCustomer.Gender == "Male")
-            {
-                dgGender.SelectedItem = dgGender.Items.Cast<ComboBoxItem>().FirstOrDefault(item => (string)item.Content == "Male");
-            }
-            else if (CurrentCustomer.Gender == "Female")
-            {
-                dgGender.SelectedItem = dgGender.Items.Cast<ComboBoxItem>().FirstOrDefault(item => (string)item.Content == "Female");
-            }
+            dgGender.SelectedItem = dgGender.Items.Cast<ComboBoxItem>()
+                .FirstOrDefault(item => (string)item.Content == CurrentCustomer.Gender);
         }
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -61,9 +47,15 @@ namespace MilkTeaCashier.WPF.Views
             string phone = dgPhone.Text.Trim();
             string gender = (dgGender.SelectedItem as ComboBoxItem)?.Content.ToString();
 
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name) )
             {
                 MessageBox.Show("Name cannot be empty.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            string pattern = @"^[a-zA-Z\s]+$"; // Only allows letters and spaces
+            if (!Regex.IsMatch(name, pattern))
+            {
+                MessageBox.Show("Name cannot contain special characters and numbers.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -78,7 +70,6 @@ namespace MilkTeaCashier.WPF.Views
                 MessageBox.Show("Gender must be selected.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-
             var customerDto = new CreateCustomerDto
             {
                 Name = name,
@@ -86,9 +77,10 @@ namespace MilkTeaCashier.WPF.Views
                 Gender = gender,
             };
 
+
             try
             {
-                if (isEditMode) // Check if editing an existing customer
+                if (isEditMode)
                 {
                     CurrentCustomer.Name = name;
                     CurrentCustomer.Phone = phone;
@@ -97,16 +89,17 @@ namespace MilkTeaCashier.WPF.Views
                     // Call the update method
                     await _customerService.UpdateCustomerAsync(CurrentCustomer.CustomerId, name, phone, gender);
                     MessageBox.Show("Customer updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    this.Tag = CurrentCustomer;
                 }
-                else 
+                else
                 {
                     Customer newCustomer = await _customerService.AddCustomerAsync(customerDto);
                     MessageBox.Show("New customer created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.Tag = newCustomer; 
+                    this.Tag = newCustomer;
                 }
 
-                this.DialogResult = true; 
-                Close(); 
+                this.DialogResult = true;
+                Close();
             }
             catch (InvalidOperationException ex)
             {

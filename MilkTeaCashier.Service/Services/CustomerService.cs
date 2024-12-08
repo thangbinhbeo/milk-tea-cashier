@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MilkTeaCashier.Data.Repository;
+using System.Diagnostics;
 
 namespace MilkTeaCashier.Service.Services
 {
@@ -22,12 +23,20 @@ namespace MilkTeaCashier.Service.Services
             _employeeRepository = employeeRepository;
             _context = new PRN212_MilkTeaCashierContext();
         }
-
-        
+        /// <summary>
+        ///  Employee employee = await _employeeService.AuthenticateAsync(username, password);
+       //  MessageBox.Show($"Welcome, {employee.FullName}!");
+        // Store the logged-in employee in the session // phải thêm dòng ở dưới vào cái login để nó có tên nhan viên x.x
+         //  CustomerService.SessionService.SetCurrentEmployee(employee); // Correctly reference the nested class
+         /// </summary>
+         /// <returns></returns>
+       
 
         public async Task<IEnumerable<Customer>> GetAllCustomersAsync()
         {
-            return await _customerRepository.GetAllAsync(c => c.Orders);
+            var customers = await _context.Customers.Include(C => C.Orders).ToListAsync(); 
+            Debug.WriteLine($"Fetched {customers.Count()} customers.");
+            return customers;
         }
 
         public async Task<Customer> AddCustomerAsync(CreateCustomerDto customerDto)
@@ -38,7 +47,7 @@ namespace MilkTeaCashier.Service.Services
             {
                 throw new InvalidOperationException("A customer with the same phone number already exists.");
             }
-
+            var currentEmployee = CustomerService.SessionService.GetCurrentEmployee();
             var newCustomer = new Customer
             {
                 Name = customerDto.Name,
@@ -46,7 +55,7 @@ namespace MilkTeaCashier.Service.Services
                 Gender = customerDto.Gender,
                 //Score = customerDto.Score,
                 CreatedAt = DateTime.UtcNow,
-                CreatedBy = null,
+                CreatedBy = currentEmployee?.FullName ?? "System",
                 UpdatedAt = null,
                 UpdatedBy = null
             };
@@ -71,16 +80,8 @@ namespace MilkTeaCashier.Service.Services
             }
 
 
-            if (!string.IsNullOrEmpty(phone) && phone != existingCustomer.Phone)
-            {
-                // Check if the new phone already exists for another customer
-                if (await CustomerExistsAsync(phone, customerId)) // Pass null for name
-                {
-                    throw new InvalidOperationException("Another customer with the same phone number already exists.");
-                }
-            }
+            var currentEmployee = SessionService.GetCurrentEmployee(); // Get the current employee
 
-            // Update only the fields that are not null
             if (!string.IsNullOrEmpty(name))
             {
                 existingCustomer.Name = name;
@@ -96,8 +97,9 @@ namespace MilkTeaCashier.Service.Services
                 existingCustomer.Gender = gender;
             }
 
+            // Update timestamps and user info
             existingCustomer.UpdatedAt = DateTime.UtcNow;
-            existingCustomer.UpdatedBy = null; 
+            existingCustomer.UpdatedBy = currentEmployee?.FullName ?? "System"; // Use current employee's name
 
             try
             {
@@ -117,7 +119,7 @@ namespace MilkTeaCashier.Service.Services
                 throw new KeyNotFoundException($"Customer with ID {customerId} not found.");
             }
 
-            _customerRepository.Remove(customer); 
+            _customerRepository.Remove(customer);
             await _customerRepository.SaveAsync();
         }
 
@@ -144,7 +146,7 @@ namespace MilkTeaCashier.Service.Services
             {
                 return result.Where(c => c.Phone.Contains(phone));
             }
-            return result; 
+            return result;
         }
 
 
@@ -163,6 +165,25 @@ namespace MilkTeaCashier.Service.Services
 
             return await query.AnyAsync(c =>
                 (phone != null && c.Phone == phone));
+        }
+        public async Task<Customer> GetCustomerByIdAsync(int customerId)
+        {
+            return await _customerRepository.GetByIdAsync(customerId);
+        }
+
+        public static class SessionService
+        {
+            private static Employee _currentEmployee;
+
+            public static void SetCurrentEmployee(Employee employee)
+            {
+                _currentEmployee = employee;
+            }
+
+            public static Employee GetCurrentEmployee()
+            {
+                return _currentEmployee;
+            }
         }
     }
 }
