@@ -1,0 +1,35 @@
+﻿<Window x:Class="MilkTeaCashier.WPF.Views.EmployeeView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
+        mc:Ignorable="d"
+                Title="EmployeeManagement" Height="500" Width="1000"
+        FontFamily="Tohoma"
+        FontSize="13"
+        Background="White"
+        WindowStartupLocation="CenterScreen"
+        >
+
+    <Grid>
+        <DataGrid x:Name="dgair" AutoGenerateColumns="False" ItemsSource="{Binding Employees}" Margin="10,10,10,133">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="EmployeeID" Binding="{Binding EmployeeId}" Width="Auto"/>
+                <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="*"/>
+                <DataGridTextColumn Header="Password Hash" Binding="{Binding PasswordHash}" Width="Auto"/>
+                <DataGridTextColumn Header="Role" Binding="{Binding Role}" Width="Auto"/>
+                <DataGridTextColumn Header="Full Name" Binding="{Binding FullName}" Width="*"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="Auto"/>
+                <DataGridTextColumn Header="Created At" Binding="{Binding CreatedAt}" Width="Auto"/>
+                <DataGridTextColumn Header="Updated At" Binding="{Binding UpdatedAt}" Width="Auto"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Button Content="Create" Click="BtnCreate_Click" Margin="10,396,766,34"/>
+        <Button Content="Update" Margin="267,396,512,34" Click="BtnUpdate_Click"/>
+        <Button Content="View" Click="BtnView_Click" RenderTransformOrigin="2.1,0.211" Margin="529,396,260,34"/>
+        <Button Content="Delete" Click="BtnDelete_Click" Margin="777,396,10,34"/>
+
+    </Grid>
+</Window>
