@@ -33,8 +33,8 @@ namespace MilkTeaCashier.WPF.Views
 
         private void ManageProducts_Click(object sender, RoutedEventArgs e)
         {
-            //var product = new Product();
-            //product.Show();
+            var productView = new ProductView();
+            productView.Show();
         }
 
         private void Report_Click(object sender, RoutedEventArgs e)

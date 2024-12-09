@@ -1,6 +1,7 @@
 ﻿using MilkTeaCashier.Data.Base;
 using MilkTeaCashier.Data.Models;
 using MilkTeaCashier.Service.Services;
+using MilkTeaCashier.WPF.OrderView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,8 +61,8 @@ namespace MilkTeaCashier.WPF.Views
                 {
                     MessageBox.Show($"Login successfully! Hello, {employee.FullName} (Cashier).", "Notifications", MessageBoxButton.OK, MessageBoxImage.Information);
                      
-                    //var cashierView = new CashierView(); 
-                    //cashierView.Show();
+                    var cashierView = new OrderView.Index(); 
+                    cashierView.Show();
                 }
                 else
                 {
