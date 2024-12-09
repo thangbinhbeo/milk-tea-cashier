@@ -1,18 +1,10 @@
-﻿using MilkTeaCashier.Data.Base;
-using MilkTeaCashier.Data.DTOs.OrderDTO;
+﻿using MilkTeaCashier.Data.DTOs.OrderDTO;
 using MilkTeaCashier.Data.Models;
 using MilkTeaCashier.Data.UnitOfWork;
 using MilkTeaCashier.Service.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Printing;
 using MilkTeaCashier.Data.DTOs;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.EntityFrameworkCore;
 
 namespace MilkTeaCashier.Service.Services
 {
@@ -124,12 +116,13 @@ namespace MilkTeaCashier.Service.Services
                     return "Please choose one TableNumberCard";
                 }
 
-                if (model.Status.Equals(OrderStatus.Canceled))
+                if (model.Status == "Canceled")
                 {
                     var orderDetails = await _unitOfWork.OrderDetailRepository.FindByConditionAsync(o => o.OrderId == orderId);
                     foreach (var orderDetail in orderDetails)
                     {
-                        await _unitOfWork.OrderDetailRepository.RemoveAsync(orderDetail);
+                        orderDetail.Status = "Canceled";
+                        await _unitOfWork.OrderDetailRepository.UpdateAsync(orderDetail);
                     }
                 }
                 else
@@ -244,7 +237,9 @@ namespace MilkTeaCashier.Service.Services
 					return null;
 				}
 
-                var orderList = orders.Select(order => new OrderDto
+                var orderList = orders
+					.OrderByDescending(order => order.CreatedAt)
+					.Select(order => new OrderDto
                 {
                     Id = order.OrderId,
                     CustomerName = order.CustomerName,

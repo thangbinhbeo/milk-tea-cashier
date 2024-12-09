@@ -97,6 +97,7 @@
                                         <ComboBoxItem Content="Pending" />
                                         <ComboBoxItem Content="Processing" />
                                         <ComboBoxItem Content="Completed" />
+                                        <ComboBoxItem Content="Canceled" />
                                     </ComboBox>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

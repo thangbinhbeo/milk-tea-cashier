@@ -29,6 +29,7 @@ namespace MilkTeaCashier.WPF.OrderView
 				var orders = await _orderService.GetAllOrdersAsync();
 				if (orders != null)
 				{
+					OrdersDataGrid.ItemsSource = null;
 					OrdersDataGrid.ItemsSource = orders;
 				}
 				else
