@@ -1,0 +1,117 @@
+﻿<Window x:Class="MilkTeaCashier.WPF.OrderView.Create"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Create Order" Height="700" Width="900"
+        Background="#f8f8f8" FontFamily="Segoe UI">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Text="Create Order" FontSize="24" FontWeight="Bold" Foreground="#333" Margin="0,0,0,20" />
+
+        <!-- Form Content -->
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Order Details -->
+            <StackPanel Margin="10" Grid.Column="0">
+                <!-- Customer Name -->
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Customer Name:" FontWeight="Bold" />
+                    <TextBox Name="CustomerNameTextBox" Height="30" Margin="0,5" />
+                </StackPanel>
+
+                <!-- Table Number -->
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Table Number:" FontWeight="Bold" />
+                    <TextBox Name="TableNumberTextBox" Height="30" Margin="0,5" />
+                </StackPanel>
+
+                <!-- Is Stay -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Dine-in (Is Stay):" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0" />
+                    <CheckBox Name="IsStayCheckBox" VerticalAlignment="Center" />
+                </StackPanel>
+                
+                <!--Payment Method-->
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Payment Method:" FontWeight="Bold" />
+                    <ComboBox Name="PaymentMethodComboBox" Height="30" Margin="0,5">
+                        <ComboBoxItem Content="Cash" />
+                        <ComboBoxItem Content="Card" />
+                        <ComboBoxItem Content="Online" />
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Status -->
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Order Status:" FontWeight="Bold" />
+                    <ComboBox Name="StatusComboBox" Height="30" Margin="0,5">
+                        <ComboBoxItem Content="Pending" />
+                        <ComboBoxItem Content="Completed" />
+                        <ComboBoxItem Content="Canceled" />
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Note -->
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Note:" FontWeight="Bold" />
+                    <TextBox Name="NoteTextBox" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,5" />
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Product List -->
+            <StackPanel Margin="10" Grid.Column="1">
+                <TextBlock Text="Order Products" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" />
+
+                <!-- Product List DataGrid -->
+                <DataGrid Name="ProductsDataGrid" AutoGenerateColumns="False" Height="250" Margin="0,0,0,10">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id" Binding="{Binding ProductId}" Width="*" />
+                        <DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}" Width="*" />
+                        <DataGridTextColumn Header="Size" Binding="{Binding Size, Mode=TwoWay}" Width="*" />
+                        <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="*" />
+                        <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity, Mode=TwoWay}" Width="*" />
+                        <DataGridTemplateColumn Header="Status" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox Text="{Binding OrderDetailStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="120">
+                                        <ComboBoxItem Content="Pending" />
+                                        <ComboBoxItem Content="Processing" />
+                                        <ComboBoxItem Content="Completed" />
+                                    </ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+
+
+                <!-- Add Product Section -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <ComboBox Name="ProductComboBox" Width="200" Margin="0,0,10,0" />
+                    <Button Content="Add Product" Name="AddProductButton" Width="100" Click="AddProductButton_Click" />
+                    <Button Content="Remove" Name="RemoveProductButton" Width="100" Click="RemoveProductButton_Click" Margin="20,0,10,0"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <!-- Footer -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="Save Order" Name="SaveOrderButton" Width="120" Margin="5" Padding="5" Click="SaveOrderButton_Click" />
+            <Button Content="Cancel" Name="CancelButton" Width="120" Margin="5" Padding="5" Click="CancelButton_Click" />
+        </StackPanel>
+    </Grid>
+</Window>
