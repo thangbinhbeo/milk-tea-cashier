@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
         mc:Ignorable="d"
-        Title="CategoryManagement" Height="300" Width="800">
+        Title="CategoryManagement" Height="540" Width="800">
     <Canvas>
         <TextBlock Canvas.Left="274" Canvas.Top="10" HorizontalAlignment="Left" VerticalAlignment="Center"
                    Text="CATEGORY MANAGEMENT" FontSize="20" FontWeight="Bold" TextAlignment="Center">
@@ -21,7 +21,7 @@
           AutoGenerateColumns="False" 
           IsReadOnly="True"
                   Width="770"
-                  Height="135" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="56" Canvas.Left="10"
+                  Height="153" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="56" Canvas.Left="10"
                   MouseDoubleClick="CategoryDataGrid_MouseDoubleClick">
 
             <DataGrid.Columns>
@@ -34,8 +34,22 @@
 
         </DataGrid>
         <Label FontStyle="Italic" FontSize="08px" Content="You can double-click to view and update the item !" Canvas.Left="6" Canvas.Top="39" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-        <Button x:Name="CloseButton" Content="Back" Canvas.Left="10" Canvas.Top="254" Click="CloseButton_Click"/>
-        <Button x:Name="CreateNewCategory" Content="Create New" Canvas.Left="24" Canvas.Top="221" Click="CreateButton_Click"/>
+        <Button x:Name="CloseButton" Content="Back" Canvas.Right="10" Canvas.Top="480" Click="CloseButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="718" Padding="15, 5" FontSize="15"/>
+        <Button x:Name="CreateNewCategory" Content="ADD" Canvas.Left="694" Canvas.Top="233" Click="CreateButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" BorderThickness="0" Padding="30, 10" FontWeight="Bold"/>
+
+        <Label Content="Searching..." Canvas.Left="10" Canvas.Top="219" FontWeight="bold" FontSize="20"/>
+        <Label Content="Name: " Canvas.Left="10" Canvas.Top="261" FontWeight="Bold" Foreground="#333333"/>
+        <TextBox x:Name="NameSearch" Canvas.Left="133" TextWrapping="Wrap" Canvas.Top="260" Width="280" Padding="5"/>
+        <Label Content="Description: " Canvas.Left="10" Canvas.Top="305" FontWeight="Bold" Foreground="#333333" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <TextBox x:Name="DescriptionSearch" Canvas.Left="133" TextWrapping="Wrap" Canvas.Top="304" Width="280" Padding="5" HorizontalAlignment="Center" VerticalAlignment="Top" Height="119"/>
+        <Label Content="Created At: " Canvas.Left="10" Canvas.Top="444" FontWeight="Bold" Foreground="#333333" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <DatePicker x:Name="DatePickerControl" Canvas.Left="133" Canvas.Top="442" HorizontalAlignment="Center" VerticalAlignment="Top" Width="280" Padding="5" SelectedDateChanged="DatePickerControl_SelectedDateChanged"/>
+
+
+        <Button Content="Search" Canvas.Left="176" Canvas.Top="486" Padding="30, 5" BorderThickness="0" HorizontalAlignment="Left" VerticalAlignment="Center" Click="SearchButton_Click"/>
+
+
+
 
     </Canvas>
 

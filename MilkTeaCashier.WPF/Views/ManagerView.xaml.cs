@@ -30,6 +30,12 @@ namespace MilkTeaCashier.WPF.Views
             var employeeView = new EmployeeView();
             employeeView.Show();
         }
+        
+        private void ManageCustomers_Click(object sender, RoutedEventArgs e)
+        {
+            var customerView = new CustomerInfoWindow();
+            customerView.Show();
+        }
 
         private void ManageProducts_Click(object sender, RoutedEventArgs e)
         {

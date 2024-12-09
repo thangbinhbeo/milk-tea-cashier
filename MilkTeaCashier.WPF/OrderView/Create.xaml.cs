@@ -2,6 +2,7 @@
 using MilkTeaCashier.Data.Models;
 using MilkTeaCashier.Service.Interfaces;
 using MilkTeaCashier.Service.Services;
+using MilkTeaCashier.WPF.Views;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -241,5 +242,11 @@ namespace MilkTeaCashier.WPF.OrderView
             CustomerComboBox.Visibility = Visibility.Collapsed;
             CustomerNameTextBox.Visibility = Visibility.Visible;
         }
+
+        private void CreateCustomerButton_Click(object sender, RoutedEventArgs e)
+		{
+			var createCustomerWindow = new CreateCustomerWindow();
+			createCustomerWindow.ShowDialog();
+		}
     }
 }

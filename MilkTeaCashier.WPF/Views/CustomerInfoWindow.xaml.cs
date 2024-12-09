@@ -12,7 +12,7 @@ namespace MilkTeaCashier.WPF.Views
 {
     public partial class CustomerInfoWindow : Window
     {
-        private readonly ICustomerService _customerService;
+        private readonly CustomerService _customerService;
         private readonly ObservableCollection<Customer> _customers;
 
         public CustomerInfoWindow()
@@ -43,7 +43,7 @@ namespace MilkTeaCashier.WPF.Views
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            CreateCustomerWindow addCustomerWindow = new CreateCustomerWindow((CustomerService)_customerService);
+            CreateCustomerWindow addCustomerWindow = new CreateCustomerWindow();
             bool? result = addCustomerWindow.ShowDialog();
 
             if (result == true && addCustomerWindow.Tag is Customer newCustomer)
@@ -57,7 +57,7 @@ namespace MilkTeaCashier.WPF.Views
             if (dgCustomer.SelectedItem is Customer selectedCustomer)
             {
                 Debug.WriteLine($"Selected customer Id {selectedCustomer.CustomerId} and customer name to update: {selectedCustomer.Name}");
-                CreateCustomerWindow editCustomerWindow = new CreateCustomerWindow((CustomerService)_customerService, selectedCustomer);
+                CreateCustomerWindow editCustomerWindow = new CreateCustomerWindow(selectedCustomer);
                 bool? result = editCustomerWindow.ShowDialog();
 
                 if (result == true)

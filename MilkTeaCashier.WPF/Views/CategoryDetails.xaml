@@ -10,20 +10,20 @@
         <TextBox x:Name="NameTextBox" Text="{Binding CategoryName}" IsReadOnly="True" Canvas.Left="50" Canvas.Top="40" FontSize="18" FontWeight="Bold"/>
 
         <Label Content="ID:" Canvas.Left="50" Canvas.Top="100"/>
-        <TextBox x:Name="IdTextBox" Text="{Binding CategoryId}" IsReadOnly="True" Canvas.Left="144" Canvas.Top="105" Width="273"/>
+        <TextBox x:Name="IdTextBox" Text="{Binding CategoryId}" IsReadOnly="True" Canvas.Left="144" Canvas.Top="105" Width="312" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
         <Label Content="Description:" Canvas.Left="50" Canvas.Top="142"/>
-        <TextBox x:Name="DescriptionTextBox" Text="{Binding Description}" IsReadOnly="True" Canvas.Left="144" Canvas.Top="147" Width="273"/>
+        <TextBox x:Name="DescriptionTextBox" Text="{Binding Description}" IsReadOnly="True" Canvas.Left="144" Canvas.Top="147" Width="312" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
         <Label Content="Updated At:" Canvas.Left="50" Canvas.Top="186"/>
-        <TextBox x:Name="UpdatedAtTextBox" Text="{Binding UpdatedAt}" IsReadOnly="True" Canvas.Left="144" Canvas.Top="191" Width="273"/>
+        <TextBox x:Name="UpdatedAtTextBox" Text="{Binding UpdatedAt}" IsReadOnly="True" Canvas.Left="144" Canvas.Top="191" Width="312" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
         <Label Content="Created At:" Canvas.Left="50" Canvas.Top="227"/>
-        <TextBox x:Name="CreatedAtTextBox" Text="{Binding CreatedAt}" IsReadOnly="True" Canvas.Left="144" Canvas.Top="232" Width="273"/>
+        <TextBox x:Name="CreatedAtTextBox" Text="{Binding CreatedAt}" IsReadOnly="True" Canvas.Left="144" Canvas.Top="232" Width="312" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-        <Button x:Name="UpdateButton" Content="Update" Canvas.Left="55" Canvas.Top="295" Click="UpdateButton_Click"/>
-        <Button x:Name="CancelButton" Content="Cancel Update" Canvas.Left="144" Canvas.Top="295" Click="CancelButton_Click" Visibility="Collapsed" />
-        <Button x:Name="CloseButton" Content="Back" Canvas.Left="57" Canvas.Top="359" Click="CloseButton_Click"/>
-        <Button x:Name="RemoveButton" Content="Delete" Canvas.Left="360" Canvas.Top="295" Click="RemoveButton_Click"/>
+        <Button x:Name="UpdateButton" Content="UPDATE" Canvas.Left="55" Canvas.Top="295" Click="UpdateButton_Click" BorderThickness="0" Padding="30, 10" FontWeight="Bold"/>
+        <Button x:Name="CancelButton" Content="Cancel Update" Canvas.Left="144" Canvas.Top="295" Click="CancelButton_Click" Visibility="Collapsed" BorderThickness="0" Padding="30, 10" FontWeight="Bold"/>
+        <Button x:Name="CloseButton" Content="Back" Canvas.Right="10" Canvas.Top="370" Click="CloseButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="50" Padding="15, 5" FontSize="15"/>
+        <Button x:Name="RemoveButton" Content="Delete" Canvas.Left="360" Canvas.Top="295" Click="RemoveButton_Click" BorderThickness="0" Padding="30, 10" FontWeight="Bold"/>
     </Canvas>
 </Window>

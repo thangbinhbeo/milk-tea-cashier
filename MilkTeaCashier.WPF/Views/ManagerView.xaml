@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
         mc:Ignorable="d"
-        Title="ManagerView" Height="450" Width="800">
+        Title="ManagerView" Height="500" Width="800">
     <Grid>
 
         <Border CornerRadius="10" BorderThickness="2" Opacity="0.95">
@@ -27,7 +27,7 @@
 
             <Grid>
                 
-                <Button Content="Logout" Width="100" Height="40" Margin="0,361,34,0" HorizontalAlignment="Right" VerticalAlignment="Top"
+                <Button Content="Logout" Width="100" Height="40" Margin="0,420,30,0" HorizontalAlignment="Right" VerticalAlignment="Top"
                         Foreground="White" FontSize="14" FontFamily="Montserrat" Background="#FF5F5F"
                         Click="Logout_Click">
                     <Button.Style>
@@ -49,7 +49,6 @@
                                FontSize="28"
                                FontWeight="Medium"
                                FontFamily="Montserrat"
-                               Cursor="Hand"
                                Margin="180,30,0,0" Width="377" />
                 </StackPanel>
 
@@ -58,6 +57,21 @@
                     <Button Content="Manage Employees" Width="200" Height="50" Margin="0,20" HorizontalAlignment="Center" VerticalAlignment="Center"
                             Foreground="White" FontSize="14" FontFamily="Montserrat" Background="#0099FF"
                             Click="ManageEmployees_Click">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="#0099FF"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#28AEED"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    
+                    <Button Content="Manage Customers" Width="200" Height="50" Margin="0,20" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Foreground="White" FontSize="14" FontFamily="Montserrat" Background="#0099FF"
+                            Click="ManageCustomers_Click">
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Background" Value="#0099FF"/>

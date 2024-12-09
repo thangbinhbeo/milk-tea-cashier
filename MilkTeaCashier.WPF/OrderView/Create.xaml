@@ -118,5 +118,6 @@
             <Button Content="Save Order" Name="SaveOrderButton" Width="120" Margin="5" Padding="5" Click="SaveOrderButton_Click" />
             <Button Content="Cancel" Name="CancelButton" Width="120" Margin="5" Padding="5" Click="CancelButton_Click" />
         </StackPanel>
+        <Button Content="Sign up a loyalty customer" HorizontalAlignment="Left" Width="170" Margin="5,15,0,0" Padding="5" Grid.Row="2" VerticalAlignment="Top" Click="CreateCustomerButton_Click"/>
     </Grid>
 </Window>

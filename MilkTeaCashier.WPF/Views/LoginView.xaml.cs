@@ -83,10 +83,17 @@ namespace MilkTeaCashier.WPF.Views
             }
         }
 
-
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                btnLogin_Click(sender, e);
+            }
         }
     }
 }

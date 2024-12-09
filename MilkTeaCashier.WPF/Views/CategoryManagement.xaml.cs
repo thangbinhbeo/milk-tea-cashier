@@ -22,6 +22,7 @@ namespace MilkTeaCashier.WPF.Views
     public partial class CategoryManagement : Window
     {
         private readonly CategoryService _service;
+        private DateTime? selectedDate;
         public CategoryManagement()
         {
             InitializeComponent();
@@ -72,6 +73,40 @@ namespace MilkTeaCashier.WPF.Views
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void DatePickerControl_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (DatePickerControl.SelectedDate.HasValue)
+            {
+                selectedDate = DatePickerControl.SelectedDate.Value;
+            } else
+            {
+                selectedDate = null;
+            }
+        }
+
+        private async void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            var name = NameSearch.Text.Trim();
+            var description = DescriptionSearch.Text.Trim();
+
+            try
+            {
+                var categories = await _service.SearchCategories(name, description, selectedDate);
+                if (categories != null)
+                {
+                    CategoryDataGrid.ItemsSource = categories;
+                }
+                else
+                {
+                    MessageBox.Show("No categories found!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading categories: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

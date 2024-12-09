@@ -16,10 +16,10 @@ namespace MilkTeaCashier.WPF.Views
         public Customer CurrentCustomer { get; private set; }
         private bool isEditMode;
 
-        public CreateCustomerWindow(CustomerService customerService, Customer customer = null)
+        public CreateCustomerWindow(Customer customer = null)
         {
             InitializeComponent();
-            _customerService = customerService;
+            _customerService ??= new CustomerService();
 
             if (customer != null)
             {
@@ -30,6 +30,7 @@ namespace MilkTeaCashier.WPF.Views
             else
             {
                 CurrentCustomer = new Customer();
+                isEditMode = false;
             }
         }
 
