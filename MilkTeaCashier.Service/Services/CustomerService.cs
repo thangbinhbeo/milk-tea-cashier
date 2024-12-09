@@ -17,7 +17,7 @@ namespace MilkTeaCashier.Service.Services
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly PRN212_MilkTeaCashierContext _context;
-        public CustomerService(GenericRepository<Customer> customerRepository, GenericRepository<Employee> employeeRepository)
+        public CustomerService()
         {
             _unitOfWork ??= new UnitOfWork();
             _context = new PRN212_MilkTeaCashierContext();
@@ -183,6 +183,12 @@ namespace MilkTeaCashier.Service.Services
             {
                 return _currentEmployee;
             }
+        }
+
+        public async Task<List<Customer>> GetAllCustomers()
+        {
+            var result = await _unitOfWork.CustomerRepository.GetAllAsync();
+            return result;
         }
     }
 }

@@ -31,6 +31,7 @@ namespace MilkTeaCashier.Service.Services
             Order order = new Order
             {
                 CustomerName = model.CustomerName,
+                CustomerId = model.CustomerId,
                 NumberTableCard = model.NumberTableCard,
                 IsStay = model.IsStay,
                 Note = model.Note,
@@ -42,6 +43,18 @@ namespace MilkTeaCashier.Service.Services
             };
             // Calculate total
             order.TotalAmount = model.orderDetails.Sum(d => d.Quantity * d.Price);
+
+            if (model.CustomerId != null)
+            {
+                var customer = await _unitOfWork.CustomerRepository.GetByIdAsync(model.CustomerId.Value);
+                if (customer != null)
+                {
+                    customer.Score ??= 0;
+
+                    customer.Score += (long)Math.Round(order.TotalAmount / 10);
+                }
+                await _unitOfWork.CustomerRepository.UpdateAsync(customer);
+            }
             
             await _unitOfWork.OrderRepository.AddAsync(order);
 			await _unitOfWork.OrderRepository.SaveAsync();

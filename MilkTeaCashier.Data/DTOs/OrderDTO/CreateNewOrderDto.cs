@@ -3,6 +3,7 @@
 	public class CreateNewOrderDto
 	{
 		public string CustomerName { get; set; }
+		public int? CustomerId { get; set; }
 		public int? NumberTableCard { get; set; }
 		public bool? IsStay { get; set; }
 		public string Note { get; set; }

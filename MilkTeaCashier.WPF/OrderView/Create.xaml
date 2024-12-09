@@ -26,9 +26,14 @@
 
             <!-- Order Details -->
             <StackPanel Margin="10" Grid.Column="0">
+                
                 <!-- Customer Name -->
                 <StackPanel Margin="0,0,0,10">
                     <TextBlock Text="Customer Name:" FontWeight="Bold" />
+                    <StackPanel Margin="0,0,0,10">
+                        <CheckBox Name="RegisterPointCheckBox" Content="Already is loyalty customer" Checked="RegisterPointCheckBox_Checked" Unchecked="RegisterPointCheckBox_Unchecked" Margin="0,5"/>
+                    </StackPanel>
+                    <ComboBox Name="CustomerComboBox" Height="30" Margin="0,5" Visibility="Collapsed" />
                     <TextBox Name="CustomerNameTextBox" Height="30" Margin="0,5" />
                 </StackPanel>
 

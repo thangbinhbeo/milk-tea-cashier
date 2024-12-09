@@ -18,7 +18,7 @@ namespace MilkTeaCashier.WPF.Views
         public CustomerInfoWindow()
         {
             InitializeComponent();
-            _customerService = new CustomerService(new GenericRepository<Customer>(), new GenericRepository<Employee>());
+            _customerService = new CustomerService();
             _customers = new ObservableCollection<Customer>();
             LoadCustomersAsync(); 
         }
