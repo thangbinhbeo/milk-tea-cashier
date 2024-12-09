@@ -20,5 +20,10 @@ namespace MilkTeaCashier.Data.Repository
         {
             return await _dbSet.Where(p => p.CategoryId == categoryId).ToListAsync();
         }
-    }
+
+		public IQueryable<Product> GetAll()
+		{
+			return _context.Products.AsQueryable(); 
+		}
+	}
 }

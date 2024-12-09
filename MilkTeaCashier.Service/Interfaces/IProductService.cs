@@ -11,6 +11,6 @@ namespace MilkTeaCashier.Service.Interfaces
         Task<Product> GetProductByIdAsync(int productId);
         Task<string> AddProductAsync(CreateProductModel product);
         Task UpdateProductAsync(Product product);
-        Task DeleteProductAsync(int productId);
+        Task<bool> DeleteProductAsync(int productId);
     }
 }
