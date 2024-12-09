@@ -49,10 +49,7 @@ namespace MilkTeaCashier.WPF.Views
 					EditProduct = selectedProduct // Set the property
 				};
 				bool? dialogResult = productDetailView.ShowDialog(); // Open as modal dialog
-				if (dialogResult == true)
-				{
-					LoadProducts(); // Reload products if changes are made
-				}
+				LoadProducts();
 			}
 			else
 			{

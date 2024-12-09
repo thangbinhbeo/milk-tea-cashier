@@ -38,8 +38,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding ProductId}" Width="50"/>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200"/>
-                <DataGridTextColumn Header="Category" Binding="{Binding Category.Name}" Width="150"/>
-                <DataGridTextColumn Header="Size" Binding="{Binding Size}" Width="100"/>
+                <DataGridTextColumn Header="Category ID" Binding="{Binding CategoryId}" Width="100"/>
                 <DataGridTextColumn Header="Size" Binding="{Binding Size}" Width="100"/>
                 <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat={}{0:C}}" Width="100"/>
                 <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
@@ -51,6 +50,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Created At" Binding="{Binding CreatedAt, StringFormat='dd/MM/yyyy'}" Width="150"/>
+                <DataGridTextColumn Header="Updated At" Binding="{Binding UpdatedAt, StringFormat='dd/MM/yyyy'}" Width="150"/>
 
             </DataGrid.Columns>
         </DataGrid>

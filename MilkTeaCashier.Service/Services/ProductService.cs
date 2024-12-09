@@ -66,6 +66,8 @@ namespace MilkTeaCashier.Service.Services
 			if (product == null)
 				throw new ArgumentNullException(nameof(product));
 
+			product.UpdatedAt = DateTime.Now;
+
 			_unitOfWork.ProductRepository.PrepareUpdate(product);
 			await _unitOfWork.ProductRepository.SaveAsync();
 		}

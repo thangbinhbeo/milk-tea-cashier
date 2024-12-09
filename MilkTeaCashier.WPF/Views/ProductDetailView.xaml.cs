@@ -45,13 +45,14 @@ namespace MilkTeaCashier.WPF.Views
 			string size = SizeTextBox.Text;
 			double price;
 			string url = "";
+			string status = SizeTextBox.Text;
 
-			/*// Validate the inputs
+			// Validate the inputs
 			if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(size) || string.IsNullOrEmpty(PriceTextBox.Text) || string.IsNullOrEmpty(CategoryTextBox.Text))
 			{
 				MessageBox.Show("Please fill in all fields.");
 				return;
-			}*/
+			}
 
 			if (!int.TryParse(CategoryTextBox.Text, out category))
 			{
@@ -62,6 +63,12 @@ namespace MilkTeaCashier.WPF.Views
 			if (!double.TryParse(PriceTextBox.Text, out price))
 			{
 				MessageBox.Show("Invalid Price.");
+				return;
+			}
+
+			if (price < 0)
+			{
+				MessageBox.Show("Price cannot be less than 0.");
 				return;
 			}
 
@@ -90,10 +97,8 @@ namespace MilkTeaCashier.WPF.Views
 				return;
 			}
 
-			// Create or update the product model with the data
 			if (EditProduct == null)
 			{
-				// Add new product (use CreateProductModel)
 				var newProduct = new CreateProductModel
 				{
 					Name = name,
@@ -101,10 +106,10 @@ namespace MilkTeaCashier.WPF.Views
 					Image = url,
 					Price = price,
 					Size = size,
-					Status = "Available" // If needed, you can add the status here
+					Status = status
 				};
 
-				var result = await _productService.AddProductAsync(newProduct);  // Pass CreateProductModel to AddProductAsync
+				var result = await _productService.AddProductAsync(newProduct);  
 
 				if (result != null)
 				{
@@ -123,6 +128,7 @@ namespace MilkTeaCashier.WPF.Views
 				EditProduct.Image = url;
 				EditProduct.Price = price;
 				EditProduct.Size = size;
+				EditProduct.Status = status;
 
 				try
 				{
@@ -135,6 +141,8 @@ namespace MilkTeaCashier.WPF.Views
 				{
 					MessageBox.Show($"Failed to update product. Error: {ex.Message}");
 				}
+				this.DialogResult = true; 
+				this.Close();
 			}
 		}
 
@@ -163,5 +171,27 @@ namespace MilkTeaCashier.WPF.Views
 				ProductImage.Source = bitmap;
 			}
 		}
+
+		protected override void OnContentRendered(EventArgs e)
+		{
+			base.OnContentRendered(e);
+
+			if (EditProduct != null)
+			{
+				ProductIdTextBox.Text = EditProduct.ProductId.ToString();
+				NameTextBox.Text = EditProduct.Name;
+				CategoryTextBox.Text = EditProduct.CategoryId.ToString();
+				SizeTextBox.Text = EditProduct.Size;
+				PriceTextBox.Text = EditProduct.Price.ToString();
+				StatusTextBox.Text = EditProduct.Status.ToString();
+
+				// Load the image if present
+				if (!string.IsNullOrEmpty(EditProduct.Image))
+				{
+					ProductImage.Source = new BitmapImage(new Uri(EditProduct.Image));
+				}
+			}
+		}
+		
 	}
 }
