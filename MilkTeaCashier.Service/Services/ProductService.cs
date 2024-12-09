@@ -1,4 +1,5 @@
 ﻿using MilkTeaCashier.Data.Base;
+using MilkTeaCashier.Data.DTOs;
 using MilkTeaCashier.Data.Models;
 using MilkTeaCashier.Data.UnitOfWork;
 using MilkTeaCashier.Service.Interfaces;
@@ -12,30 +13,48 @@ namespace MilkTeaCashier.Service.Services
 {
     public class ProductService : IProductService
     {
-        private readonly GenericRepository<Product> _productRepository;
+        private readonly UnitOfWork _unitOfWork;
 
-        public ProductService(GenericRepository<Product> productRepository)
+        public ProductService()
         {
-            _productRepository = productRepository;
+            _unitOfWork ??= new UnitOfWork();
         }
 
         public async Task<IEnumerable<Product>> GetAllProductsAsync()
         {
-            return await _productRepository.GetAllAsync();
+            return await _unitOfWork.ProductRepository.GetAllAsync();
         }
 
         public async Task<Product> GetProductByIdAsync(int productId)
         {
-            return await _productRepository.GetByIdAsync(productId);
+            return await _unitOfWork.ProductRepository.GetByIdAsync(productId);
         }
 
-        public async Task AddProductAsync(Product product)
+        public async Task<string> AddProductAsync(CreateProductModel product)
         {
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
 
-            await _productRepository.AddAsync(product);
-            await _productRepository.SaveAsync();
+            var newProduct = new Product
+            {
+                CategoryId = product.CategoryId,
+                Name = product.Name,
+                Size = product.Size,
+                Price = product.Price,
+                Image = product.Image,
+                Status = "Available",
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+            };
+
+            var result = await _unitOfWork.ProductRepository.CreateAsync(newProduct);
+            if (result > 0)
+            {
+                return "Create Product Successfully!";
+            } else
+            {
+                return "Create Fail!";
+            }
         }
 
         public async Task UpdateProductAsync(Product product)
@@ -43,18 +62,18 @@ namespace MilkTeaCashier.Service.Services
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
 
-            _productRepository.PrepareUpdate(product);
-            await _productRepository.SaveAsync();
+            _unitOfWork.ProductRepository.PrepareUpdate(product);
+            await _unitOfWork.ProductRepository.SaveAsync();
         }
 
         public async Task DeleteProductAsync(int productId)
         {
-            var product = await _productRepository.GetByIdAsync(productId);
+            var product = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
             if (product == null)
                 throw new KeyNotFoundException("Product not found.");
 
-            _productRepository.PrepareRemove(product);
-            await _productRepository.SaveAsync();
+            _unitOfWork.ProductRepository.PrepareRemove(product);
+            await _unitOfWork.ProductRepository.SaveAsync();
         }
     }
 

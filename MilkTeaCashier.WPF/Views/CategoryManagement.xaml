@@ -7,26 +7,35 @@
         mc:Ignorable="d"
         Title="CategoryManagement" Height="300" Width="800">
     <Canvas>
+        <TextBlock Canvas.Left="274" Canvas.Top="10" HorizontalAlignment="Left" VerticalAlignment="Center"
+                   Text="CATEGORY MANAGEMENT" FontSize="20" FontWeight="Bold" TextAlignment="Center">
+            <TextBlock.Foreground>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#D9AFD9" Offset="0"/>
+                    <GradientStop Color="#97D9E1" Offset="1"/>
+                </LinearGradientBrush>
+            </TextBlock.Foreground>
+        </TextBlock>
+
         <DataGrid x:Name="CategoryDataGrid" 
           AutoGenerateColumns="False" 
           IsReadOnly="True"
-                  Width="800"
-                  Height="113" HorizontalAlignment="Center" VerticalAlignment="Top">
+                  Width="770"
+                  Height="135" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="56" Canvas.Left="10"
+                  MouseDoubleClick="CategoryDataGrid_MouseDoubleClick">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding CategoryId}" Width="25"/>
                 <DataGridTextColumn Header="Name" Binding="{Binding CategoryName}" Width="200"/>
                 <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
                 <DataGridTextColumn Header="Created At" Binding="{Binding CreatedAt}" Width="100"/>
+                <DataGridTextColumn Header="Updated At" Binding="{Binding UpdatedAt}" Width="100"/>
             </DataGrid.Columns>
 
         </DataGrid>
-        <Label Content="Category Name:" Canvas.Left="10" Canvas.Top="118" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-        <TextBox x:Name="CategoryNameTextBox" Canvas.Left="111" TextWrapping="Wrap" Text="Input" Canvas.Top="122" Width="271" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-        <Label Content="Description:" Canvas.Left="10" Canvas.Top="154" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-        <TextBox x:Name="DescriptionTextBox" Canvas.Left="111" TextWrapping="Wrap" Text="Input" Canvas.Top="158" Width="271" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-        <Button Content="Create" Canvas.Left="10" Canvas.Top="202" Click="Button_Click"/>
-
+        <Label FontStyle="Italic" FontSize="08px" Content="You can double-click to view and update the item !" Canvas.Left="6" Canvas.Top="39" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Button x:Name="CloseButton" Content="Back" Canvas.Left="10" Canvas.Top="254" Click="CloseButton_Click"/>
+        <Button x:Name="CreateNewCategory" Content="Create New" Canvas.Left="24" Canvas.Top="221" Click="CreateButton_Click"/>
 
     </Canvas>
 

@@ -1,4 +1,6 @@
-﻿using MilkTeaCashier.WPF.ViewModels;
+﻿using Microsoft.Win32;
+using MilkTeaCashier.Service.Services;
+using MilkTeaCashier.WPF.ViewModels;
 using MilkTeaCashier.WPF.Views;
 using System.Text;
 using System.Windows;
@@ -37,5 +39,6 @@ namespace MilkTeaCashier.WPF
 
             categoryWindow.Show();
         }
+
     }
 }
