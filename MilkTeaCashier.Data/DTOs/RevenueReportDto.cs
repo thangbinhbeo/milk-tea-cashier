@@ -9,14 +9,23 @@ namespace MilkTeaCashier.Data.DTOs
 {
     public class RevenueReportDto
     {
-        public DateTime ReportDate { get; set; }
-        public double TotalRevenue { get; set; }
-        public int CompletedOrders { get; set; }
-        public List<PaymentMethodSummary> PaymentSummaries { get; set; }
+        public DateTime ReportDate { get; set; } // Date of the report
+        public double TotalRevenue { get; set; } // Total revenue for the day
+        public int CompletedOrders { get; set; } // Total completed orders
+        public List<PaymentMethodSummary> PaymentSummaries { get; set; } // Revenue breakdown by payment method
+        public List<CategorySummary> CategorySummaries { get; set; } // Revenue breakdown by category
     }
+
     public class PaymentMethodSummary
     {
-        public string PaymentMethod { get; set; }
-        public double Revenue { get; set; }
+        public string PaymentMethod { get; set; } // e.g., Cash, Credit Card
+        public double Revenue { get; set; } // Revenue for this payment method
     }
+
+    public class CategorySummary
+    {
+        public string CategoryName { get; set; } // e.g., Drinks, Toppings
+        public double Revenue { get; set; } // Revenue for this category
+    }
+
 }
