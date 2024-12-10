@@ -116,24 +116,7 @@ namespace MilkTeaCashier.WPF.OrderView
 
 				int.TryParse(searchOrderIdText, out int searchOrderId);
 
-				var orders = await _orderService.GetAllOrdersAsync();
-
-				if (searchDate.HasValue)
-				{
-					orders = orders.Where(o => o.CreatedAt.Value.Date == searchDate.Value.Date).ToList();
-				}
-				if (!string.IsNullOrEmpty(searchCustomer))
-				{
-					orders = orders.Where(o => o.CustomerName.Contains(searchCustomer, StringComparison.OrdinalIgnoreCase)).ToList();
-				}
-				if (!string.IsNullOrEmpty(searchStatus) && searchStatus != "All")
-				{
-					orders = orders.Where(o => o.Status.Equals(searchStatus, StringComparison.OrdinalIgnoreCase)).ToList();
-				}
-				if (searchOrderId != 0)
-				{
-					orders = orders.Where(o => o.OrderId == searchOrderId).ToList();
-				}
+				var orders = await _orderService.SearchOrdersAsync(searchDate,searchCustomer,searchStatus,searchOrderId);
 
 				OrdersDataGrid.ItemsSource = orders;
 

@@ -295,7 +295,7 @@ namespace MilkTeaCashier.Service.Services
             return result;
         }
 
-		/*public async Task<List<OrderDto>> SearchOrdersAsync(DateTime? date, string? customerName, string? status, int? orderId)
+		public async Task<List<Order>> SearchOrdersAsync(DateTime? date, string? customerName, string? status, int? orderId)
 		{
 			var orders = await GetAllOrdersAsync();
 
@@ -308,27 +308,21 @@ namespace MilkTeaCashier.Service.Services
             if (!string.IsNullOrEmpty(status) && status != "All")
                 orders = orders.Where(o => o.Status.Equals(status, StringComparison.OrdinalIgnoreCase)).ToList();
 
-            if (orderId.HasValue)
-                orders = orders.Where(o => o.Id == orderId).ToList();
+            if (orderId != 0)
+                orders = orders.Where(o => o.OrderId == orderId).ToList();
 
 			return orders;
-		}*/
+		}
 
 
-        public async Task<IEnumerable<Order>> GetOrdersByDateAsync(DateTime date)
-        {
-            return await _unitOfWork.OrderRepository.FindByConditionAsync(o => o.CreatedAt.Value == date.Date);
-        }
+        
 
         public async Task<Order> GetOrderByIdAsync(int orderId)
         {
             return await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
         }
 
-        public double CalculateTotalAmount(List<OrderDetail> orderDetails)
-        {
-            return orderDetails.Sum(detail => detail.Quantity * detail.Price);
-        }
+
 
         public async Task<OrderPrintModel> GetByIdOrder(int orderId)
         {

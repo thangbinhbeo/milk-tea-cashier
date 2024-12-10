@@ -8,9 +8,7 @@ namespace MilkTeaCashier.Service.Interfaces
     public interface IOrderService
     {
         Task<OrderResponse> PlaceOrderAsync(CreateNewOrderDto model);
-		Task<IEnumerable<Order>> GetOrdersByDateAsync(DateTime date);
         Task<Order> GetOrderByIdAsync(int orderId);
-        double CalculateTotalAmount(List<OrderDetail> orderDetails);
         Task<List<Product>> GetAllProductsAsync();
     }
 }
