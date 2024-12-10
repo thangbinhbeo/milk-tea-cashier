@@ -102,26 +102,7 @@ namespace MilkTeaCashier.WPF.ViewModels
 
             TopSellingProducts ??= new();
             TopSellingProducts.Clear();
-            // Add mock data
-            RevenueReports.Add(new RevenueReportDto
-            {
-                ReportDate = DateTime.Now,
-                TotalRevenue = 1000,
-                CompletedOrders = 5,
-                PaymentSummaries = new List<PaymentMethodSummary>
-                {
-                    new PaymentMethodSummary { PaymentMethod = "Cash", Revenue = 600 },
-                    new PaymentMethodSummary { PaymentMethod = "Card", Revenue = 400 }
-                }
-            });
-
-            TopSellingProducts.Add(new TopSellingProductDto
-            {
-                ProductName = "Milk Tea",
-                QuantitySold = 20,
-                Revenue = 500
-            });
-
+            
             var revenueReports = await _reportingService.GetRevenueReportAsync(SelectedStartDate, SelectedEndDate);
             var topSellingProducts = await _reportingService.GetTopSellingProductsAsync(SelectedStartDate, SelectedEndDate);
             AddRevenueReports(revenueReports);
