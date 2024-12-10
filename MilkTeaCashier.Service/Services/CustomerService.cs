@@ -31,7 +31,7 @@ namespace MilkTeaCashier.Service.Services
          /// </summary>
          /// <returns></returns>
        
-        public async Task<IEnumerable<Customer>> GetAllCustomersAsync()
+        public async Task<List<Customer>> GetAllCustomersAsync()
         {
             var customers = await _context.Customers.Include(C => C.Orders).ToListAsync(); 
             Debug.WriteLine($"Fetched {customers.Count()} customers.");
@@ -46,7 +46,8 @@ namespace MilkTeaCashier.Service.Services
             {
                 throw new InvalidOperationException("A customer with the same phone number already exists.");
             }
-            var currentEmployee = CustomerService.SessionService.GetCurrentEmployee();
+            var currentEmployee = await _unitOfWork.EmployeeRepository.GetByIdAsync(customerDto.ManagerID);
+
             var newCustomer = new Customer
             {
                 Name = customerDto.Name,
@@ -54,9 +55,9 @@ namespace MilkTeaCashier.Service.Services
                 Gender = customerDto.Gender,
                 Score = 0,
                 CreatedAt = DateTime.UtcNow,
-                CreatedBy = currentEmployee?.FullName ?? "System",
-                UpdatedAt = null,
-                UpdatedBy = null
+                CreatedBy = currentEmployee.FullName ?? "System",
+                UpdatedAt = DateTime.UtcNow,
+                UpdatedBy = currentEmployee.FullName ?? "System"
             };
 
             await _unitOfWork.CustomerRepository.AddAsync(newCustomer);
@@ -65,7 +66,7 @@ namespace MilkTeaCashier.Service.Services
             return newCustomer;
         }
 
-        public async Task UpdateCustomerAsync(int customerId, string name = null, string phone = null, string gender = null)
+        public async Task UpdateCustomerAsync(int customerId, int employeeID, string name = null, string phone = null, string gender = null)
         {
             // Validate input
             if (customerId <= 0)
@@ -79,7 +80,7 @@ namespace MilkTeaCashier.Service.Services
             }
 
 
-            var currentEmployee = SessionService.GetCurrentEmployee(); // Get the current employee
+            var currentEmployee = await _unitOfWork.EmployeeRepository.GetByIdAsync(employeeID);
 
             if (!string.IsNullOrEmpty(name))
             {
@@ -96,9 +97,8 @@ namespace MilkTeaCashier.Service.Services
                 existingCustomer.Gender = gender;
             }
 
-            // Update timestamps and user info
             existingCustomer.UpdatedAt = DateTime.UtcNow;
-            existingCustomer.UpdatedBy = currentEmployee?.FullName ?? "System"; // Use current employee's name
+            existingCustomer.UpdatedBy = currentEmployee?.FullName ?? "System";
 
             try
             {

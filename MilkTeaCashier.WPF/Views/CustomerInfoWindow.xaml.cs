@@ -15,12 +15,15 @@ namespace MilkTeaCashier.WPF.Views
         private readonly CustomerService _customerService;
         private readonly ObservableCollection<Customer> _customers;
 
-        public CustomerInfoWindow()
+        private int _employeeID;
+
+        public CustomerInfoWindow(int employeeID)
         {
             InitializeComponent();
             _customerService = new CustomerService();
             _customers = new ObservableCollection<Customer>();
-            LoadCustomersAsync(); 
+            LoadCustomersAsync();
+            _employeeID = employeeID;
         }
 
         private async Task LoadCustomersAsync()
@@ -28,12 +31,7 @@ namespace MilkTeaCashier.WPF.Views
             try
             {
                 var customers = await _customerService.GetAllCustomersAsync();
-                _customers.Clear(); 
-                foreach (var customer in customers)
-                {
-                    _customers.Add(customer);
-                }
-                dgCustomer.ItemsSource = _customers; 
+                dgCustomer.ItemsSource = customers; 
             }
             catch (Exception ex)
             {
@@ -43,7 +41,7 @@ namespace MilkTeaCashier.WPF.Views
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            CreateCustomerWindow addCustomerWindow = new CreateCustomerWindow();
+            CreateCustomerWindow addCustomerWindow = new CreateCustomerWindow(_employeeID);
             bool? result = addCustomerWindow.ShowDialog();
 
             if (result == true && addCustomerWindow.Tag is Customer newCustomer)
@@ -57,14 +55,16 @@ namespace MilkTeaCashier.WPF.Views
             if (dgCustomer.SelectedItem is Customer selectedCustomer)
             {
                 Debug.WriteLine($"Selected customer Id {selectedCustomer.CustomerId} and customer name to update: {selectedCustomer.Name}");
-                CreateCustomerWindow editCustomerWindow = new CreateCustomerWindow(selectedCustomer);
-                bool? result = editCustomerWindow.ShowDialog();
+                CreateCustomerWindow editCustomerWindow = new CreateCustomerWindow(selectedCustomer, _employeeID);
+                var result = editCustomerWindow.ShowDialog();
 
                 if (result == true)
                 {
                     await LoadCustomersAsync(); 
                     var updatedCustomer = _customers.FirstOrDefault(c => c.CustomerId == selectedCustomer.CustomerId);
                     Debug.WriteLine($"UpdatedBy after refresh: {updatedCustomer?.UpdatedBy}");
+
+                    dgCustomer.Items.Refresh();
                 }
             }
             else

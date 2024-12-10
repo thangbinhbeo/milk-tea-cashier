@@ -19,6 +19,7 @@ namespace MilkTeaCashier.Data.DTOs
 
         [Required(ErrorMessage = "Gender is empty")]
         public string Gender { get; set; }
+        public int ManagerID { get; set; }
         
     }
 }

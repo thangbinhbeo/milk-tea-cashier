@@ -42,7 +42,7 @@ namespace MilkTeaCashier.WPF.Views
             try
             {
          
-                var employeeService = new EmployeeService(new GenericRepository<Employee>());
+                var employeeService = new EmployeeService();
 
              
                 var employee = await employeeService.AuthenticateAsync(username, password);
@@ -54,14 +54,14 @@ namespace MilkTeaCashier.WPF.Views
                 {
                     MessageBox.Show($"Login successfully! Hello, {employee.FullName} (Manager).", "Notifications", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    var managerView = new ManagerView();
+                    var managerView = new ManagerView(employee.EmployeeId);
                     managerView.Show();
                 }
                 else if (employee.Role == "Cashier")
                 {
                     MessageBox.Show($"Login successfully! Hello, {employee.FullName} (Cashier).", "Notifications", MessageBoxButton.OK, MessageBoxImage.Information);
                      
-                    var cashierView = new OrderView.Index(); 
+                    var cashierView = new OrderView.Index(employee.EmployeeId); 
                     cashierView.Show();
                 }
                 else

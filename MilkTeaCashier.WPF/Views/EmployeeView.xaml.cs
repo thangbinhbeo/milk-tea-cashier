@@ -37,10 +37,8 @@ namespace MilkTeaCashier.WPF.Views
         {
             InitializeComponent();
 
+            _employeeService = new EmployeeService();
 
-            _employeeService = new EmployeeService(new GenericRepository<Employee>());
-
-        
             LoadData();
         }
 

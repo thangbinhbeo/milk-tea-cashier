@@ -18,12 +18,15 @@ namespace MilkTeaCashier.WPF.OrderView
 		private readonly OrderService _orderService;
 		private readonly CustomerService _customerService;
 		private ObservableCollection<OrderDetailDto> _selectedProducts;
-		public Create()
+
+		private int _employeeID;
+		public Create(int employeeID)
 		{
 			InitializeComponent();
 			_orderService ??= new OrderService();
 			_customerService ??= new CustomerService();
 			_selectedProducts = new ObservableCollection<OrderDetailDto>();  
+			_employeeID = employeeID;
 			ProductsDataGrid.ItemsSource = _selectedProducts; 
 			LoadProduct();
 		}
@@ -144,6 +147,7 @@ namespace MilkTeaCashier.WPF.OrderView
 					Status = orderStatus,
 					Note = note,
 					PaymentMethod = paymentMethod,
+					EmployeeId = _employeeID
 				};
 
 				newOrder.orderDetails = _selectedProducts.Select(p => new OrderDetailDto
@@ -248,7 +252,7 @@ namespace MilkTeaCashier.WPF.OrderView
 
         private void CreateCustomerButton_Click(object sender, RoutedEventArgs e)
 		{
-			var createCustomerWindow = new CreateCustomerWindow();
+			var createCustomerWindow = new CreateCustomerWindow(_employeeID);
 			createCustomerWindow.ShowDialog();
 		}
     }

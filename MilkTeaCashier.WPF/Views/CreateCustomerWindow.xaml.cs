@@ -13,25 +13,34 @@ namespace MilkTeaCashier.WPF.Views
     public partial class CreateCustomerWindow : Window
     {
         private readonly CustomerService _customerService;
+        private readonly EmployeeService _employeeService;
         public Customer CurrentCustomer { get; private set; }
+        private int _employeeID;
         private bool isEditMode;
 
-        public CreateCustomerWindow(Customer customer = null)
+        public CreateCustomerWindow(Customer customer, int employeeID)
         {
             InitializeComponent();
             _customerService ??= new CustomerService();
+            _employeeService ??= new EmployeeService();
 
-            if (customer != null)
-            {
-                CurrentCustomer = customer;
-                isEditMode = true;
-                LoadCustomerData();
-            }
-            else
-            {
-                CurrentCustomer = new Customer();
-                isEditMode = false;
-            }
+            CurrentCustomer = customer;
+            isEditMode = true;
+            LoadCustomerData();
+
+            _employeeID = employeeID;
+        }
+
+        public CreateCustomerWindow(int employeeID)
+        {
+            InitializeComponent();
+            _customerService ??= new CustomerService();
+            _employeeService ??= new EmployeeService();
+
+            CurrentCustomer = new Customer();
+            isEditMode = false;
+
+            _employeeID = employeeID;
         }
 
         private void LoadCustomerData()
@@ -76,6 +85,7 @@ namespace MilkTeaCashier.WPF.Views
                 Name = name,
                 Phone = phone,
                 Gender = gender,
+                ManagerID = _employeeID
             };
 
 
@@ -88,9 +98,11 @@ namespace MilkTeaCashier.WPF.Views
                     CurrentCustomer.Gender = gender;
 
                     // Call the update method
-                    await _customerService.UpdateCustomerAsync(CurrentCustomer.CustomerId, name, phone, gender);
+                    await _customerService.UpdateCustomerAsync(CurrentCustomer.CustomerId, _employeeID, name, phone, gender);
                     MessageBox.Show("Customer updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.Tag = CurrentCustomer;
+
+                    var updatedCustomer = await _customerService.GetCustomerByIdAsync(CurrentCustomer.CustomerId);
+                    this.Tag = updatedCustomer;
                 }
                 else
                 {

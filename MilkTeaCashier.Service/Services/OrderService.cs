@@ -45,7 +45,7 @@ namespace MilkTeaCashier.Service.Services
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 Status = OrderStatus.Pending.ToString(),
-                EmployeeId = 7
+                EmployeeId = model.EmployeeId
             };
 
             // Calculate total
