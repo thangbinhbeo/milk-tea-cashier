@@ -159,8 +159,11 @@ namespace MilkTeaCashier.WPF.OrderView
 
 				// 4. Lưu đơn hàng (gọi dịch vụ lưu đơn hàng)
 				var result = await _orderService.PlaceOrderAsync(newOrder);
+				var billPrint = new BillPreviewWindow(result.OrderId);
 
-				MessageBox.Show(result);
+				MessageBox.Show(result.Message.ToString());
+				this.Close();
+				billPrint.ShowDialog();
 			}
 			catch (Exception ex)
 			{
