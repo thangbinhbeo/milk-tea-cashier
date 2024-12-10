@@ -13,7 +13,14 @@
             <TextBlock x:Name="CustomerNameText" Text="Customer: John Doe" FontSize="18" Margin="10"/>
             <TextBlock x:Name="OrderDateText" Text="Date: 2024-12-10" FontSize="18" Margin="10"/>
 
-            <DataGrid x:Name="ProductsDataGrid" Height="200" Margin="10" AutoGenerateColumns="True" IsReadOnly="True" />
+            <DataGrid x:Name="ProductsDataGrid" Height="200" Margin="10" AutoGenerateColumns="False" IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}" Width="150"/>
+                    <DataGridTextColumn Header="Size" Binding="{Binding Size}" Width="*"/>
+                    <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="70"/>
+                    <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="90"/>
+                </DataGrid.Columns>
+            </DataGrid>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
                 <TextBlock x:Name="TotalAmountText" Text="Total: $100.00" FontSize="18" Margin="10"/>

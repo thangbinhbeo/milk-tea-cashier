@@ -343,6 +343,45 @@ namespace MilkTeaCashier.Service.Services
             return orderDetails.Sum(detail => detail.Quantity * detail.Price);
         }
 
+        public async Task<OrderPrintModel> GetByIdOrder(int orderId)
+        {
+            var order = _unitOfWork.OrderRepository.GetOrderDetail();
+            var orderPrint = order
+                .Where(c => c.OrderId == orderId)
+                .Select(o => new OrderPrintModel
+                {
+                    OrderId = o.OrderId,
+                    TotalAmount = o.TotalAmount,
+                    Status = o.Status,
+                    IsStay = o.IsStay,
+                    Note = o.Note,
+                    NumberTableCard = o.NumberTableCard,
+                    PaymentMethod = o.PaymentMethod,
+                    CreatedAt = o.CreatedAt,
+                    UpdatedAt = o.UpdatedAt,
+                    EmployeeName = o.Employee.FullName,
+                    CustomerName = o.CustomerId.HasValue ? o.Customer.Name : o.CustomerName,
+                    Score = o.CustomerId.HasValue ? o.Customer.Score : null,
+                    ProductPrint = o.OrderDetails.Select(od => new ProductPrint
+                    {
+                        ProductId = od.ProductId,
+                        ProductName = od.Product.Name,
+                        Size = od.Size,
+                        Price = od.Price,
+                        Quantity = od.Quantity
+                    }).ToList()
+                }).FirstOrDefault();
+
+            if (orderPrint == null)
+            {
+                Console.WriteLine("Order not found.");
+                return null;
+            } else
+            {
+                return orderPrint;
+            }
+        }
+
         public async Task PrintBillToPrinter(int orderId)
         {
             try
@@ -478,8 +517,8 @@ namespace MilkTeaCashier.Service.Services
                 XGraphics gfx = XGraphics.FromPdfPage(page);
 
                 XFont titleFont = new XFont("Arial", 14, XFontStyleEx.Bold);
-                XFont headerFont = new XFont("Arial", 12, XFontStyleEx.Bold);
-                XFont regularFont = new XFont("Arial", 11);
+                XFont headerFont = new XFont("Arial", 12, XFontStyleEx.Regular);
+                XFont regularFont = new XFont("Arial", 10, XFontStyleEx.Regular);
                 XBrush brush = XBrushes.Black;
 
                 double margin = 40;
@@ -509,10 +548,32 @@ namespace MilkTeaCashier.Service.Services
                 gfx.DrawString("---- Order Details ----", titleFont, brush, x, y);
                 y += 20;
 
+                double tableStartY = y;
+                double tableHeight = 20;
+                double tableWidth = page.Width - 2 * margin; 
+                double columnWidth1 = 150;
+                double columnWidth2 = 80; 
+                double columnWidth3 = 80; 
+                double columnWidth4 = 100; 
+
+                gfx.DrawString("Product Name", headerFont, brush, x, tableStartY);
+                gfx.DrawString("Size", headerFont, brush, x + columnWidth1, tableStartY);
+                gfx.DrawString("Quantity", headerFont, brush, x + columnWidth1 + columnWidth2, tableStartY);
+                gfx.DrawString("Price", headerFont, brush, x + columnWidth1 + columnWidth2 + columnWidth3, tableStartY);
+                y += tableHeight;
+
+                gfx.DrawLine(XPens.Black, x, y, tableWidth + margin, y);
+                y += tableHeight;
+
                 foreach (var detail in orderPrint.ProductPrint)
                 {
-                    gfx.DrawString($"{detail.ProductName} - Size: {detail.Size} - Quantity: {detail.Quantity} - Price: {detail.Price:C}", regularFont, brush, x, y);
-                    y += 20;
+                    gfx.DrawString(detail.ProductName, regularFont, brush, x, y);
+                    gfx.DrawString(detail.Size, regularFont, brush, x + columnWidth1, y);
+                    gfx.DrawString(detail.Quantity.ToString(), regularFont, brush, x + columnWidth1 + columnWidth2, y);
+                    gfx.DrawString($"{detail.Price:C}", regularFont, brush, x + columnWidth1 + columnWidth2 + columnWidth3, y);
+                    y += tableHeight;
+
+                    gfx.DrawLine(XPens.Black, x, y, tableWidth + margin, y);
                 }
 
                 y += 20;

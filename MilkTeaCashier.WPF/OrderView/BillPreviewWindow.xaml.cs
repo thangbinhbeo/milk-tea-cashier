@@ -29,6 +29,18 @@ namespace MilkTeaCashier.WPF.OrderView
             _service ??= new OrderService();
             InitializeComponent();
             _orderId = orderId;
+            LoadUI();
+        }
+
+        private async void LoadUI()
+        {
+            var order = await _service.GetByIdOrder(_orderId);
+            OrderIdText.Text = $"Order ID: {_orderId}";
+            CustomerNameText.Text = $"Customer: {order.CustomerName}";
+            OrderDateText.Text = $"Date: {order.CreatedAt}";
+            TotalAmountText.Text = $"Total: ${order.TotalAmount}";
+
+            ProductsDataGrid.ItemsSource = order.ProductPrint;
         }
 
         private void ExportPDFButton_Click(object sender, RoutedEventArgs e)
