@@ -1,6 +1,7 @@
 ﻿using MilkTeaCashier.Data.Base;
 using MilkTeaCashier.Data.Models;
 using MilkTeaCashier.Service.Services;
+using MilkTeaCashier.WPF.OrderView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace MilkTeaCashier.WPF.Views
             try
             {
          
-                var employeeService = new EmployeeService(new GenericRepository<Employee>());
+                var employeeService = new EmployeeService();
 
              
                 var employee = await employeeService.AuthenticateAsync(username, password);
@@ -53,15 +54,15 @@ namespace MilkTeaCashier.WPF.Views
                 {
                     MessageBox.Show($"Login successfully! Hello, {employee.FullName} (Manager).", "Notifications", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    var managerView = new ManagerView();
+                    var managerView = new ManagerView(employee.EmployeeId);
                     managerView.Show();
                 }
                 else if (employee.Role == "Cashier")
                 {
                     MessageBox.Show($"Login successfully! Hello, {employee.FullName} (Cashier).", "Notifications", MessageBoxButton.OK, MessageBoxImage.Information);
                      
-                    //var cashierView = new CashierView(); 
-                    //cashierView.Show();
+                    var cashierView = new OrderView.Index(employee.EmployeeId); 
+                    cashierView.Show();
                 }
                 else
                 {
@@ -82,10 +83,17 @@ namespace MilkTeaCashier.WPF.Views
             }
         }
 
-
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                btnLogin_Click(sender, e);
+            }
         }
     }
 }

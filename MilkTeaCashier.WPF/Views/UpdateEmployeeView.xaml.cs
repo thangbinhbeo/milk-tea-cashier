@@ -11,10 +11,8 @@ namespace MilkTeaCashier.WPF.Views
         public UpdateEmployeeView(Employee employee)
         {
             InitializeComponent();
-
   
             UpdateEmployee = employee;
-
     
             txtUsername.Text = UpdateEmployee.Username;
             txtPassword.Password = UpdateEmployee.PasswordHash; 

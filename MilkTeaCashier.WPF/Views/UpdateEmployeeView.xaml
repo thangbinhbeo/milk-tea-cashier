@@ -30,14 +30,14 @@
 
             
             <TextBlock Text="Role:" Margin="10,10,0,5"/>
-            <ComboBox x:Name="cmbRole">
+            <ComboBox x:Name="cmbRole" SelectedValuePath="Tag">
                 <ComboBoxItem Content="Manager" Tag="Manager"/>
                 <ComboBoxItem Content="Cashier" Tag="Cashier"/>
             </ComboBox>
 
             
             <TextBlock Text="Status:" Margin="10,10,0,5"/>
-            <ComboBox x:Name="cmbStatus">
+            <ComboBox x:Name="cmbStatus" SelectedValuePath="Tag">
                 <ComboBoxItem Content="Active" Tag="Active"/>
                 <ComboBoxItem Content="Inactive" Tag="Inactive"/>
             </ComboBox>

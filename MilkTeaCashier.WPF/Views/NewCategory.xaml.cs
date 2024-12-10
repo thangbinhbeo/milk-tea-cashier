@@ -30,10 +30,10 @@ namespace MilkTeaCashier.WPF.Views
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
+            this.Close();
+
             var category = new CategoryManagement();
             category.ShowDialog();
-
-            this.Close();
         }
 
         private async void CreateButton_Click(object sender, RoutedEventArgs e)
@@ -54,6 +54,7 @@ namespace MilkTeaCashier.WPF.Views
             var result = await _service.CreateNewCategory(newCategory);
 
             MessageBox.Show(result);
+
             this.Close();
 
             var category = new CategoryManagement();

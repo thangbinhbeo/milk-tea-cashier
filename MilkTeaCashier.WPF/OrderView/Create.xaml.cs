@@ -2,6 +2,7 @@
 using MilkTeaCashier.Data.Models;
 using MilkTeaCashier.Service.Interfaces;
 using MilkTeaCashier.Service.Services;
+using MilkTeaCashier.WPF.Views;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,12 +16,17 @@ namespace MilkTeaCashier.WPF.OrderView
 	public partial class Create : Window
 	{
 		private readonly OrderService _orderService;
+		private readonly CustomerService _customerService;
 		private ObservableCollection<OrderDetailDto> _selectedProducts;
-		public Create()
+
+		private int _employeeID;
+		public Create(int employeeID)
 		{
 			InitializeComponent();
-			_orderService =  new OrderService();
+			_orderService ??= new OrderService();
+			_customerService ??= new CustomerService();
 			_selectedProducts = new ObservableCollection<OrderDetailDto>();  
+			_employeeID = employeeID;
 			ProductsDataGrid.ItemsSource = _selectedProducts; 
 			LoadProduct();
 		}
@@ -90,8 +96,28 @@ namespace MilkTeaCashier.WPF.OrderView
 		{
 			try
 			{
-				// 1. Thu thập thông tin từ các trường trong giao diện
-				string customerName = CustomerNameTextBox.Text.Trim();
+                string customerName;
+                int? customerId = null;
+
+				if (RegisterPointCheckBox.IsChecked == true)
+				{
+                    if (CustomerComboBox.SelectedItem is ComboBoxItem selectedCustomer)
+                    {
+                        customerName = selectedCustomer.Content.ToString();
+                        customerId = (int?)selectedCustomer.Tag;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please select a customer from the list.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+                }
+				else
+				{
+                    customerName = CustomerNameTextBox.Text.Trim();
+                }
+
+                // 1. Thu thập thông tin từ các trường trong giao diện
 				string tableNumber = TableNumberTextBox.Text.Trim();
 				bool isStay = IsStayCheckBox.IsChecked.GetValueOrDefault();
 				string orderStatus = (StatusComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
@@ -115,11 +141,13 @@ namespace MilkTeaCashier.WPF.OrderView
 				var newOrder = new CreateNewOrderDto
 				{
 					CustomerName = customerName,
+					CustomerId = customerId,
 					NumberTableCard = int.Parse(tableNumber),
 					IsStay = isStay,
 					Status = orderStatus,
 					Note = note,
 					PaymentMethod = paymentMethod,
+					EmployeeId = _employeeID
 				};
 
 				newOrder.orderDetails = _selectedProducts.Select(p => new OrderDetailDto
@@ -135,8 +163,11 @@ namespace MilkTeaCashier.WPF.OrderView
 
 				// 4. Lưu đơn hàng (gọi dịch vụ lưu đơn hàng)
 				var result = await _orderService.PlaceOrderAsync(newOrder);
+				var billPrint = new BillPreviewWindow(result.OrderId);
 
-				MessageBox.Show(result);
+				MessageBox.Show(result.Message.ToString());
+				this.Close();
+				billPrint.ShowDialog();
 			}
 			catch (Exception ex)
 			{
@@ -179,5 +210,50 @@ namespace MilkTeaCashier.WPF.OrderView
 		{
 			this.Close();
 		}
-	}
+
+        private async void RegisterPointCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+			try
+			{
+                CustomerComboBox.Visibility = Visibility.Visible;
+                CustomerNameTextBox.Visibility = Visibility.Collapsed;
+
+                var customers = await _customerService.GetAllCustomers();
+
+                if (customers != null && customers.Any())
+                {
+                    CustomerComboBox.Items.Clear();
+
+                    foreach (var customer in customers)
+                    {
+                        CustomerComboBox.Items.Add(new ComboBoxItem
+                        {
+                            Content = customer.Name,
+                            Tag = customer.CustomerId
+                        });
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("No customers found.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+			catch(Exception ex)
+			{
+                MessageBox.Show($"Error loading customers: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void RegisterPointCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CustomerComboBox.Visibility = Visibility.Collapsed;
+            CustomerNameTextBox.Visibility = Visibility.Visible;
+        }
+
+        private void CreateCustomerButton_Click(object sender, RoutedEventArgs e)
+		{
+			var createCustomerWindow = new CreateCustomerWindow(_employeeID);
+			createCustomerWindow.ShowDialog();
+		}
+    }
 }

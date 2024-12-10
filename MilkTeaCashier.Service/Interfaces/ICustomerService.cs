@@ -11,9 +11,9 @@ namespace MilkTeaCashier.Service.Interfaces
     public interface ICustomerService
     {
 
-        Task<IEnumerable<Customer>> GetAllCustomersAsync();
+        Task<List<Customer>> GetAllCustomersAsync();
         Task<Customer> AddCustomerAsync(CreateCustomerDto customerDto);
-        Task UpdateCustomerAsync(int customerId, string name = null, string phone = null, string gender = null);
+        Task UpdateCustomerAsync(int customerId, int employeeID, string name = null, string phone = null, string gender = null);
 
         Task DeleteCustomerAsync(int customerId);
 

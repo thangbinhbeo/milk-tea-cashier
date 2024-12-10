@@ -112,7 +112,7 @@ namespace MilkTeaCashier.WPF.Views
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			LoadProducts();  // Automatically load products when the window is loaded.
+			LoadProducts(); 
 		}
 
 		private async void LoadProducts()
@@ -141,5 +141,11 @@ namespace MilkTeaCashier.WPF.Views
 				ProductsDataGrid.IsEnabled = true;
 			}
 		}
-	}
+
+        private void ManageCategory_Click(object sender, RoutedEventArgs e)
+		{
+			var categoryManagement = new CategoryManagement();
+			categoryManagement.ShowDialog();
+		}
+    }
 }

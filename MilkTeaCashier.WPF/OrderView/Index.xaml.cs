@@ -16,10 +16,12 @@ namespace MilkTeaCashier.WPF.OrderView
 	public partial class Index : Window
 	{
 		private readonly OrderService _orderService;
-		public Index()
+		private int _employeeID;
+		public Index(int employeeID)
 		{
 			InitializeComponent();
 			_orderService = new OrderService();
+			_employeeID = employeeID;
 			LoadOrders();
 		}
 
@@ -46,7 +48,7 @@ namespace MilkTeaCashier.WPF.OrderView
 
 		private void AddOrderButton_Click(object sender, RoutedEventArgs e)
 		{
-			var createOrderWindow = new Create();
+			var createOrderWindow = new Create(_employeeID);
 			createOrderWindow.Closed += (s, args) => LoadOrders();
 			createOrderWindow.ShowDialog();
 		}
