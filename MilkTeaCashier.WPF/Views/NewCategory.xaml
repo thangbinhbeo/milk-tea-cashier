@@ -5,23 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
         mc:Ignorable="d"
-        Title="NewCategory" Height="450" Width="800">
+        Title="NewCategory" Height="450" Width="520">
     <Canvas>
-        <Label FontWeight="Bold" FontSize="25px" Content="Adding a new category..." Canvas.Left="59" Canvas.Top="39"/>
+        <Label FontWeight="Bold" FontSize="25px" Content="Adding a new category..." Canvas.Left="49" Canvas.Top="39" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-        <Label Content="Category Name:" Canvas.Left="66" Canvas.Top="111"/>
-        <TextBox x:Name="Name" Canvas.Left="172" Canvas.Top="114" Height="20" Width="300" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <Label Content="Category Name:" Canvas.Left="56" Canvas.Top="111" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <TextBox x:Name="Name" Canvas.Left="162" Canvas.Top="114" Height="20" Width="300" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-        <Label Content="Description:" Canvas.Left="66" Canvas.Top="155"/>
-        <TextBox x:Name="Description" Canvas.Left="172" Canvas.Top="159" Width="300" 
+        <Label Content="Description:" Canvas.Left="56" Canvas.Top="155" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <TextBox x:Name="Description" Canvas.Left="162" Canvas.Top="159" Width="300" 
                          Height="100" 
                          TextWrapping="Wrap"
                  AcceptsReturn="True"
-                 VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                 VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-        <Button x:Name="CreateButton" Content="Add Category" Width="120" 
-                    Height="40" Canvas.Left="66" Canvas.Top="304" Click="CreateButton_Click"/>
-        <Button x:Name="BackButton" Content="Back" Canvas.Left="66" Canvas.Top="391" Click="CloseButton_Click"/>
+        <Button x:Name="CreateButton" Content="Add Category" Width="140" 
+                    Height="40" Canvas.Left="200" Canvas.Top="294" Click="CreateButton_Click" BorderThickness="0" Padding="30, 10" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Button x:Name="BackButton" Content="Back" Canvas.Left="49" Canvas.Top="379" Click="CloseButton_Click" Padding="15, 5" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
     </Canvas>
 </Window>

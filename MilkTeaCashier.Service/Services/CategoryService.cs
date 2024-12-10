@@ -38,6 +38,44 @@ namespace MilkTeaCashier.Service.Services
             }
         }
 
+        public async Task<List<Category>> SearchCategories(string? name, string? description, DateTime? createdAt)
+        {
+            try
+            {
+                var categories = await _unitOfWork.CategoryRepository.GetAllAsync();
+
+                if (categories == null || categories.Count == 0)
+                {
+                    return null; 
+                }
+
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    name = name.ToLower();
+                    categories = categories.Where(c => c.CategoryName != null && c.CategoryName.ToLower().Contains(name)).ToList();
+                }
+
+                if (!string.IsNullOrWhiteSpace(description))
+                {
+                    description = description.ToLower();
+                    categories = categories.Where(c => c.Description != null && c.Description.ToLower().Contains(description)).ToList();
+                }
+
+                if (createdAt.HasValue)
+                {
+                    categories = categories.Where(c => c.CreatedAt.HasValue && c.CreatedAt.Value.Date <= createdAt.Value.Date).ToList();
+                }
+
+                return categories;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw new Exception("Error occurred while searching for categories: ", ex);
+            }
+        }
+
+
         public async Task<Category> GetById(int id)
         {
             try

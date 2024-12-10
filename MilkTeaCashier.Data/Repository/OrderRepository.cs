@@ -21,9 +21,6 @@ namespace MilkTeaCashier.Data.Repository
         {
             return _context.Orders
                 .Include(o => o.OrderDetails)
-                    .ThenInclude(od => od.Product)
-                .Include(o => o.OrderDetails)
-                .Include(o => o.NumberTableCard)
                 .Include(o => o.Customer)
                 .Include(o => o.Employee);
         }

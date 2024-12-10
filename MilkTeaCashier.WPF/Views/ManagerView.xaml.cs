@@ -20,9 +20,11 @@ namespace MilkTeaCashier.WPF.Views
     /// </summary>
     public partial class ManagerView : Window
     {
-        public ManagerView()
+        private int _employeeID;
+        public ManagerView(int employeeID)
         {
             InitializeComponent();
+            _employeeID = employeeID;
         }
 
         private void ManageEmployees_Click(object sender, RoutedEventArgs e)
@@ -30,11 +32,17 @@ namespace MilkTeaCashier.WPF.Views
             var employeeView = new EmployeeView();
             employeeView.Show();
         }
+        
+        private void ManageCustomers_Click(object sender, RoutedEventArgs e)
+        {
+            var customerView = new CustomerInfoWindow(_employeeID);
+            customerView.Show();
+        }
 
         private void ManageProducts_Click(object sender, RoutedEventArgs e)
         {
-            //var product = new Product();
-            //product.Show();
+            var productView = new ProductView();
+            productView.Show();
         }
 
         private void Report_Click(object sender, RoutedEventArgs e)
