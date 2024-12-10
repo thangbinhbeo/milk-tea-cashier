@@ -5,20 +5,43 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+
+        <!-- Date Range and Filters -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
+            <DatePicker SelectedDate="{Binding SelectedStartDate}" />
+            <TextBlock Text="to" Margin="5" VerticalAlignment="Center" />
+            <DatePicker SelectedDate="{Binding SelectedEndDate}" />
+        </StackPanel>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
             <DatePicker SelectedDate="{Binding SelectedStartDate}" />
             <TextBlock Text="to" Margin="5" VerticalAlignment="Center" />
             <DatePicker SelectedDate="{Binding SelectedEndDate}" />
-            <Button Content="Load Reports"
-                    Command="{Binding LoadReportsCommand}"
-                    Margin="10,0" />
+            <Button Content="Load Reports" 
+                    Command="{Binding LoadReportsCommand}" Width="98"
+                    Margin="5"
+            />
+        </StackPanel>
+        <!-- Revenue Thresholds -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10">
+            <TextBlock Text="Revenue:" VerticalAlignment="Center" Margin="0,0,5,0" />
+            <TextBox Text="{Binding MinRevenue}" Width="60" Margin="0,0,5,0" />
+            <TextBlock Text="to" VerticalAlignment="Center" Margin="0,0,5,0" />
+            <TextBox Text="{Binding MaxRevenue}" Width="60" />
+
+            <!-- Top N Filter -->
+            <TextBlock Text="Top N:" Margin="10,0,5,0" VerticalAlignment="Center" />
+            <TextBox Text="{Binding TopN}" Width="50" />
+
+            <Button Content="Apply Filters" Command="{Binding ApplyFiltersCommand}" Margin="10,0,0,0" />
         </StackPanel>
 
-        <TabControl Grid.Row="1">
+        <!-- Tab Control for Reports -->
+        <TabControl Grid.Row="2">
             <TabItem Header="Revenue Reports">
                 <DataGrid ItemsSource="{Binding RevenueReports}" AutoGenerateColumns="False">
                     <DataGrid.Columns>
@@ -39,9 +62,10 @@
             </TabItem>
         </TabControl>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-            <Button Content="Export to CSV" Command="{Binding ExportToCSVCommand}" />
-            <Button Content="Export to PDF" Command="{Binding ExportToPDFCommand}" Margin="5,0" />
+        <!-- Export Buttons -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+            <Button Content="Export to CSV" Command="{Binding ExportToCSVCommand}" IsEnabled="{Binding CanExport}" />
+            <Button Content="Export to PDF" Command="{Binding ExportToPDFCommand}" IsEnabled="{Binding CanExport}" Margin="5,0" />
         </StackPanel>
     </Grid>
 </Window>

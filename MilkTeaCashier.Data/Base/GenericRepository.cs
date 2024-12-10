@@ -17,11 +17,13 @@ namespace MilkTeaCashier.Data.Base
         public GenericRepository()
         {
             _context ??= new PRN212_MilkTeaCashierContext();
+            _dbSet = _context.Set<T>();
         }
 
         public GenericRepository(PRN212_MilkTeaCashierContext context)
         {
             _context = context;
+            _dbSet = _context.Set<T>();
         }
 
         #region Separating assign entity and save operators
@@ -182,6 +184,50 @@ namespace MilkTeaCashier.Data.Base
         {
             return await _context.Set<T>().FindAsync(code);
         }
+        #region ___HELPER METHODS___
+
+        /// <summary>
+        /// Retrieves all entities from the database.
+        /// </summary>
+        /// <returns>All entities as an IQueryable for further filtering.</returns>
+        public IQueryable<T> FindAll()
+        {
+            return _dbSet.AsNoTracking();
+        }
+
+        /// <summary>
+        /// Retrieves all entities matching a specified condition.
+        /// </summary>
+        /// <param name="expression">The condition to filter entities.</param>
+        /// <returns>Filtered entities as an IQueryable.</returns>
+        public IQueryable<T> FindByConditionAsQueryable(Expression<Func<T, bool>> expression)
+        {
+            return _dbSet.Where(expression).AsNoTracking();
+        }
+
+        /// <summary>
+        /// Selects specific properties or transformations from the entity set.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the transformed result.</typeparam>
+        /// <param name="selector">The selector function to transform entities.</param>
+        /// <returns>Selected entities as an IEnumerable.</returns>
+        public IEnumerable<TResult> Select<TResult>(Expression<Func<T, TResult>> selector)
+        {
+            return _dbSet.AsNoTracking().Select(selector).ToList();
+        }
+
+        /// <summary>
+        /// Retrieves distinct entities based on a specified property or selector.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the property to use for distinctness.</typeparam>
+        /// <param name="keySelector">The selector function to determine distinctness.</param>
+        /// <returns>Distinct entities as an IEnumerable.</returns>
+        public IEnumerable<T> Distinct<TKey>(Expression<Func<T, TKey>> keySelector)
+        {
+            return _dbSet.AsNoTracking().GroupBy(keySelector).Select(g => g.First()).ToList();
+        }
+
+        #endregion New Methods
     }
 }
 

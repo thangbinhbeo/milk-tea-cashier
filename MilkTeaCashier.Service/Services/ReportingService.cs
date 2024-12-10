@@ -100,6 +100,80 @@ namespace MilkTeaCashier.Service.Services
                 .ToList();
 
         }
+        public List<RevenueReportDto> FilterRevenueReports(
+            DateTime startDate,
+            DateTime endDate,
+            double? minRevenue = null,
+            double? maxRevenue = null)
+        {
+            // Step 1: Fetch and filter orders
+            var ordersQuery = _unitOfWork.OrderRepository.GetOrderDetail()
+                .Where(o => o.CreatedAt.HasValue && o.CreatedAt.Value.Date >= startDate && o.CreatedAt.Value.Date <= endDate && o.Status == OrderStatus.Completed.ToString());
+
+            var orders = ordersQuery.ToList();
+
+            // Step 2: Group by date and ensure OrderDetails are included
+            var groupedOrders = orders
+                .Where(o => o.OrderDetails != null && o.OrderDetails.Any())
+                .GroupBy(o => o.CreatedAt.Value.Date);
+
+            // Step 3: Build RevenueReportDto
+            var revenueReports = groupedOrders.Select(group => new RevenueReportDto
+            {
+                ReportDate = group.Key,
+                TotalRevenue = group.Sum(o => o.TotalAmount),
+                CompletedOrders = group.Count(),
+                PaymentSummaries = group
+                    .Where(o => o.PaymentMethod != null)
+                    .GroupBy(o => o.PaymentMethod)
+                    .Select(paymentGroup => new PaymentMethodSummary
+                    {
+                        PaymentMethod = paymentGroup.Key,
+                        Revenue = paymentGroup.Sum(o => o.TotalAmount)
+                    }).ToList(),
+                CategorySummaries = GetCategorySummaries(group.SelectMany(o => o.OrderDetails))
+            }).ToList();
+
+            if (minRevenue.HasValue)
+            {
+                revenueReports = revenueReports.Where(r => r.TotalRevenue >= minRevenue.Value).ToList();
+            }
+
+            if (maxRevenue.HasValue)
+            {
+                revenueReports = revenueReports.Where(r => r.TotalRevenue <= maxRevenue.Value).ToList();
+            }
+
+            return revenueReports;
+        }
+
+        private List<CategorySummary> GetCategorySummaries(IEnumerable<OrderDetail> orderDetails)
+        {
+            if (orderDetails == null)
+                return new List<CategorySummary>();
+
+            return orderDetails
+                .Where(od => od.Product != null && od.Product.Category != null)
+                .GroupBy(od => od.Product.Category.CategoryName ?? "Uncategorized")
+                .Select(categoryGroup => new CategorySummary
+                {
+                    CategoryName = categoryGroup.Key,
+                    Revenue = categoryGroup.Sum(od => od.Price * od.Quantity)
+                })
+                .ToList();
+        }
+
+       
+        public List<TopSellingProductDto> FilterTopSellingProducts(
+            List<TopSellingProductDto> topSellingProducts,
+            int topN
+        )
+        {
+            return topSellingProducts
+                .OrderByDescending(p => p.QuantitySold)
+                .Take(topN)
+                .ToList();
+        }
 
         public string PrepareExportData(IEnumerable<RevenueReportDto> revenueReports, IEnumerable<TopSellingProductDto> topSellingProducts)
         {
@@ -113,6 +187,26 @@ namespace MilkTeaCashier.Service.Services
         #endregion
 
         #region ___HELPER METHODS___
+        public List<string> GetAvailableCategories()
+        {
+            // Fetch all categories and handle null or empty cases
+            return _unitOfWork.CategoryRepository.FindAll()
+                .Where(c => !string.IsNullOrWhiteSpace(c.CategoryName))
+                .Select(c => c.CategoryName)
+                .Distinct()
+                .ToList();
+        }
+
+        public List<string> GetAvailablePaymentMethods()
+        {
+            // Fetch all payment methods and handle null or empty cases
+            return _unitOfWork.OrderRepository.FindAll()
+                .Where(o => !string.IsNullOrWhiteSpace(o.PaymentMethod))
+                .Select(o => o.PaymentMethod)
+                .Distinct()
+                .ToList();
+        }
+
         private void AppendRevenueReports(IEnumerable<RevenueReportDto> revenueReports, StringBuilder exportedData)
         {
             exportedData.AppendLine("Revenue Reports:");

@@ -14,6 +14,24 @@ namespace MilkTeaCashier.Service.Interfaces
 
         Task<List<RevenueReportDto>> GetRevenueReportAsync(DateTime startDate, DateTime endDate);
         Task<List<TopSellingProductDto>> GetTopSellingProductsAsync(DateTime startDate, DateTime endDate);
+
+        List<RevenueReportDto> FilterRevenueReports
+        (
+            DateTime startDate,
+            DateTime endDate,
+            double? minRevenue = null,
+            double? maxRevenue = null
+        );
+
+
+        List<TopSellingProductDto> FilterTopSellingProducts
+        (
+            List<TopSellingProductDto> topSellingProducts,
+            int topN
+        );
+
+        List<string> GetAvailableCategories();
+        List<string> GetAvailablePaymentMethods();
         string PrepareExportData
         (
             IEnumerable<RevenueReportDto> revenueReports,

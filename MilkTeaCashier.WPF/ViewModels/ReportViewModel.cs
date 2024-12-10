@@ -15,7 +15,6 @@ namespace MilkTeaCashier.WPF.ViewModels
 {
     public class ReportViewModel : BaseViewModel
     {
-
         #region ___FIELDS AND PROPERTIES___
         public const string SALE_REPORT_CSV_FILE_NAME = "SaleReport.csv";
         public const string SALE_REPORT_PDF_FILE_NAME = "SaleReport.pdf";
@@ -24,13 +23,20 @@ namespace MilkTeaCashier.WPF.ViewModels
 
         public ObservableRangeCollection<RevenueReportDto> RevenueReports { get; set; }
         public ObservableRangeCollection<TopSellingProductDto> TopSellingProducts { get; set; }
+        public List<TopSellingProductDto> AllTopSellingProducts { get; set; } // Original unfiltered list
 
-        public DateTime SelectedStartDate { get; set; } = DateTime.Now.AddDays(-7); //default 7 days report
-        public DateTime SelectedEndDate   { get; set; } = DateTime.Now;
+
+        public DateTime SelectedStartDate { get; set; } = DateTime.Now.AddDays(-7); // Default 7 days report
+        public DateTime SelectedEndDate { get; set; } = DateTime.Now;
+
+        public double? MinRevenue { get; set; }
+        public double? MaxRevenue { get; set; }
+        public int? TopN { get; set; }
 
         public RelayCommand LoadReportsCommand { get; }
         public RelayCommand ExportToCSVCommand { get; }
         public RelayCommand ExportToPDFCommand { get; }
+        public RelayCommand ApplyFiltersCommand { get; }
 
         private bool _isOperationInProgress;
 
@@ -65,13 +71,15 @@ namespace MilkTeaCashier.WPF.ViewModels
                 _ => !IsOperationInProgress && CanExport(),
                 ex => HanleException("Failed to export to PDF!", ex)
             );
+
+            ApplyFiltersCommand = new RelayCommand(
+                _ => ApplyFilters(),
+                _ => !IsOperationInProgress
+            );
         }
-
-
         #endregion
 
         #region ___MAIN METHODS___
-
         private async Task ExecuteWithState(Func<Task> asyncMethod)
         {
             IsOperationInProgress = true;
@@ -84,11 +92,13 @@ namespace MilkTeaCashier.WPF.ViewModels
                 IsOperationInProgress = false;
             }
         }
+
         private async Task ExportToCSVAsync()
         {
             var data = _reportingService.PrepareExportData(RevenueReports, TopSellingProducts);
             await _fileExportService.ExportToCSVAsync(data, SALE_REPORT_CSV_FILE_NAME);
         }
+
         private async Task ExportToPDFAsync()
         {
             var data = _reportingService.PrepareExportData(RevenueReports, TopSellingProducts);
@@ -97,76 +107,117 @@ namespace MilkTeaCashier.WPF.ViewModels
 
         private async Task LoadReportsAsync()
         {
-            RevenueReports ??= new();
-            RevenueReports.Clear();
+            try
+            {
+                IsOperationInProgress = true;
 
-            TopSellingProducts ??= new();
-            TopSellingProducts.Clear();
-            
-            var revenueReports = await _reportingService.GetRevenueReportAsync(SelectedStartDate, SelectedEndDate);
-            var topSellingProducts = await _reportingService.GetTopSellingProductsAsync(SelectedStartDate, SelectedEndDate);
-            AddRevenueReports(revenueReports);
-            AddTopSellingProducts(topSellingProducts);
+                var revenueReports = await _reportingService.GetRevenueReportAsync(SelectedStartDate, SelectedEndDate);
+                var topSellingProducts = await _reportingService.GetTopSellingProductsAsync(SelectedStartDate, SelectedEndDate);
 
-            Console.WriteLine("xxx load report!");
+                // Clear collections only after fetching data successfully
+                RevenueReports?.Clear();
+                TopSellingProducts?.Clear();
+                AllTopSellingProducts?.Clear();
+               
+
+                AddRevenueReports(revenueReports);
+                AddTopSellingProducts(topSellingProducts);
+                // Store the original list for filtering
+                AllTopSellingProducts = topSellingProducts.ToList();
+
+                Console.WriteLine("Reports loaded successfully.");
+            }
+            catch (Exception ex)
+            {
+                HanleException("Failed to load reports", ex);
+            }
+            finally
+            {
+                IsOperationInProgress = false;
+            }
         }
 
-        
+
+        private void ApplyFilters()
+        {
+            try
+            {
+                Console.WriteLine($"Applying Filters:");
+                Console.WriteLine($"- Min Revenue: {MinRevenue}");
+                Console.WriteLine($"- Max Revenue: {MaxRevenue}");
+                Console.WriteLine($"- Top N: {TopN}");
+
+                // Filter Revenue Reports
+                if (RevenueReports.Any())
+                {
+                    var filteredReports = _reportingService.FilterRevenueReports(
+                        startDate: SelectedStartDate,
+                        endDate: SelectedEndDate,
+                        minRevenue: MinRevenue,
+                        maxRevenue: MaxRevenue
+                    );
+
+                    Console.WriteLine($"Filtered Reports Count: {filteredReports.Count}");
+                    RevenueReports.ReplaceRange(filteredReports);
+                }
+
+                // Filter Top-Selling Products
+                if (AllTopSellingProducts != null && AllTopSellingProducts.Any())
+                {
+                    var filteredTopProducts = AllTopSellingProducts // Use the original collection
+                        .OrderByDescending(p => p.Revenue)
+                        .Take(TopN ?? AllTopSellingProducts.Count) // Default to all if TopN is null
+                        .ToList();
+
+                    Console.WriteLine($"Filtered Top-Selling Products Count: {filteredTopProducts.Count}");
+                    TopSellingProducts.ReplaceRange(filteredTopProducts);
+                }
+            }
+            catch (Exception ex)
+            {
+                HanleException("Failed to apply filters", ex);
+            }
+        }
+
         private void HanleException(string message, Exception ex)
         {
             MessageBox.Show($"{message}: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
-
         #endregion
 
         #region ___HELPER METHODS___
         public bool CanLoadReports()
         {
-            return SelectedStartDate <= SelectedEndDate; //Simple condition
+            return SelectedStartDate <= SelectedEndDate; // Simple condition
         }
+
         public bool CanExport()
         {
-            var canExport = RevenueReports != null && (RevenueReports.Any() || TopSellingProducts.Any());
-            Console.WriteLine($"CanExport: {canExport}");
-            return canExport;
+            return RevenueReports != null && (RevenueReports.Any() || TopSellingProducts.Any());
         }
 
         public void AddRevenueReports(List<RevenueReportDto> revenueReports)
         {
             if (revenueReports == null) return;
-            foreach (RevenueReportDto report in revenueReports)
+            foreach (var report in revenueReports)
             {
-                if (report == null || RevenueReports.Contains(report)) 
+                if (report == null || RevenueReports.Contains(report))
                     continue;
                 RevenueReports.Add(report);
             }
         }
-        public void AddRevenueReport(RevenueReportDto revenueReport)
-        {
-            if (revenueReport == null) return;
-            if (!RevenueReports.Contains(revenueReport))
-            {
-                RevenueReports.Add(revenueReport);
-            }
-        }
+
         public void AddTopSellingProducts(List<TopSellingProductDto> topSellingReports)
         {
             if (topSellingReports == null) return;
-            foreach (TopSellingProductDto prd in topSellingReports)
+            foreach (var prd in topSellingReports)
             {
                 if (prd == null || TopSellingProducts.Contains(prd))
                     continue;
                 TopSellingProducts.Add(prd);
             }
         }
-        public void AddTopSellingProduct(TopSellingProductDto topSellingProduct)
-        {
-            if (topSellingProduct == null) return;
-            if (!TopSellingProducts.Contains(topSellingProduct))
-            {
-                TopSellingProducts.Add(topSellingProduct);
-            }
-        }
         #endregion
     }
+
 }
