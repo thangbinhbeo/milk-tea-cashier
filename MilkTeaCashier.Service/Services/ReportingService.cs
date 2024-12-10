@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using MilkTeaCashier.Data.DTOs;
 using MilkTeaCashier.Data.Models;
 using MilkTeaCashier.Data.UnitOfWork;
@@ -80,10 +81,14 @@ namespace MilkTeaCashier.Service.Services
 
         public async Task<List<TopSellingProductDto>> GetTopSellingProductsAsync(DateTime startDate, DateTime endDate)
         {
-            var orderDetailList = await _unitOfWork.OrderDetailRepository.FindByConditionAsync(
-                od => od.Order.CreatedAt >= startDate && od.Order.CreatedAt <= endDate);
+            var orderDetailList = await _unitOfWork.OrderDetailRepository.FindByConditionAsync
+            (
+                od => od.Order.CreatedAt >= startDate && od.Order.CreatedAt <= endDate,
+                include: query => query.Include(od => od.Product)
+            );
 
             return orderDetailList
+                .Where(od => od.Product != null) // Ensure Product is not null
                 .GroupBy(od => new { od.ProductId, od.Product.Name })
                 .Select(group => new TopSellingProductDto
                 {
@@ -91,7 +96,9 @@ namespace MilkTeaCashier.Service.Services
                     ProductName = group.Key.Name,
                     QuantitySold = group.Sum(od => od.Quantity),
                     Revenue = group.Sum(od => od.Price * od.Quantity)
-                }).ToList();
+                })
+                .ToList();
+
         }
 
         public string PrepareExportData(IEnumerable<RevenueReportDto> revenueReports, IEnumerable<TopSellingProductDto> topSellingProducts)

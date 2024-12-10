@@ -64,9 +64,25 @@ namespace MilkTeaCashier.Data.Base
             return _context.Set<T>().Where(expression).AsNoTracking();
         }
 
-        public async Task<IEnumerable<T>> FindByConditionAsync(Expression<Func<T, bool>> expression)
+        public virtual async Task<IEnumerable<T>> FindByConditionAsync(Expression<Func<T, bool>> expression)
         {
             return await _context.Set<T>().Where(expression).AsNoTracking().ToListAsync();
+        }
+        public async Task<IEnumerable<T>> FindByConditionAsync
+        (
+            Expression<Func<T, bool>> expression,
+            Func<IQueryable<T>, IQueryable<T>> include = null
+        )
+        {
+            IQueryable<T> query = _context.Set<T>().Where(expression).AsNoTracking();
+
+            // Apply the include function if provided
+            if (include != null)
+            {
+                query = include(query);
+            }
+
+            return await query.ToListAsync();
         }
 
         public List<T> GetAll()
