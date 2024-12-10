@@ -40,16 +40,16 @@
                 <TextBlock Text="Order ID" Margin="0,0,0,5"/>
                 <TextBox Name="SearchOrderIdTextBox" Width="100"/>
             </StackPanel>
-            <Button Content="Search" Width="100" Margin="5" Click="Button_Click" />
+            <Button Content="Search" Width="100" Margin="5" Click="SearchButton_Click" />
         </StackPanel>
 
         <!-- Data Grid -->
         <DataGrid Grid.Row="2" Name="OrdersDataGrid" AutoGenerateColumns="False" Margin="0,0,0,10"
               RowBackground="#fff" AlternatingRowBackground="#f2f2f2" GridLinesVisibility="None">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Order ID" Binding="{Binding Id}" Width="100"/>
+                <DataGridTextColumn Header="Order ID" Binding="{Binding OrderId}" Width="100"/>
                 <DataGridTextColumn Header="Customer Name" Binding="{Binding CustomerName}" Width="200"/>
-                <DataGridTextColumn Header="Total Amount" Binding="{Binding TotalAmount, Mode=OneWay}" Width="100"/>
+                <DataGridTextColumn Header="Total Amount" Binding="{Binding TotalAmount}"/>
                 <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
                 <DataGridTextColumn Header="Payment Method" Binding="{Binding PaymentMethod}" Width="100"/>
                 <DataGridTextColumn Header="Table Number" Binding="{Binding NumberTableCard}" Width="100"/>

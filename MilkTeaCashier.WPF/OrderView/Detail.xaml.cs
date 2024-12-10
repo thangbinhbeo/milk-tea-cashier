@@ -179,6 +179,8 @@ namespace MilkTeaCashier.WPF.OrderView
 				var result = await _orderService.UpdateOrderAsync(OrderId, newOrder);
 
 				MessageBox.Show(result);
+
+				this.Close();
 			}
 			catch (Exception ex)
 			{
