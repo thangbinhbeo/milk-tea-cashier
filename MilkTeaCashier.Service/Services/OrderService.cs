@@ -252,37 +252,24 @@ namespace MilkTeaCashier.Service.Services
             }
         }
 
-        public async Task<List<OrderDto>> GetAllOrdersAsync()
+        public async Task<List<Order>> GetAllOrdersAsync()
         {
-            try
-            {
-                var orders = await _unitOfWork.OrderRepository.GetAllAsync();
-                if (orders == null || orders.Count == 0)
-                {
-                    return null;
-                }
+			try
+			{
+				var orders = (await _unitOfWork.OrderRepository.GetAllOrdersAsync()).OrderByDescending(o => o.CreatedAt).ToList();
+				if (orders == null || orders.Count == 0)
+				{
+					return null;
+				}
 
-                var orderList = orders
-                    .OrderByDescending(order => order.CreatedAt)
-                    .Select(order => new OrderDto
-                    {
-                        Id = order.OrderId,
-                        CustomerName = order.CustomerName,
-                        TotalAmount = order.TotalAmount,
-                        Status = order.Status,
-                        PaymentMethod = order.PaymentMethod,
-                        NumberTableCard = order.NumberTableCard,
-                        CreatedAt = order.CreatedAt,
-                    }).ToList();
-
-                return orderList;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw new Exception("Error: ", ex);
-            }
-        }
+				return orders;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				throw new Exception("Error: ", ex);
+			}
+		}
 
         public async Task<List<Product>> GetAllProductsAsync()
         {
@@ -308,9 +295,9 @@ namespace MilkTeaCashier.Service.Services
             return result;
         }
 
-        public async Task<List<OrderDto>> SearchOrdersAsync(DateTime? date, string? customerName, string? status, int? orderId)
-        {
-            var orders = await GetAllOrdersAsync();
+		public async Task<List<Order>> SearchOrdersAsync(DateTime? date, string? customerName, string? status, int? orderId)
+		{
+			var orders = await GetAllOrdersAsync();
 
             if (date.HasValue)
                 orders = orders.Where(o => o.CreatedAt.Value.Date == date.Value.Date).ToList();
@@ -321,27 +308,21 @@ namespace MilkTeaCashier.Service.Services
             if (!string.IsNullOrEmpty(status) && status != "All")
                 orders = orders.Where(o => o.Status.Equals(status, StringComparison.OrdinalIgnoreCase)).ToList();
 
-            if (orderId.HasValue)
-                orders = orders.Where(o => o.Id == orderId).ToList();
+            if (orderId != 0)
+                orders = orders.Where(o => o.OrderId == orderId).ToList();
 
-            return orders;
-        }
+			return orders;
+		}
 
 
-        public async Task<IEnumerable<Order>> GetOrdersByDateAsync(DateTime date)
-        {
-            return await _unitOfWork.OrderRepository.FindByConditionAsync(o => o.CreatedAt.Value == date.Date);
-        }
+        
 
         public async Task<Order> GetOrderByIdAsync(int orderId)
         {
             return await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
         }
 
-        public double CalculateTotalAmount(List<OrderDetail> orderDetails)
-        {
-            return orderDetails.Sum(detail => detail.Quantity * detail.Price);
-        }
+
 
         public async Task<OrderPrintModel> GetByIdOrder(int orderId)
         {

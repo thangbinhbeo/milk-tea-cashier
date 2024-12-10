@@ -30,7 +30,7 @@
 
                 <StackPanel Margin="0,0,0,10">
                     <TextBlock Text="Order Id:" FontWeight="Bold" />
-                    <TextBox Name="OrderIdTextBox" Text="{Binding OrderId}" Height="30" Margin="0,5" />
+                    <TextBox Name="OrderIdTextBox" Text="{Binding OrderId}" Height="30" Margin="0,5" IsReadOnly="True"/>
                 </StackPanel>
 
                 <!-- Customer Name -->
@@ -85,10 +85,10 @@
                 <!-- Product List DataGrid -->
                 <DataGrid Name="ProductsDataGrid" AutoGenerateColumns="False" Height="250" Margin="0,0,0,10">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Id" Binding="{Binding ProductId}" Width="*" />
-                        <DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}" Width="*" />
+                        <DataGridTextColumn Header="Id" Binding="{Binding ProductId}" Width="*" IsReadOnly="True" />
+                        <DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}" Width="*" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Size" Binding="{Binding Size, Mode=TwoWay}" Width="*" />
-                        <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="*" />
+                        <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="*" IsReadOnly="True" />
                         <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity, Mode=TwoWay}" Width="*" />
                         <DataGridTemplateColumn Header="Status" Width="*">
                             <DataGridTemplateColumn.CellTemplate>

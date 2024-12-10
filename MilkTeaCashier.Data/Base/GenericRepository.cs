@@ -78,8 +78,15 @@ namespace MilkTeaCashier.Data.Base
         {
             return await _context.Set<T>().ToListAsync();
         }
+		public async Task<List<Order>> GetAllOrdersAsync()
+		{
+			return await _context.Orders
+								 .AsNoTracking()
+								 .Include(o => o.OrderDetails)
+								 .ToListAsync();
+		}
 
-        public List<T> GetAll(params Expression<Func<T, object>>[] includes)
+		public List<T> GetAll(params Expression<Func<T, object>>[] includes)
         {
             var query = _context.Set<T>().AsQueryable();
             foreach (var include in includes)

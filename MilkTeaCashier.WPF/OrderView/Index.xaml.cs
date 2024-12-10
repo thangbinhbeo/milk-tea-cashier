@@ -1,4 +1,5 @@
 ﻿using MilkTeaCashier.Data.DTOs.OrderDTO;
+using MilkTeaCashier.Data.Models;
 using MilkTeaCashier.Service.Services;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace MilkTeaCashier.WPF.OrderView
 			LoadOrders();
 		}
 
-		private async void LoadOrders()
+		public async void LoadOrders()
 		{
 			try
 			{
@@ -59,13 +60,13 @@ namespace MilkTeaCashier.WPF.OrderView
 
 		private async void ViewDetailsButton_Click(object sender, RoutedEventArgs e)
 		{
-			var selectedOrder = OrdersDataGrid.SelectedItem as OrderDto;
+			var selectedOrder = OrdersDataGrid.SelectedItem as Order;
 			if (selectedOrder == null)
 			{
 				MessageBox.Show("Please select an order to view details.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
 				return;
 			}
-			var order = await _orderService.GetOrderByIdAsync(selectedOrder.Id);
+			var order = await _orderService.GetOrderByIdAsync(selectedOrder.OrderId);
 
 			var detailWindow = new Detail(order);
 			detailWindow.Closed += (s, args) => LoadOrders();
@@ -74,7 +75,7 @@ namespace MilkTeaCashier.WPF.OrderView
 
 		private async void DeleteOrderButton_Click(object sender, RoutedEventArgs e)
 		{
-			var selectedOrder = OrdersDataGrid.SelectedItem as OrderDto;
+			var selectedOrder = OrdersDataGrid.SelectedItem as Order;
 			if (selectedOrder == null)
 			{
 				MessageBox.Show("Please select an order to remove.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -82,7 +83,7 @@ namespace MilkTeaCashier.WPF.OrderView
 			}
 
 			var confirmationResult = MessageBox.Show(
-				$"Are you sure you want to delete the order with ID {selectedOrder.Id}?",
+				$"Are you sure you want to delete the order with ID {selectedOrder.OrderId}?",
 				"Confirm Deletion",
 				MessageBoxButton.YesNo,
 				MessageBoxImage.Warning
@@ -92,7 +93,7 @@ namespace MilkTeaCashier.WPF.OrderView
 			{
 				try
 				{
-					var resultMessage = await _orderService.DeleteOrderByIdAsync(selectedOrder.Id);
+					var resultMessage = await _orderService.DeleteOrderByIdAsync(selectedOrder.OrderId);
 					MessageBox.Show(resultMessage, "Information", MessageBoxButton.OK, MessageBoxImage.Information);
 
 					LoadOrders();
@@ -104,7 +105,7 @@ namespace MilkTeaCashier.WPF.OrderView
 			}
 		}
 
-		private async void Button_Click(object sender, RoutedEventArgs e)
+		private async void SearchButton_Click(object sender, RoutedEventArgs e)
 		{
 			try
 			{
@@ -115,24 +116,7 @@ namespace MilkTeaCashier.WPF.OrderView
 
 				int.TryParse(searchOrderIdText, out int searchOrderId);
 
-				var orders = await _orderService.GetAllOrdersAsync();
-
-				if (searchDate.HasValue)
-				{
-					orders = orders.Where(o => o.CreatedAt.Value.Date == searchDate.Value.Date).ToList();
-				}
-				if (!string.IsNullOrEmpty(searchCustomer))
-				{
-					orders = orders.Where(o => o.CustomerName.Contains(searchCustomer, StringComparison.OrdinalIgnoreCase)).ToList();
-				}
-				if (!string.IsNullOrEmpty(searchStatus) && searchStatus != "All")
-				{
-					orders = orders.Where(o => o.Status.Equals(searchStatus, StringComparison.OrdinalIgnoreCase)).ToList();
-				}
-				if (searchOrderId != 0)
-				{
-					orders = orders.Where(o => o.Id == searchOrderId).ToList();
-				}
+				var orders = await _orderService.SearchOrdersAsync(searchDate,searchCustomer,searchStatus,searchOrderId);
 
 				OrdersDataGrid.ItemsSource = orders;
 
