@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
         mc:Ignorable="d"
         Title="Create Employee"
-        Height="500"
+        Height="350"
         Width="600"
         WindowStartupLocation="CenterScreen">
     <Grid Margin="10">
@@ -35,19 +35,8 @@
                 <ComboBoxItem Content="Cashier" Tag="Cashier"/>
             </ComboBox>
 
-            
-            <TextBlock Text="Status:" Margin="10,10,0,5"/>
-            <ComboBox x:Name="cmbStatus">
-                <ComboBoxItem Content="Active" Tag="Active"/>
-                <ComboBoxItem Content="Inactive" Tag="Inactive"/>
-            </ComboBox>
-
-           
-            <TextBlock Text="Created At:" Margin="10,10,0,5"/>
-            <DatePicker x:Name="dpCreatedAt"  />
-
-            <TextBlock Text="Updated At:" Margin="10,10,0,5"/>
-            <DatePicker x:Name="dpUpdatedAt"  />
+            <TextBlock Text="Created At:" Margin="10,10,0,5" IsEnabled="False"/>
+            <TextBox x:Name="dpCreatedAt"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0" Grid.Row="1">
