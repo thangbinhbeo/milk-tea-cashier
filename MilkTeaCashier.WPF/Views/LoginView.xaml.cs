@@ -44,11 +44,11 @@ namespace MilkTeaCashier.WPF.Views
          
                 var employeeService = new EmployeeService();
 
-             
                 var employee = await employeeService.AuthenticateAsync(username, password);
-                if (employee.Status == "Inactive") 
+                if (employee.Status == "Inactive")
                 {
                     MessageBox.Show("Account is not active!!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
                 else if (employee.Role == "Manager")
                 {
@@ -67,6 +67,7 @@ namespace MilkTeaCashier.WPF.Views
                 else
                 {
                     MessageBox.Show("Invalid access!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
 
                 this.Close();
