@@ -5,8 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
         mc:Ignorable="d"
-        Title="ProductView" Height="450" Width="800"
-        Loaded="Window_Loaded">
+        Title="ProductView" Height="450" Width="800">
     <!-- Đảm bảo gắn sự kiện Loaded ở đây -->
     <Grid>
         <!-- Title -->

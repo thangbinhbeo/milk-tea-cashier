@@ -61,14 +61,24 @@ namespace MilkTeaCashier.Service.Services
 			}
 		}
 
-		public async Task UpdateProductAsync(Product product)
+		public async Task UpdateProductAsync(int id, CreateProductModel product)
 		{
 			if (product == null)
 				throw new ArgumentNullException(nameof(product));
 
-			product.UpdatedAt = DateTime.Now;
+			var update = new Product
+			{
+				CategoryId = product.CategoryId,
+				Name = product.Name,
+				Size = product.Size,
+				Price = product.Price,
+				Image = product.Image,
+				ProductId = id,
+				Status = product.Status,
+				UpdatedAt = DateTime.Now,
+			};
 
-			_unitOfWork.ProductRepository.PrepareUpdate(product);
+			_unitOfWork.ProductRepository.PrepareUpdate(update);
 			await _unitOfWork.ProductRepository.SaveAsync();
 		}
 
