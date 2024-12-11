@@ -33,9 +33,16 @@
                     <StackPanel Margin="0,0,0,10">
                         <CheckBox Name="RegisterPointCheckBox" Content="Already is loyalty customer" Checked="RegisterPointCheckBox_Checked" Unchecked="RegisterPointCheckBox_Unchecked" Margin="0,5"/>
                     </StackPanel>
-                    <ComboBox Name="CustomerComboBox" Height="30" Margin="0,5" Visibility="Collapsed" />
+
+                    <ComboBox Name="CustomerComboBox" Height="30" Margin="0,5" Visibility="Collapsed" SelectionChanged="CustomerComboBox_SelectionChanged"/>
+
                     <TextBox Name="CustomerNameTextBox" Height="30" Margin="0,5" />
+
+                    <TextBlock Name="CustomerPointsTextBlock" Visibility="Collapsed" Margin="0,5"/>
+
+                    <CheckBox Name="ApplyPointsCheckBox" Content="Apply loyalty points to order" Visibility="Collapsed" Margin="0,5"/>
                 </StackPanel>
+
 
                 <!-- Table Number -->
                 <StackPanel Margin="0,0,0,10">
@@ -81,7 +88,7 @@
                 <TextBlock Text="Order Products" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" />
 
                 <!-- Product List DataGrid -->
-                <DataGrid Name="ProductsDataGrid" AutoGenerateColumns="False" Height="250" Margin="0,0,0,10">
+                <DataGrid Name="ProductsDataGrid" AutoGenerateColumns="False" Height="250" Margin="0,0,0,10" CellEditEnding="ProductsDataGrid_CellEditEnding">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding ProductId}" Width="*" IsReadOnly="True" />
                         <DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}" Width="*" IsReadOnly="True" />
@@ -109,6 +116,11 @@
                     <ComboBox Name="ProductComboBox" Width="200" Margin="0,0,10,0" />
                     <Button Content="Add Product" Name="AddProductButton" Width="100" Click="AddProductButton_Click" />
                     <Button Content="Remove" Name="RemoveProductButton" Width="100" Click="RemoveProductButton_Click" Margin="20,0,10,0"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,10" HorizontalAlignment="Right">
+                    <TextBlock Text="Subtotal:" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
+                    <TextBlock Name="SubtotalTextBlock" Text="0" FontSize="14" VerticalAlignment="Center" Margin="10,0,0,0" />
                 </StackPanel>
             </StackPanel>
         </Grid>

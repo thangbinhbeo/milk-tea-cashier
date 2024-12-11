@@ -3,6 +3,7 @@ using MilkTeaCashier.Data.Models;
 using MilkTeaCashier.Service.Interfaces;
 using MilkTeaCashier.Service.Services;
 using MilkTeaCashier.WPF.Views;
+using Org.BouncyCastle.Security.Certificates;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,6 +19,8 @@ namespace MilkTeaCashier.WPF.OrderView
 		private readonly OrderService _orderService;
 		private readonly CustomerService _customerService;
 		private ObservableCollection<OrderDetailDto> _selectedProducts;
+
+		private bool isLoyal = false;
 
 		private int _employeeID;
 		public Create(int employeeID)
@@ -137,6 +140,15 @@ namespace MilkTeaCashier.WPF.OrderView
 					return;
 				}
 
+				int customerLoyal = 0;
+				if (isLoyal)
+				{
+                    string pointsText = CustomerPointsTextBlock.Text;
+
+                    string pointsValue = pointsText.Replace("Total Points: ", "").Trim();
+					customerLoyal = int.Parse(pointsValue);
+                }
+
 				// 3. Tạo đối tượng đơn hàng
 				var newOrder = new CreateNewOrderDto
 				{
@@ -147,7 +159,8 @@ namespace MilkTeaCashier.WPF.OrderView
 					Status = orderStatus,
 					Note = note,
 					PaymentMethod = paymentMethod,
-					EmployeeId = _employeeID
+					EmployeeId = _employeeID,
+					CustomerScore = customerLoyal
 				};
 
 				newOrder.orderDetails = _selectedProducts.Select(p => new OrderDetailDto
@@ -215,8 +228,12 @@ namespace MilkTeaCashier.WPF.OrderView
         {
 			try
 			{
+				isLoyal = true;
                 CustomerComboBox.Visibility = Visibility.Visible;
                 CustomerNameTextBox.Visibility = Visibility.Collapsed;
+
+                CustomerPointsTextBlock.Visibility = Visibility.Visible;
+                ApplyPointsCheckBox.Visibility = Visibility.Visible;
 
                 var customers = await _customerService.GetAllCustomers();
 
@@ -244,10 +261,31 @@ namespace MilkTeaCashier.WPF.OrderView
             }
         }
 
+        private async void CustomerComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CustomerComboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                var customerId = (int)selectedItem.Tag;
+
+                var customer = await _customerService.GetCustomerByIdAsync(customerId);
+
+                if (customer != null)
+                {
+                    CustomerPointsTextBlock.Text = $"Total Points: {customer.Score}";
+                }
+                else
+                {
+                    MessageBox.Show("Customer not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
         private void RegisterPointCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             CustomerComboBox.Visibility = Visibility.Collapsed;
             CustomerNameTextBox.Visibility = Visibility.Visible;
+            CustomerPointsTextBlock.Visibility = Visibility.Collapsed;
+            ApplyPointsCheckBox.Visibility = Visibility.Collapsed;
         }
 
         private void CreateCustomerButton_Click(object sender, RoutedEventArgs e)
@@ -255,5 +293,31 @@ namespace MilkTeaCashier.WPF.OrderView
 			var createCustomerWindow = new CreateCustomerWindow(_employeeID);
 			createCustomerWindow.ShowDialog();
 		}
+
+        private void ProductsDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            if (e.Column.Header.ToString() == "Price" || e.Column.Header.ToString() == "Quantity")
+            {
+                UpdateSubtotal();
+            }
+        }
+
+        private void UpdateSubtotal()
+        {
+            double subtotal = 0;
+
+            foreach (var item in ProductsDataGrid.Items)
+            {
+                if (item is OrderDetailDto product)
+                {
+                    double price = product.Price;
+                    int quantity = product.Quantity;
+
+                    subtotal += price * quantity;
+                }
+            }
+
+            SubtotalTextBlock.Text = subtotal.ToString("C2");
+        }
     }
 }
