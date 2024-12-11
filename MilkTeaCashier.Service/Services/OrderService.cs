@@ -80,15 +80,6 @@ namespace MilkTeaCashier.Service.Services
             await _unitOfWork.OrderRepository.SaveAsync();
             int orderID = order.OrderId;
 
-            if (order.NumberTableCard != null)
-            {
-                await _unitOfWork.TableCardRepository.AddAsync(new TableCard
-                {
-                    NumberTableCard = (int)order.NumberTableCard
-                });
-                await _unitOfWork.TableCardRepository.SaveAsync();
-            }
-
             foreach (var detail in model.orderDetails)
             {
                 OrderDetail orderDetail = new OrderDetail
