@@ -10,7 +10,7 @@ namespace MilkTeaCashier.Service.Interfaces
         Task<IEnumerable<Product>> GetAllProductsAsync();
         Task<Product> GetProductByIdAsync(int productId);
         Task<string> AddProductAsync(CreateProductModel product);
-        Task UpdateProductAsync(Product product);
+        Task UpdateProductAsync(int id, CreateProductModel product);
         Task<bool> DeleteProductAsync(int productId);
     }
 }

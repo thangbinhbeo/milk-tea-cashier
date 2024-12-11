@@ -49,8 +49,21 @@ namespace MilkTeaCashier.Service.Services
             };
 
             // Calculate total
-            order.TotalAmount = model.orderDetails.Sum(d => d.Quantity * d.Price);
+            if (model.CustomerScore > 0)
+            {
+                var total = model.orderDetails.Sum(d => d.Quantity * d.Price);
+                order.TotalAmount = total - model.CustomerScore.Value;
 
+                var customer = await _unitOfWork.CustomerRepository.GetByIdAsync(model.CustomerId.Value);
+                customer.Score = 0;
+
+                await _unitOfWork.CustomerRepository.UpdateAsync(customer);
+            } 
+            else
+            {
+                order.TotalAmount = model.orderDetails.Sum(d => d.Quantity * d.Price);
+            }
+            
             if (model.CustomerId != null)
             {
                 var customer = await _unitOfWork.CustomerRepository.GetByIdAsync(model.CustomerId.Value);
@@ -58,7 +71,7 @@ namespace MilkTeaCashier.Service.Services
                 {
                     customer.Score ??= 0;
 
-                    customer.Score += (long)Math.Round(order.TotalAmount / 10);
+                    customer.Score += (long)Math.Round(order.TotalAmount / 1000);
                 }
                 await _unitOfWork.CustomerRepository.UpdateAsync(customer);
             }
@@ -66,15 +79,6 @@ namespace MilkTeaCashier.Service.Services
             await _unitOfWork.OrderRepository.AddAsync(order);
             await _unitOfWork.OrderRepository.SaveAsync();
             int orderID = order.OrderId;
-
-            if (order.NumberTableCard != null)
-            {
-                await _unitOfWork.TableCardRepository.AddAsync(new TableCard
-                {
-                    NumberTableCard = (int)order.NumberTableCard
-                });
-                await _unitOfWork.TableCardRepository.SaveAsync();
-            }
 
             foreach (var detail in model.orderDetails)
             {

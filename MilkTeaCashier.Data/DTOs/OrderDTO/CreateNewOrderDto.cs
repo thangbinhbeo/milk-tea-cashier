@@ -10,6 +10,7 @@
 		public string PaymentMethod { get; set; }
 		public string Status { get; set; }
 		public int EmployeeId { get; set; }
+		public int? CustomerScore { get; set; }
 		public List<OrderDetailDto> orderDetails { get; set; }
 	}
 }

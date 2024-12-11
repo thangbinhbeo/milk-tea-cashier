@@ -30,7 +30,8 @@ namespace MilkTeaCashier.WPF.Views
 		{
 			InitializeComponent();
 			_service = new ProductService();
-		}
+            LoadProducts();
+        }
 
 		private void AddProduct_Click(object sender, RoutedEventArgs e)
 		{
@@ -44,6 +45,8 @@ namespace MilkTeaCashier.WPF.Views
 			var selectedProduct = ProductsDataGrid.SelectedItem as Product;
 			if (selectedProduct != null)
 			{
+				this.Close();
+
 				var productDetailView = new ProductDetailView
 				{
 					EditProduct = selectedProduct // Set the property
@@ -108,11 +111,6 @@ namespace MilkTeaCashier.WPF.Views
 			{
 				LoadProducts();
 			}
-		}
-
-		private void Window_Loaded(object sender, RoutedEventArgs e)
-		{
-			LoadProducts(); 
 		}
 
 		private async void LoadProducts()

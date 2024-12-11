@@ -62,7 +62,7 @@
             <Button Content="View Details" Name="ViewDetailsButton" Width="120" Margin="5" Click="ViewDetailsButton_Click" />
             <Button Content="Add Order" Name="AddOrderButton" Width="120" Margin="5" Click="AddOrderButton_Click" />
             <Button Content="Delete Order" Name="DeleteOrderButton" Width="120" Margin="5" Click="DeleteOrderButton_Click" />
-            <Button Content="Close" Name="CloseButton" Width="120" Margin="5" Click="CloseButton_Click" />
+            <Button Content="LOGOUT" Name="CloseButton" Width="120" Margin="5" Click="CloseButton_Click" />
         </StackPanel>
     </Grid>
 </Window>

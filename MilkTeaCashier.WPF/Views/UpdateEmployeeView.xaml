@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
         mc:Ignorable="d"
                 Title="Update Employee"
-        Height="500"
+        Height="450"
         Width="600"
         WindowStartupLocation="CenterScreen">
     <Grid Margin="10">
@@ -42,13 +42,11 @@
                 <ComboBoxItem Content="Inactive" Tag="Inactive"/>
             </ComboBox>
 
-           
             <TextBlock Text="Created At:" Margin="10,10,0,5"/>
-            <DatePicker x:Name="dpCreatedAt"  />
+            <TextBox x:Name="dpCreatedAt" IsEnabled="False"/>
 
-            
             <TextBlock Text="Updated At:" Margin="10,10,0,5"/>
-            <DatePicker x:Name="dpUpdatedAt"  />
+            <TextBox x:Name="dpUpdatedAt" IsEnabled="False"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0" Grid.Row="1">

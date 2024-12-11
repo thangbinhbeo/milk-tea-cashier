@@ -1,6 +1,7 @@
 ﻿using MilkTeaCashier.Data.DTOs.OrderDTO;
 using MilkTeaCashier.Data.Models;
 using MilkTeaCashier.Service.Services;
+using MilkTeaCashier.WPF.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,8 +56,11 @@ namespace MilkTeaCashier.WPF.OrderView
 
 		private void CloseButton_Click(object sender, RoutedEventArgs e)
 		{
-			this.Close();
-		}
+            var login = new LoginView();
+            login.Show();
+
+            this.Close();
+        }
 
 		private async void ViewDetailsButton_Click(object sender, RoutedEventArgs e)
 		{

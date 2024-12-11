@@ -28,35 +28,33 @@ namespace MilkTeaCashier.WPF.Views
 		private string _fileExtension;
 		private readonly ImageUploadService _firebaseService;
 		private readonly ProductService _productService;
+		private readonly CategoryService _categoryService;
+
+		private bool isEdit = false;
 		public Product EditProduct { get; set; }
 
 		public ProductDetailView()
 		{
-			InitializeComponent();
+            InitializeComponent();
 			_productService = new ProductService();
-			_firebaseService = new ImageUploadService();
-		}
+			_firebaseService = new ImageUploadService(); 
+			_categoryService = new CategoryService();
+            LoadCatgories();
+        }
 
-		private async void SaveButton_Click(object sender, RoutedEventArgs e)
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
 		{
-			// Retrieve values from the form fields
 			string name = NameTextBox.Text;
 			int category;
-			string size = SizeTextBox.Text;
+			string size = SizeTextBox.SelectedItem != null ? SizeTextBox.SelectedItem.ToString() : null;
 			double price;
 			string url = "";
-			string status = SizeTextBox.Text;
+			string status = StatusTextBox.SelectedItem != null ? StatusTextBox.SelectedItem.ToString() : null;
 
-			// Validate the inputs
-			if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(size) || string.IsNullOrEmpty(PriceTextBox.Text) || string.IsNullOrEmpty(CategoryTextBox.Text))
+            // Validate the inputs
+            if (string.IsNullOrEmpty(name) || SizeTextBox.SelectedItem == null || string.IsNullOrEmpty(PriceTextBox.Text) || CategoryTextBox.SelectedItem == null)
 			{
 				MessageBox.Show("Please fill in all fields.");
-				return;
-			}
-
-			if (!int.TryParse(CategoryTextBox.Text, out category))
-			{
-				MessageBox.Show("Invalid Category ID.");
 				return;
 			}
 
@@ -74,7 +72,6 @@ namespace MilkTeaCashier.WPF.Views
 
 			try
 			{
-				// If an image is selected, upload it
 				if (!string.IsNullOrEmpty(_selectedFilePath))
 				{
 					string fileName = System.IO.Path.GetFileName(_selectedFilePath);
@@ -87,7 +84,6 @@ namespace MilkTeaCashier.WPF.Views
 				}
 				else
 				{
-					// If editing, retain the existing image URL
 					url = EditProduct.Image;
 				}
 			}
@@ -97,7 +93,10 @@ namespace MilkTeaCashier.WPF.Views
 				return;
 			}
 
-			if (EditProduct == null)
+			var selected = CategoryTextBox.SelectedItem as Category;
+			category = selected.CategoryId;
+
+            if (EditProduct == null)
 			{
 				var newProduct = new CreateProductModel
 				{
@@ -106,7 +105,7 @@ namespace MilkTeaCashier.WPF.Views
 					Image = url,
 					Price = price,
 					Size = size,
-					Status = status
+					Status = "Available"
 				};
 
 				var result = await _productService.AddProductAsync(newProduct);  
@@ -114,7 +113,10 @@ namespace MilkTeaCashier.WPF.Views
 				if (result != null)
 				{
 					MessageBox.Show("Product added successfully.");
-				}
+
+                    this.DialogResult = true;
+                    this.Close();
+                }
 				else
 				{
 					MessageBox.Show("Failed to add product. Please try again.");
@@ -122,18 +124,26 @@ namespace MilkTeaCashier.WPF.Views
 			}
 			else
 			{
-				// Update the existing product
 				EditProduct.Name = name;
-				EditProduct.CategoryId = category;
+				EditProduct.CategoryId = 8;
 				EditProduct.Image = url;
 				EditProduct.Price = price;
 				EditProduct.Size = size;
 				EditProduct.Status = status;
 
+				var updatePro = new CreateProductModel
+				{
+					CategoryId = category,
+					Image = url,
+					Price = price,
+					Size = size,
+					Status = status,
+					Name = name
+				};
+
 				try
 				{
-					// Call the update method with the updated product
-					await _productService.UpdateProductAsync(EditProduct);
+					await _productService.UpdateProductAsync(EditProduct.ProductId, updatePro);
 
 					MessageBox.Show("Product updated successfully.");
 				}
@@ -141,7 +151,10 @@ namespace MilkTeaCashier.WPF.Views
 				{
 					MessageBox.Show($"Failed to update product. Error: {ex.Message}");
 				}
-				this.DialogResult = true; 
+				this.DialogResult = true;
+				var view = new ProductView();
+				view.ShowDialog();
+
 				this.Close();
 			}
 		}
@@ -192,6 +205,79 @@ namespace MilkTeaCashier.WPF.Views
 				}
 			}
 		}
-		
+
+		public async void LoadCatgories()
+		{
+			var categories = await _categoryService.GetAllCategory();
+			CategoryTextBox.ItemsSource = categories;
+
+            var currentItems = StatusTextBox.ItemsSource as List<string>;
+			if (currentItems != null)
+			{
+				currentItems.Add("Available");
+				currentItems.Add("Unavailable");
+
+				StatusTextBox.ItemsSource = null;
+				StatusTextBox.ItemsSource = currentItems;
+			}
+			else
+			{
+				StatusTextBox.ItemsSource = new List<string> { "Available", "Unavailable" };
+			}
+
+			var items = SizeTextBox.ItemsSource as List<string>;
+			if (items != null)
+			{
+				items.Add("M");
+				items.Add("S");
+				items.Add("L");
+				items.Add("XL");
+
+				SizeTextBox.ItemsSource = null;
+				SizeTextBox.ItemsSource = items;
+			}
+			else
+			{
+				SizeTextBox.ItemsSource = new List<string> { "M", "S", "L", "XL" };
+			}
+
+			if (EditProduct != null)
+			{
+				var category = EditProduct.CategoryId;
+				var status = EditProduct.Status;
+				var size = EditProduct.Size;
+				ProductIdTextBox.IsEnabled = false;
+
+                foreach (var item in StatusTextBox.ItemsSource)
+				{
+					if (item.Equals(status))
+					{
+						StatusTextBox.SelectedItem = status;
+					}
+				}
+
+				foreach (var item in SizeTextBox.ItemsSource)
+				{
+					if (item.Equals(size))
+					{
+						SizeTextBox.SelectedItem = size;
+					}
+				}
+
+				var cate = await _categoryService.GetById(category);
+
+                if (cate != null)
+                {
+                    CategoryTextBox.SelectedValue = cate.CategoryId;
+                }
+            } 
+			else
+			{
+				IdLabel.Visibility = Visibility.Collapsed;
+				ProductIdTextBox.Visibility = Visibility.Collapsed;
+				StatusLabel.Visibility = Visibility.Collapsed;
+				StatusTextBox.Visibility = Visibility.Collapsed;
+            }
+		}
 	}
 }

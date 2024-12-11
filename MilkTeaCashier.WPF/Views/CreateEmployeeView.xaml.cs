@@ -16,6 +16,7 @@ namespace MilkTeaCashier.WPF.Views
         public CreateEmployeeView()
         {
             InitializeComponent();
+            dpCreatedAt.Text = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
         }
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
@@ -27,11 +28,11 @@ namespace MilkTeaCashier.WPF.Views
                 string password = txtPassword.Password;
                 string fullName = txtFullName.Text.Trim();
                 var selectedRole = cmbRole.SelectedItem as ComboBoxItem;
-                var selectedStatus = cmbStatus.SelectedItem as ComboBoxItem;
-                DateTime? createdAt = dpCreatedAt.SelectedDate;
-                DateTime? updatedAt = dpUpdatedAt.SelectedDate;
+                var selectedStatus = "Active";
+                DateTime createdAt = DateTime.Now;
+                DateTime updatedAt = DateTime.Now;
 
-                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(fullName) || selectedRole == null || selectedStatus == null || createdAt == null || updatedAt == null)
+                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(fullName) || selectedStatus == null)
                 {
                     MessageBox.Show("Please fill all fields!", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
@@ -43,7 +44,7 @@ namespace MilkTeaCashier.WPF.Views
                     PasswordHash = password,
                     FullName = fullName,
                     Role = selectedRole.Tag.ToString(),
-                    Status = selectedStatus.Tag.ToString(),
+                    Status = selectedStatus,
                     CreatedAt = createdAt,
                     UpdatedAt = updatedAt
                 };
