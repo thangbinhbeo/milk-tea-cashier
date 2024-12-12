@@ -145,5 +145,10 @@ namespace MilkTeaCashier.WPF.Views
 			var categoryManagement = new CategoryManagement();
 			categoryManagement.ShowDialog();
 		}
+
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }
