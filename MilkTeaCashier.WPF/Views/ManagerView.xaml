@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
         mc:Ignorable="d"
-        Title="ManagerView" Height="500" Width="800">
+        Title="ManagerView" Height="500" Width="800" WindowStartupLocation="CenterScreen">
     <Grid>
 
         <Border CornerRadius="10" BorderThickness="2" Opacity="0.95">

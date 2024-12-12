@@ -36,7 +36,7 @@ namespace MilkTeaCashier.WPF.Views
 		private void AddProduct_Click(object sender, RoutedEventArgs e)
 		{
 			var productDetailView = new ProductDetailView();
-			var dialogResult = productDetailView.ShowDialog(); // Show the product detail view for adding a new product
+			var dialogResult = productDetailView.ShowDialog();
 			LoadProducts();
 		}
 
@@ -49,9 +49,9 @@ namespace MilkTeaCashier.WPF.Views
 
 				var productDetailView = new ProductDetailView
 				{
-					EditProduct = selectedProduct // Set the property
+					EditProduct = selectedProduct 
 				};
-				bool? dialogResult = productDetailView.ShowDialog(); // Open as modal dialog
+				bool? dialogResult = productDetailView.ShowDialog();
 				LoadProducts();
 			}
 			else

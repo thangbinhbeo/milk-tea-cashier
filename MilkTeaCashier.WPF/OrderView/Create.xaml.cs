@@ -19,6 +19,7 @@ namespace MilkTeaCashier.WPF.OrderView
 		private readonly OrderService _orderService;
 		private readonly CustomerService _customerService;
 		private ObservableCollection<OrderDetailDto> _selectedProducts;
+		private List<CartItem> _listCart;
 
 		private bool isLoyal = false;
 
@@ -31,63 +32,30 @@ namespace MilkTeaCashier.WPF.OrderView
 			_selectedProducts = new ObservableCollection<OrderDetailDto>();  
 			_employeeID = employeeID;
 			ProductsDataGrid.ItemsSource = _selectedProducts; 
-			LoadProduct();
 		}
-
-		private async void LoadProduct()
+		
+		public Create(int employeeID, List<CartItem> cartList)
 		{
-			try
-			{
-				var productList = await _orderService.GetAllProductsAsync();
-				if (productList == null || !productList.Any())
-				{
-					MessageBox.Show("No products found.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-					return;
-				}
+			InitializeComponent();
+			_orderService ??= new OrderService();
+			_customerService ??= new CustomerService();
+			_selectedProducts = new ObservableCollection<OrderDetailDto>();  
+			_employeeID = employeeID;
+			ProductsDataGrid.ItemsSource = _selectedProducts; 
+			_listCart = cartList;
 
-				ProductComboBox.ItemsSource = productList.Select(p => p.Name).ToList();
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"An error occurred while loading products: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			}
-		}
+			ProductsDataGrid.ItemsSource = _listCart;
+			SubtotalTextBlock.Text = _listCart.Sum(o => o.SubTotal).ToString();
+        }
 
 		private async void AddProductButton_Click(object sender, RoutedEventArgs e)
 		{
 			try
 			{
-				// Kiểm tra xem người dùng đã chọn sản phẩm chưa
-				var selectedProductName = ProductComboBox.SelectedItem?.ToString();
-				if (string.IsNullOrEmpty(selectedProductName))
-				{
-					MessageBox.Show("Please select a product.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-					return;
-				}
+				var cart = new ProductCart(_employeeID);
+				cart.ShowDialog();
 
-				// Tải danh sách sản phẩm bất đồng bộ
-				var productList = await _orderService.GetAllProductsAsync();
-				var product = productList.FirstOrDefault(p => p.Name == selectedProductName);
-
-				if (product == null)
-				{
-					MessageBox.Show("Selected product not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-					return;
-				}
-
-				// Tạo một đối tượng Product trong DataGrid
-				var productToAdd = new OrderDetailDto
-				{
-					ProductId = product.ProductId,
-					ProductName = product.Name,
-					Size = product.Size, 
-					Price = product.Price, 
-					Quantity = 1, 
-					OrderDetailStatus = "Pending",
-				};
-
-				// Thêm vào danh sách
-				_selectedProducts.Add(productToAdd);
+				this.Close();
 			}
 			catch (Exception ex)
 			{
@@ -134,9 +102,9 @@ namespace MilkTeaCashier.WPF.OrderView
 					return;
 				}
 
-				if (!_selectedProducts.Any())
+				if (ProductsDataGrid.ItemsSource == null)
 				{
-					MessageBox.Show("Please choose at least 1 Product.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+					MessageBox.Show("There is none of products to paid !", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
 					return;
 				}
 
@@ -160,7 +128,7 @@ namespace MilkTeaCashier.WPF.OrderView
 					Note = note,
 					PaymentMethod = paymentMethod,
 					EmployeeId = _employeeID,
-					CustomerScore = customerLoyal
+                    CustomerScore = customerLoyal
 				};
 
 				newOrder.orderDetails = _selectedProducts.Select(p => new OrderDetailDto
@@ -170,9 +138,8 @@ namespace MilkTeaCashier.WPF.OrderView
 					Size = p.Size,
 					Price = p.Price,
 					Quantity = p.Quantity,
-					OrderDetailStatus = p.OrderDetailStatus,
+					OrderDetailStatus = "Pending",
 				}).ToList();
-
 
 				// 4. Lưu đơn hàng (gọi dịch vụ lưu đơn hàng)
 				var result = await _orderService.PlaceOrderAsync(newOrder);
@@ -194,28 +161,6 @@ namespace MilkTeaCashier.WPF.OrderView
 				}
 
 				MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			}
-		}
-
-		private void RemoveProductButton_Click(object sender, RoutedEventArgs e)
-		{
-			try
-			{
-				// Lấy sản phẩm được chọn trong DataGrid
-				var selectedProduct = ProductsDataGrid.SelectedItem as OrderDetailDto;
-
-				if (selectedProduct == null)
-				{
-					MessageBox.Show("Please select a product to remove.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-					return;
-				}
-
-				// Loại bỏ sản phẩm khỏi danh sách
-				_selectedProducts.Remove(selectedProduct);
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"An error occurred while removing the product: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
 		}
 
