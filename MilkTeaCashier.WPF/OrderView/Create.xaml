@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Create Order" Height="700" Width="900"
-        Background="#f8f8f8" FontFamily="Segoe UI">
+        Background="#87cefa" FontFamily="Segoe UI" WindowStartupLocation="CenterScreen">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <TextBlock Text="Create Order" FontSize="24" FontWeight="Bold" Foreground="#333" Margin="0,0,0,20" />
+        <TextBlock Text="Create Order" FontSize="24" FontWeight="Bold" Foreground="#333" HorizontalAlignment="Center" Margin="0,0,0,20" />
 
         <!-- Form Content -->
         <Grid Grid.Row="1" Margin="10">
@@ -26,23 +26,14 @@
 
             <!-- Order Details -->
             <StackPanel Margin="10" Grid.Column="0">
-                
-                <!-- Customer Name -->
                 <StackPanel Margin="0,0,0,10">
                     <TextBlock Text="Customer Name:" FontWeight="Bold" />
-                    <StackPanel Margin="0,0,0,10">
-                        <CheckBox Name="RegisterPointCheckBox" Content="Already is loyalty customer" Checked="RegisterPointCheckBox_Checked" Unchecked="RegisterPointCheckBox_Unchecked" Margin="0,5"/>
-                    </StackPanel>
-
+                    <CheckBox Name="RegisterPointCheckBox" Content="Already is loyalty customer" Checked="RegisterPointCheckBox_Checked" Unchecked="RegisterPointCheckBox_Unchecked" Margin="0,5" />
                     <ComboBox Name="CustomerComboBox" Height="30" Margin="0,5" Visibility="Collapsed" SelectionChanged="CustomerComboBox_SelectionChanged"/>
-
                     <TextBox Name="CustomerNameTextBox" Height="30" Margin="0,5" />
-
                     <TextBlock Name="CustomerPointsTextBlock" Visibility="Collapsed" Margin="0,5"/>
-
                     <CheckBox Name="ApplyPointsCheckBox" Content="Apply loyalty points to order" Visibility="Collapsed" Margin="0,5"/>
                 </StackPanel>
-
 
                 <!-- Table Number -->
                 <StackPanel Margin="0,0,0,10">
@@ -55,8 +46,8 @@
                     <TextBlock Text="Dine-in (Is Stay):" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0" />
                     <CheckBox Name="IsStayCheckBox" VerticalAlignment="Center" />
                 </StackPanel>
-                
-                <!--Payment Method-->
+
+                <!-- Payment Method -->
                 <StackPanel Margin="0,0,0,10">
                     <TextBlock Text="Payment Method:" FontWeight="Bold" />
                     <ComboBox Name="PaymentMethodComboBox" Height="30" Margin="0,5">
@@ -109,13 +100,11 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
-
-
                 <!-- Add Product Section -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                     <ComboBox Name="ProductComboBox" Width="200" Margin="0,0,10,0" />
-                    <Button Content="Add Product" Name="AddProductButton" Width="100" Click="AddProductButton_Click" />
-                    <Button Content="Remove" Name="RemoveProductButton" Width="100" Click="RemoveProductButton_Click" Margin="20,0,10,0"/>
+                    <Button Content="Add Product" Name="AddProductButton" Width="100" Background="#1E90FF" Foreground="White" Click="AddProductButton_Click" />
+                    <Button Content="Remove" Name="RemoveProductButton" Width="100" Background="#FF6347" Foreground="White" Click="RemoveProductButton_Click" Margin="20,0,10,0"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,10,0,10" HorizontalAlignment="Right">
@@ -127,9 +116,10 @@
 
         <!-- Footer -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-            <Button Content="Save Order" Name="SaveOrderButton" Width="120" Margin="5" Padding="5" Click="SaveOrderButton_Click" />
-            <Button Content="Cancel" Name="CancelButton" Width="120" Margin="5" Padding="5" Click="CancelButton_Click" />
+            <Button Content="Save Order" Name="SaveOrderButton" Width="120" Background="#32CD32" Foreground="White" Margin="5" Padding="5" Click="SaveOrderButton_Click" />
+            <Button Content="Cancel" Name="CancelButton" Width="120" Background="#FF6347" Foreground="White" Margin="5" Padding="5" Click="CancelButton_Click" />
         </StackPanel>
-        <Button Content="Sign up a loyalty customer" HorizontalAlignment="Left" Width="170" Margin="5,15,0,0" Padding="5" Grid.Row="2" VerticalAlignment="Top" Click="CreateCustomerButton_Click"/>
+
+        <Button Content="Sign up a loyalty customer" HorizontalAlignment="Left" Width="170" Margin="5,15,0,0" Padding="5" Grid.Row="2" VerticalAlignment="Top" Background="#FFD700" Foreground="Black" Click="CreateCustomerButton_Click"/>
     </Grid>
 </Window>

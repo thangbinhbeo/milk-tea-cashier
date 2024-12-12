@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.OrderView"
         mc:Ignorable="d"
-                Title="Create Order" Height="700" Width="900"
-        Background="#f8f8f8" FontFamily="Segoe UI">
+        Title="Create Order" Height="700" Width="900"
+        Background="#87cefa" FontFamily="Segoe UI" WindowStartupLocation="CenterScreen">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <TextBlock Text="Details Order" FontSize="24" FontWeight="Bold" Foreground="#333" Margin="0,0,0,20" />
+        <TextBlock Text="Details Order" FontSize="24" FontWeight="Bold" Foreground="#333" Margin="0,0,0,20" HorizontalAlignment="Center" />
 
         <!-- Form Content -->
         <Grid Grid.Row="1" Margin="10">
@@ -105,21 +105,19 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
-
-
                 <!-- Add Product Section -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                     <ComboBox Name="ProductComboBox" Width="200" Margin="0,0,10,0" />
-                    <Button Content="Add Product" Name="AddProductButton" Width="100" Click="AddProductButton_Click" />
-                    <Button Content="Remove" Name="RemoveProductButton" Width="100" Click="RemoveProductButton_Click" Margin="20,0,10,0"/>
+                    <Button Content="Add Product" Name="AddProductButton" Width="100" Background="#32CD32" Foreground="White" Click="AddProductButton_Click" />
+                    <Button Content="Remove" Name="RemoveProductButton" Width="100" Background="#FF6347" Foreground="White" Click="RemoveProductButton_Click" Margin="20,0,10,0"/>
                 </StackPanel>
             </StackPanel>
         </Grid>
 
         <!-- Footer -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-            <Button Content="Save Order" Name="SaveOrderButton" Width="120" Margin="5" Padding="5" Click="SaveOrderButton_Click" />
-            <Button Content="Cancel" Name="CancelButton" Width="120" Margin="5" Padding="5" Click="CancelButton_Click" />
+            <Button Content="Save Order" Name="SaveOrderButton" Width="120" Margin="5" Padding="5" Background="#1E90FF" Foreground="White" Click="SaveOrderButton_Click" />
+            <Button Content="Cancel" Name="CancelButton" Width="120" Margin="5" Padding="5" Background="#FFD700" Foreground="Black" Click="CancelButton_Click" />
         </StackPanel>
     </Grid>
 </Window>
