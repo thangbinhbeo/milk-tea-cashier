@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.OrderView"
         mc:Ignorable="d"
-        Title="Order Management" Background="#f8f8f8" Width="908" Height="500">
+        Title="Order Management" Background="#87cefa" Width="908" Height="500" WindowStartupLocation="CenterScreen">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <TextBlock Grid.Row="0" Text="Order Management" FontSize="24" FontWeight="Bold" Foreground="#333" Margin="0,0,0,10"/>
+        <TextBlock Grid.Row="0" Text="Order Management" FontSize="24" FontWeight="Bold" Foreground="#333" HorizontalAlignment="Center" Margin="0,0,0,10"/>
 
         <!-- Search Fields -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
@@ -40,12 +40,12 @@
                 <TextBlock Text="Order ID" Margin="0,0,0,5"/>
                 <TextBox Name="SearchOrderIdTextBox" Width="100"/>
             </StackPanel>
-            <Button Content="Search" Width="100" Margin="5" Click="SearchButton_Click" />
+            <Button Content="Search" Width="100" Margin="5" Click="SearchButton_Click" Background="#1E90FF" Foreground="White"/>
         </StackPanel>
 
         <!-- Data Grid -->
         <DataGrid Grid.Row="2" Name="OrdersDataGrid" AutoGenerateColumns="False" Margin="0,0,0,10"
-              RowBackground="#fff" AlternatingRowBackground="#f2f2f2" GridLinesVisibility="None">
+              RowBackground="#fff" AlternatingRowBackground="#f2f2f2" GridLinesVisibility="None" IsReadOnly="True" SelectionMode="Single">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Order ID" Binding="{Binding OrderId}" Width="100"/>
                 <DataGridTextColumn Header="Customer Name" Binding="{Binding CustomerName}" Width="200"/>
@@ -59,10 +59,10 @@
 
         <!-- Buttons -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="View Details" Name="ViewDetailsButton" Width="120" Margin="5" Click="ViewDetailsButton_Click" />
-            <Button Content="Add Order" Name="AddOrderButton" Width="120" Margin="5" Click="AddOrderButton_Click" />
-            <Button Content="Delete Order" Name="DeleteOrderButton" Width="120" Margin="5" Click="DeleteOrderButton_Click" />
-            <Button Content="LOGOUT" Name="CloseButton" Width="120" Margin="5" Click="CloseButton_Click" />
+            <Button Content="View Details" Name="ViewDetailsButton" Width="120" Margin="5" Click="ViewDetailsButton_Click"  Background="#FFD700" Foreground="Black"/>
+            <Button Content="Add Order" Name="AddOrderButton" Width="120" Margin="5" Click="AddOrderButton_Click" Background="#32CD32" Foreground="Black"/>
+            <Button Content="Delete Order" Name="DeleteOrderButton" Width="120" Margin="5" Click="DeleteOrderButton_Click" Background="#FF6347" Foreground="White"/>
+            <Button Content="LOGOUT" Name="CloseButton" Width="120" Margin="5" Click="CloseButton_Click" Background="#1E90FF" Foreground="White"/>
         </StackPanel>
     </Grid>
 </Window>
