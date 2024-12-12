@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         Title="Sales Reporting" Height="800" Width="1000"
-        Background="#f4f4f4">
+        Background="#f4f4f4" WindowStartupLocation="CenterScreen">
     <Grid Margin="10">
         <!-- Grid Definitions -->
         <Grid.RowDefinitions>

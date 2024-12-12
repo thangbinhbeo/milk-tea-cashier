@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Create Order" Height="700" Width="900"
+        Title="Create Order" Height="600" Width="900"
         Background="#87cefa" FontFamily="Segoe UI" WindowStartupLocation="CenterScreen">
 
     <Grid Margin="10">
@@ -32,7 +32,7 @@
                     <ComboBox Name="CustomerComboBox" Height="30" Margin="0,5" Visibility="Collapsed" SelectionChanged="CustomerComboBox_SelectionChanged"/>
                     <TextBox Name="CustomerNameTextBox" Height="30" Margin="0,5" />
                     <TextBlock Name="CustomerPointsTextBlock" Visibility="Collapsed" Margin="0,5"/>
-                    <CheckBox Name="ApplyPointsCheckBox" Content="Apply loyalty points to order" Visibility="Collapsed" Margin="0,5"/>
+                    <CheckBox Name="ApplyPointsCheckBox" Content="Apply loyalty points to order" Visibility="Collapsed" Margin="0,5" Checked="PointUse" Unchecked="PointNoUse"/>
                 </StackPanel>
 
                 <!-- Table Number -->
@@ -57,16 +57,6 @@
                     </ComboBox>
                 </StackPanel>
 
-                <!-- Status -->
-                <StackPanel Margin="0,0,0,10">
-                    <TextBlock Text="Order Status:" FontWeight="Bold" />
-                    <ComboBox Name="StatusComboBox" Height="30" Margin="0,5">
-                        <ComboBoxItem Content="Pending" />
-                        <ComboBoxItem Content="Completed" />
-                        <ComboBoxItem Content="Canceled" />
-                    </ComboBox>
-                </StackPanel>
-
                 <!-- Note -->
                 <StackPanel Margin="0,0,0,10">
                     <TextBlock Text="Note:" FontWeight="Bold" />
@@ -81,30 +71,17 @@
                 <!-- Product List DataGrid -->
                 <DataGrid Name="ProductsDataGrid" AutoGenerateColumns="False" Height="250" Margin="0,0,0,10" CellEditEnding="ProductsDataGrid_CellEditEnding">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Id" Binding="{Binding ProductId}" Width="*" IsReadOnly="True" />
-                        <DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}" Width="*" IsReadOnly="True" />
-                        <DataGridTextColumn Header="Size" Binding="{Binding Size, Mode=TwoWay}" Width="*" />
-                        <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="*" IsReadOnly="True" />
-                        <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity, Mode=TwoWay}" Width="*" />
-                        <DataGridTemplateColumn Header="Status" Width="*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <ComboBox Text="{Binding OrderDetailStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="120">
-                                        <ComboBoxItem Content="Pending" />
-                                        <ComboBoxItem Content="Processing" />
-                                        <ComboBoxItem Content="Completed" />
-                                    </ComboBox>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Id" Binding="{Binding ProductId}" Width="40" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Product Name" Binding="{Binding Name}" Width="*" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Size" Binding="{Binding Size, Mode=TwoWay}" Width="40" />
+                        <DataGridTextColumn Header="Price" Binding="{Binding SubTotal}" Width="100" IsReadOnly="True" />
+                        <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity, Mode=TwoWay}" Width="70" />
                     </DataGrid.Columns>
                 </DataGrid>
 
                 <!-- Add Product Section -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <ComboBox Name="ProductComboBox" Width="200" Margin="0,0,10,0" />
-                    <Button Content="Add Product" Name="AddProductButton" Width="100" Background="#1E90FF" Foreground="White" Click="AddProductButton_Click" />
-                    <Button Content="Remove" Name="RemoveProductButton" Width="100" Background="#FF6347" Foreground="White" Click="RemoveProductButton_Click" Margin="20,0,10,0"/>
+                    <Button Content="Update Order Product" Name="AddProductButton" Width="496" Background="#1E90FF" Foreground="White" Click="AddProductButton_Click" Padding="5"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,10,0,10" HorizontalAlignment="Right">

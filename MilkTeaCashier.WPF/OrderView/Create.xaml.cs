@@ -1,5 +1,6 @@
 ﻿using MilkTeaCashier.Data.DTOs.OrderDTO;
 using MilkTeaCashier.Data.Models;
+using MilkTeaCashier.Data.UnitOfWork;
 using MilkTeaCashier.Service.Interfaces;
 using MilkTeaCashier.Service.Services;
 using MilkTeaCashier.WPF.Views;
@@ -18,7 +19,10 @@ namespace MilkTeaCashier.WPF.OrderView
 	{
 		private readonly OrderService _orderService;
 		private readonly CustomerService _customerService;
-		private ObservableCollection<OrderDetailDto> _selectedProducts;
+		private ObservableCollection<CartItem> _selectedProducts;
+		private List<CartItem> _listCart;
+		private int _customerId = 0;
+		private double _originalPrice = 0;
 
 		private bool isLoyal = false;
 
@@ -28,66 +32,33 @@ namespace MilkTeaCashier.WPF.OrderView
 			InitializeComponent();
 			_orderService ??= new OrderService();
 			_customerService ??= new CustomerService();
-			_selectedProducts = new ObservableCollection<OrderDetailDto>();  
+			_selectedProducts = new ObservableCollection<CartItem>();  
 			_employeeID = employeeID;
 			ProductsDataGrid.ItemsSource = _selectedProducts; 
-			LoadProduct();
 		}
-
-		private async void LoadProduct()
+		
+		public Create(int employeeID, List<CartItem> cartList)
 		{
-			try
-			{
-				var productList = await _orderService.GetAllProductsAsync();
-				if (productList == null || !productList.Any())
-				{
-					MessageBox.Show("No products found.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-					return;
-				}
+			InitializeComponent();
+			_orderService ??= new OrderService();
+			_customerService ??= new CustomerService();
+			_selectedProducts = new ObservableCollection<CartItem>();  
+			_employeeID = employeeID;
+			ProductsDataGrid.ItemsSource = _selectedProducts; 
+			_listCart = cartList;
 
-				ProductComboBox.ItemsSource = productList.Select(p => p.Name).ToList();
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"An error occurred while loading products: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			}
-		}
+			ProductsDataGrid.ItemsSource = _listCart;
+			SubtotalTextBlock.Text = _listCart.Sum(o => o.SubTotal).ToString();
+        }
 
 		private async void AddProductButton_Click(object sender, RoutedEventArgs e)
 		{
 			try
 			{
-				// Kiểm tra xem người dùng đã chọn sản phẩm chưa
-				var selectedProductName = ProductComboBox.SelectedItem?.ToString();
-				if (string.IsNullOrEmpty(selectedProductName))
-				{
-					MessageBox.Show("Please select a product.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-					return;
-				}
+				var cart = new ProductCart(_employeeID);
+				cart.ShowDialog();
 
-				// Tải danh sách sản phẩm bất đồng bộ
-				var productList = await _orderService.GetAllProductsAsync();
-				var product = productList.FirstOrDefault(p => p.Name == selectedProductName);
-
-				if (product == null)
-				{
-					MessageBox.Show("Selected product not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-					return;
-				}
-
-				// Tạo một đối tượng Product trong DataGrid
-				var productToAdd = new OrderDetailDto
-				{
-					ProductId = product.ProductId,
-					ProductName = product.Name,
-					Size = product.Size, 
-					Price = product.Price, 
-					Quantity = 1, 
-					OrderDetailStatus = "Pending",
-				};
-
-				// Thêm vào danh sách
-				_selectedProducts.Add(productToAdd);
+				this.Close();
 			}
 			catch (Exception ex)
 			{
@@ -123,7 +94,7 @@ namespace MilkTeaCashier.WPF.OrderView
                 // 1. Thu thập thông tin từ các trường trong giao diện
 				string tableNumber = TableNumberTextBox.Text.Trim();
 				bool isStay = IsStayCheckBox.IsChecked.GetValueOrDefault();
-				string orderStatus = (StatusComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+				string orderStatus = "Completed";
 				string paymentMethod = (PaymentMethodComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
 				string note = NoteTextBox.Text.Trim();
 
@@ -134,9 +105,9 @@ namespace MilkTeaCashier.WPF.OrderView
 					return;
 				}
 
-				if (!_selectedProducts.Any())
+				if (ProductsDataGrid.ItemsSource == null)
 				{
-					MessageBox.Show("Please choose at least 1 Product.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+					MessageBox.Show("There is none of products to paid !", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
 					return;
 				}
 
@@ -160,19 +131,18 @@ namespace MilkTeaCashier.WPF.OrderView
 					Note = note,
 					PaymentMethod = paymentMethod,
 					EmployeeId = _employeeID,
-					CustomerScore = customerLoyal
+                    CustomerScore = customerLoyal
 				};
 
-				newOrder.orderDetails = _selectedProducts.Select(p => new OrderDetailDto
+				newOrder.orderDetails = _listCart.Select(p => new OrderDetailDto
 				{
 					ProductId = p.ProductId,
-					ProductName = p.ProductName,
+					ProductName = p.Name,
 					Size = p.Size,
 					Price = p.Price,
 					Quantity = p.Quantity,
-					OrderDetailStatus = p.OrderDetailStatus,
+					OrderDetailStatus = "Pending",
 				}).ToList();
-
 
 				// 4. Lưu đơn hàng (gọi dịch vụ lưu đơn hàng)
 				var result = await _orderService.PlaceOrderAsync(newOrder);
@@ -194,28 +164,6 @@ namespace MilkTeaCashier.WPF.OrderView
 				}
 
 				MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			}
-		}
-
-		private void RemoveProductButton_Click(object sender, RoutedEventArgs e)
-		{
-			try
-			{
-				// Lấy sản phẩm được chọn trong DataGrid
-				var selectedProduct = ProductsDataGrid.SelectedItem as OrderDetailDto;
-
-				if (selectedProduct == null)
-				{
-					MessageBox.Show("Please select a product to remove.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-					return;
-				}
-
-				// Loại bỏ sản phẩm khỏi danh sách
-				_selectedProducts.Remove(selectedProduct);
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"An error occurred while removing the product: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
 		}
 
@@ -266,6 +214,7 @@ namespace MilkTeaCashier.WPF.OrderView
             if (CustomerComboBox.SelectedItem is ComboBoxItem selectedItem)
             {
                 var customerId = (int)selectedItem.Tag;
+				_customerId = customerId;
 
                 var customer = await _customerService.GetCustomerByIdAsync(customerId);
 
@@ -318,6 +267,52 @@ namespace MilkTeaCashier.WPF.OrderView
             }
 
             SubtotalTextBlock.Text = subtotal.ToString("C2");
+        }
+
+        private async void PointUse(object sender, RoutedEventArgs e)
+		{
+            try
+            {
+				if (int.Parse(SubtotalTextBlock.Text.Trim()) == 0)
+				{
+                    MessageBox.Show("There aren't any products !", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+				} 
+				else
+				{
+                    var customer = await _customerService.GetCustomerByIdAsync(_customerId);
+
+                    int price = int.Parse(SubtotalTextBlock.Text.Trim());
+					_originalPrice = price;
+					int score = customer.Score != null ? (int)customer.Score : 0;
+                    if (score >= price)
+                    {
+						SubtotalTextBlock.Text = (0).ToString();
+                    }
+                    else
+                    {
+                        SubtotalTextBlock.Text = (price - score).ToString();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error discount point: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+		
+		private void PointNoUse(object sender, RoutedEventArgs e)
+		{
+            try
+            {
+                SubtotalTextBlock.Text = _originalPrice.ToString();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error discount point: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

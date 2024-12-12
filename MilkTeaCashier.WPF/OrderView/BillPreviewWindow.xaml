@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.OrderView"
         mc:Ignorable="d"
-        Title="BillPreviewWindow" Height="600" Width="400">
+        Title="BillPreviewWindow" Height="600" Width="400" WindowStartupLocation="CenterScreen">
     <Grid>
         <StackPanel>
             <TextBlock Text="Order Invoice" FontSize="24" HorizontalAlignment="Center" Margin="10"/>
