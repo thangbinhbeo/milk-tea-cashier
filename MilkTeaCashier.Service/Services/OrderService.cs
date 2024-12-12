@@ -24,15 +24,6 @@ namespace MilkTeaCashier.Service.Services
             if (model == null || model.orderDetails == null || !model.orderDetails.Any())
                 throw new ArgumentException("Order or OrderDetails cannot be null or empty.");
 
-            var a = await _unitOfWork.TableCardRepository.FindByConditionAsync(a => a.NumberTableCard == model.NumberTableCard);
-            if (a.Any())
-            {
-                return new OrderResponse
-                {
-                    OrderId = 0,
-                    Message = "Please choose other TableNumber",
-                };
-            }
 
             Order order = new Order
             {
@@ -48,14 +39,23 @@ namespace MilkTeaCashier.Service.Services
                 EmployeeId = model.EmployeeId
             };
 
-            // Calculate total
             if (model.CustomerScore > 0)
             {
                 var total = model.orderDetails.Sum(d => d.Quantity * d.Price);
-                order.TotalAmount = total - model.CustomerScore.Value;
 
                 var customer = await _unitOfWork.CustomerRepository.GetByIdAsync(model.CustomerId.Value);
-                customer.Score = 0;
+                if (model.CustomerScore >= total)
+                {
+                    order.TotalAmount = 0;
+
+                    customer.Score -= (customer.Score - (int)Math.Round(total));
+                }
+                else
+                {
+                    order.TotalAmount = total - model.CustomerScore.Value;
+
+                    customer.Score = 0;
+                }
 
                 await _unitOfWork.CustomerRepository.UpdateAsync(customer);
             } 
@@ -76,8 +76,8 @@ namespace MilkTeaCashier.Service.Services
                 await _unitOfWork.CustomerRepository.UpdateAsync(customer);
             }
 
-            await _unitOfWork.OrderRepository.AddAsync(order);
-            await _unitOfWork.OrderRepository.SaveAsync();
+            var rs = await _unitOfWork.OrderRepository.CreateAsync(order);
+
             int orderID = order.OrderId;
 
             foreach (var detail in model.orderDetails)
@@ -91,10 +91,8 @@ namespace MilkTeaCashier.Service.Services
                     Price = detail.Price,
                     Status = detail.OrderDetailStatus,
                 };
-                await _unitOfWork.OrderDetailRepository.AddAsync(orderDetail);
+                await _unitOfWork.OrderDetailRepository.CreateAsync(orderDetail);
             }
-
-            await _unitOfWork.OrderDetailRepository.SaveAsync();
 
             return new OrderResponse
             {

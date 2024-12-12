@@ -32,7 +32,7 @@
                     <ComboBox Name="CustomerComboBox" Height="30" Margin="0,5" Visibility="Collapsed" SelectionChanged="CustomerComboBox_SelectionChanged"/>
                     <TextBox Name="CustomerNameTextBox" Height="30" Margin="0,5" />
                     <TextBlock Name="CustomerPointsTextBlock" Visibility="Collapsed" Margin="0,5"/>
-                    <CheckBox Name="ApplyPointsCheckBox" Content="Apply loyalty points to order" Visibility="Collapsed" Margin="0,5"/>
+                    <CheckBox Name="ApplyPointsCheckBox" Content="Apply loyalty points to order" Visibility="Collapsed" Margin="0,5" Checked="PointUse" Unchecked="PointNoUse"/>
                 </StackPanel>
 
                 <!-- Table Number -->

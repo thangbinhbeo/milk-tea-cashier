@@ -1,5 +1,6 @@
 ﻿using MilkTeaCashier.Data.DTOs.OrderDTO;
 using MilkTeaCashier.Data.Models;
+using MilkTeaCashier.Data.UnitOfWork;
 using MilkTeaCashier.Service.Interfaces;
 using MilkTeaCashier.Service.Services;
 using MilkTeaCashier.WPF.Views;
@@ -18,8 +19,10 @@ namespace MilkTeaCashier.WPF.OrderView
 	{
 		private readonly OrderService _orderService;
 		private readonly CustomerService _customerService;
-		private ObservableCollection<OrderDetailDto> _selectedProducts;
+		private ObservableCollection<CartItem> _selectedProducts;
 		private List<CartItem> _listCart;
+		private int _customerId = 0;
+		private double _originalPrice = 0;
 
 		private bool isLoyal = false;
 
@@ -29,7 +32,7 @@ namespace MilkTeaCashier.WPF.OrderView
 			InitializeComponent();
 			_orderService ??= new OrderService();
 			_customerService ??= new CustomerService();
-			_selectedProducts = new ObservableCollection<OrderDetailDto>();  
+			_selectedProducts = new ObservableCollection<CartItem>();  
 			_employeeID = employeeID;
 			ProductsDataGrid.ItemsSource = _selectedProducts; 
 		}
@@ -39,7 +42,7 @@ namespace MilkTeaCashier.WPF.OrderView
 			InitializeComponent();
 			_orderService ??= new OrderService();
 			_customerService ??= new CustomerService();
-			_selectedProducts = new ObservableCollection<OrderDetailDto>();  
+			_selectedProducts = new ObservableCollection<CartItem>();  
 			_employeeID = employeeID;
 			ProductsDataGrid.ItemsSource = _selectedProducts; 
 			_listCart = cartList;
@@ -131,10 +134,10 @@ namespace MilkTeaCashier.WPF.OrderView
                     CustomerScore = customerLoyal
 				};
 
-				newOrder.orderDetails = _selectedProducts.Select(p => new OrderDetailDto
+				newOrder.orderDetails = _listCart.Select(p => new OrderDetailDto
 				{
 					ProductId = p.ProductId,
-					ProductName = p.ProductName,
+					ProductName = p.Name,
 					Size = p.Size,
 					Price = p.Price,
 					Quantity = p.Quantity,
@@ -211,6 +214,7 @@ namespace MilkTeaCashier.WPF.OrderView
             if (CustomerComboBox.SelectedItem is ComboBoxItem selectedItem)
             {
                 var customerId = (int)selectedItem.Tag;
+				_customerId = customerId;
 
                 var customer = await _customerService.GetCustomerByIdAsync(customerId);
 
@@ -263,6 +267,52 @@ namespace MilkTeaCashier.WPF.OrderView
             }
 
             SubtotalTextBlock.Text = subtotal.ToString("C2");
+        }
+
+        private async void PointUse(object sender, RoutedEventArgs e)
+		{
+            try
+            {
+				if (int.Parse(SubtotalTextBlock.Text.Trim()) == 0)
+				{
+                    MessageBox.Show("There aren't any products !", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+				} 
+				else
+				{
+                    var customer = await _customerService.GetCustomerByIdAsync(_customerId);
+
+                    int price = int.Parse(SubtotalTextBlock.Text.Trim());
+					_originalPrice = price;
+					int score = customer.Score != null ? (int)customer.Score : 0;
+                    if (score >= price)
+                    {
+						SubtotalTextBlock.Text = (0).ToString();
+                    }
+                    else
+                    {
+                        SubtotalTextBlock.Text = (price - score).ToString();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error discount point: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+		
+		private void PointNoUse(object sender, RoutedEventArgs e)
+		{
+            try
+            {
+                SubtotalTextBlock.Text = _originalPrice.ToString();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error discount point: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
