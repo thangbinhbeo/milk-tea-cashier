@@ -8,7 +8,7 @@
                 Title="Update Employee"
         Height="450"
         Width="600"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" Background="#87cefa">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

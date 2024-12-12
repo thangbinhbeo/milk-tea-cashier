@@ -94,7 +94,7 @@ namespace MilkTeaCashier.WPF.OrderView
                 // 1. Thu thập thông tin từ các trường trong giao diện
 				string tableNumber = TableNumberTextBox.Text.Trim();
 				bool isStay = IsStayCheckBox.IsChecked.GetValueOrDefault();
-				string orderStatus = "Completed";
+				string orderStatus = "Pending";
 				string paymentMethod = (PaymentMethodComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
 				string note = NoteTextBox.Text.Trim();
 

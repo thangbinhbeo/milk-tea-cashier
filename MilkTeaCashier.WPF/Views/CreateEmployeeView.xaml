@@ -8,7 +8,7 @@
         Title="Create Employee"
         Height="350"
         Width="600"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" Background="#87cefa">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -18,25 +18,25 @@
         <StackPanel Margin="10">
             
             <TextBlock Text="Username:" Margin="0,0,0,5"/>
-            <TextBox x:Name="txtUsername" />
+            <TextBox x:Name="txtUsername" Padding="3"/>
 
          
-            <TextBlock Text="Password:" Margin="10,10,0,5"/>
-            <PasswordBox x:Name="txtPassword" />
+            <TextBlock Text="Password:" Margin="0,10,0,5"/>
+            <PasswordBox x:Name="txtPassword" Padding="3"/>
 
             
-            <TextBlock Text="Full Name:" Margin="10,10,0,5"/>
-            <TextBox x:Name="txtFullName" />
+            <TextBlock Text="Full Name:" Margin="0,10,0,5"/>
+            <TextBox x:Name="txtFullName" Padding="3"/>
 
            
-            <TextBlock Text="Role:" Margin="10,10,0,5"/>
+            <TextBlock Text="Role:" Margin="0,10,0,5"/>
             <ComboBox x:Name="cmbRole">
                 <ComboBoxItem Content="Manager" Tag="Manager"/>
                 <ComboBoxItem Content="Cashier" Tag="Cashier"/>
             </ComboBox>
 
-            <TextBlock Text="Created At:" Margin="10,10,0,5" IsEnabled="False"/>
-            <TextBox x:Name="dpCreatedAt"/>
+            <TextBlock Text="Created At:" Margin="0,15,0,5" IsEnabled="False"/>
+            <TextBox x:Name="dpCreatedAt" Padding="3"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0" Grid.Row="1">

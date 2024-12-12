@@ -15,7 +15,15 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <TextBlock Grid.Row="0" Text="Order Management" FontSize="24" FontWeight="Bold" Foreground="#333" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+        <TextBlock Grid.Row="0" Text="ORDER MANAGEMENT" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10">
+            <TextBlock.Foreground>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#FFF700" Offset="0"/>
+                    <GradientStop Color="#FF2525" Offset="1"/>
+                </LinearGradientBrush>
+            </TextBlock.Foreground>
+        </TextBlock>
+
 
         <!-- Search Fields -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">

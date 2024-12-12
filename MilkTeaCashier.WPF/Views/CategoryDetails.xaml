@@ -5,25 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
         mc:Ignorable="d"
-        Title="CategoryDetails" Height="450" Width="550">
+        Title="CategoryDetails" Height="450" Width="550" Background="#87cefa">
     <Canvas>
-        <TextBox x:Name="NameTextBox" Text="{Binding CategoryName}" IsReadOnly="True" Canvas.Left="50" Canvas.Top="40" FontSize="18" FontWeight="Bold"/>
+        <TextBox x:Name="NameTextBox" Text="{Binding CategoryName}" IsReadOnly="True" Canvas.Left="50" Canvas.Top="40" FontSize="18"/>
 
-        <Label Content="ID:" Canvas.Left="50" Canvas.Top="100"/>
+        <Label Content="ID:" Canvas.Left="50" Canvas.Top="100" FontWeight="Bold"/>
         <TextBox x:Name="IdTextBox" Text="{Binding CategoryId}" IsReadOnly="True" Canvas.Left="144" Canvas.Top="105" Width="312" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-        <Label Content="Description:" Canvas.Left="50" Canvas.Top="142"/>
+        <Label Content="Description:" Canvas.Left="50" Canvas.Top="142" FontWeight="Bold"/>
         <TextBox x:Name="DescriptionTextBox" Text="{Binding Description}" IsReadOnly="True" Canvas.Left="144" Canvas.Top="147" Width="312" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-        <Label Content="Updated At:" Canvas.Left="50" Canvas.Top="186"/>
+        <Label Content="Updated At:" Canvas.Left="50" Canvas.Top="186" FontWeight="Bold"/>
         <TextBox x:Name="UpdatedAtTextBox" Text="{Binding UpdatedAt}" IsReadOnly="True" Canvas.Left="144" Canvas.Top="191" Width="312" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-        <Label Content="Created At:" Canvas.Left="50" Canvas.Top="227"/>
+        <Label Content="Created At:" Canvas.Left="50" Canvas.Top="227" FontWeight="Bold"/>
         <TextBox x:Name="CreatedAtTextBox" Text="{Binding CreatedAt}" IsReadOnly="True" Canvas.Left="144" Canvas.Top="232" Width="312" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
         <Button x:Name="UpdateButton" Content="UPDATE" Canvas.Left="55" Canvas.Top="295" Click="UpdateButton_Click" BorderThickness="0" Padding="30, 10" FontWeight="Bold"/>
         <Button x:Name="CancelButton" Content="Cancel Update" Canvas.Left="144" Canvas.Top="295" Click="CancelButton_Click" Visibility="Collapsed" BorderThickness="0" Padding="30, 10" FontWeight="Bold"/>
         <Button x:Name="CloseButton" Content="Back" Canvas.Right="10" Canvas.Top="373" Click="CloseButton_Click" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Left="56" Padding="15, 5" FontSize="15"/>
         <Button x:Name="RemoveButton" Content="Delete" Canvas.Left="360" Canvas.Top="295" Click="RemoveButton_Click" BorderThickness="0" Padding="30, 10" FontWeight="Bold"/>
+        <Label Content="Name: " Canvas.Left="43" Canvas.Top="10" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
+        <Label Content="First update to enable edit category !" Canvas.Left="50" Canvas.Top="328" FontStyle="Italic" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Center"/>
     </Canvas>
 </Window>

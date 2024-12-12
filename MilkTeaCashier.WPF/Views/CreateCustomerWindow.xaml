@@ -5,21 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
         mc:Ignorable="d"
-        Title="Customer Window" Height="350" Width="500" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Background="#111951" > 
+        Title="Customer Window" Height="350" Width="500" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Background="#87cefa" > 
     <Grid>
         <Grid Margin="10">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <!-- Thông tin Customer -->
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <Label Content="Customer Name:" Width="150" VerticalAlignment="Center"/>
+                    <Label Content="Customer Name:" Width="150" VerticalAlignment="Center" FontWeight="Bold"/>
                     <TextBox x:Name="dgName" Width="300"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <Label Content="Phone Number:" Width="150" VerticalAlignment="Center"/>
+                    <Label Content="Phone Number:" Width="150" VerticalAlignment="Center" FontWeight="Bold"/>
                     <TextBox x:Name="dgPhone" Width="300"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <Label Content="Gender:" Width="150" VerticalAlignment="Center"/>
+                    <Label Content="Gender:" Width="150" VerticalAlignment="Center" FontWeight="Bold"/>
                     <ComboBox x:Name="dgGender" Width="300" Margin="5">
                         <ComboBoxItem Content="Male" />
                         <ComboBoxItem Content="Female" />

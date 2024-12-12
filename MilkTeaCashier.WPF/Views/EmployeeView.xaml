@@ -5,31 +5,45 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
         mc:Ignorable="d"
-                Title="EmployeeManagement" Height="500" Width="1000"
+                Title="EmployeeManagement" Height="600" Width="1000"
         FontFamily="Tohoma"
         FontSize="13"
-        Background="White"
+        Background="#87cefa"
         WindowStartupLocation="CenterScreen"
         >
 
     <Grid>
-        <DataGrid x:Name="dgair" AutoGenerateColumns="False" ItemsSource="{Binding Employees}" Margin="10,10,10,133">
+        <TextBlock Text="EMPLOYEE MANAGEMENT" 
+           FontSize="30" 
+           FontWeight="Bold" 
+           HorizontalAlignment="Center" 
+           VerticalAlignment="Top" 
+           Margin="0,22,0,0">
+            <TextBlock.Foreground>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#671E75" Offset="0.112"/>
+                    <GradientStop Color="#FC4C02" Offset="0.911"/>
+                </LinearGradientBrush>
+            </TextBlock.Foreground>
+        </TextBlock>
+
+        <DataGrid x:Name="dgair" AutoGenerateColumns="False" ItemsSource="{Binding Employees}" Margin="10,79,10,93">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="EmployeeID" Binding="{Binding EmployeeId}" Width="Auto"/>
-                <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="*"/>
-                <DataGridTextColumn Header="Password Hash" Binding="{Binding PasswordHash}" Width="Auto"/>
-                <DataGridTextColumn Header="Role" Binding="{Binding Role}" Width="Auto"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding EmployeeId}" Width="40"/>
+                <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="150"/>
+                <DataGridTextColumn Header="Password" Binding="{Binding PasswordHash}" Width="100"/>
+                <DataGridTextColumn Header="Role" Binding="{Binding Role}" Width="100"/>
                 <DataGridTextColumn Header="Full Name" Binding="{Binding FullName}" Width="*"/>
-                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="Auto"/>
-                <DataGridTextColumn Header="Created At" Binding="{Binding CreatedAt}" Width="Auto"/>
-                <DataGridTextColumn Header="Updated At" Binding="{Binding UpdatedAt}" Width="Auto"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+                <DataGridTextColumn Header="Created At" Binding="{Binding CreatedAt}" Width="150"/>
+                <DataGridTextColumn Header="Updated At" Binding="{Binding UpdatedAt}" Width="150"/>
             </DataGrid.Columns>
         </DataGrid>
 
-        <Button Content="Create" Click="BtnCreate_Click" Margin="10,396,766,34"/>
-        <Button Content="Update" Margin="267,396,512,34" Click="BtnUpdate_Click"/>
-        <Button Content="View" Click="BtnView_Click" RenderTransformOrigin="2.1,0.211" Margin="529,396,260,34"/>
-        <Button Content="Delete" Click="BtnDelete_Click" Margin="777,396,10,34"/>
+        <Button Content="Create" Click="BtnCreate_Click" Margin="10,522,766,16"/>
+        <Button Content="Update" Margin="267,522,512,16" Click="BtnUpdate_Click"/>
+        <Button Content="View" Click="BtnView_Click" RenderTransformOrigin="2.1,0.211" Margin="529,522,260,16"/>
+        <Button Content="Delete" Click="BtnDelete_Click" Margin="777,522,10,16"/>
 
     </Grid>
 </Window>

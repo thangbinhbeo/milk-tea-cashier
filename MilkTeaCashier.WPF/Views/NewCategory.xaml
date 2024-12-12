@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
         mc:Ignorable="d"
-        Title="NewCategory" Height="450" Width="520">
+        Title="NewCategory" Height="450" Width="520" Background="#87cefa">
     <Canvas>
         <Label FontWeight="Bold" FontSize="25px" Content="Adding a new category..." Canvas.Left="49" Canvas.Top="39" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 

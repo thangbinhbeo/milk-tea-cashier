@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.OrderView"
         mc:Ignorable="d"
-        Title="Create Order" Height="700" Width="900"
+        Title="Create Order" Height="650" Width="900"
         Background="#87cefa" FontFamily="Segoe UI" WindowStartupLocation="CenterScreen">
 
     <Grid Margin="10">
@@ -36,45 +36,37 @@
                 <!-- Customer Name -->
                 <StackPanel Margin="0,0,0,10">
                     <TextBlock Text="Customer Name:" FontWeight="Bold" />
-                    <TextBox Name="CustomerNameTextBox" Text="{Binding CustomerName}" Height="30" Margin="0,5" />
+                    <TextBox Name="CustomerNameTextBox" Text="{Binding CustomerName}" Height="30" Margin="0,5" IsReadOnly="True"/>
                 </StackPanel>
 
                 <!-- Table Number -->
                 <StackPanel Margin="0,0,0,10">
                     <TextBlock Text="Table Number:" FontWeight="Bold" />
-                    <TextBox Name="TableNumberTextBox" Text="{Binding NumberTableCard}" Height="30" Margin="0,5" />
+                    <TextBox Name="TableNumberTextBox" Text="{Binding NumberTableCard}" Height="30" Margin="0,5" IsReadOnly="True"/>
                 </StackPanel>
 
                 <!-- Is Stay -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                     <TextBlock Text="Dine-in (Is Stay):" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0" />
-                    <CheckBox Name="IsStayCheckBox" IsChecked="{Binding IsStay}" VerticalAlignment="Center" />
+                    <CheckBox Name="IsStayCheckBox" IsChecked="{Binding IsStay}" VerticalAlignment="Center" IsEnabled="False"/>
                 </StackPanel>
 
                 <!--Payment Method-->
                 <StackPanel Margin="0,0,0,10">
                     <TextBlock Text="Payment Method:" FontWeight="Bold" />
-                    <ComboBox Name="PaymentMethodComboBox" Height="30" Margin="0,5" Text="{Binding PaymentMethod}">
-                        <ComboBoxItem Content="Cash" />
-                        <ComboBoxItem Content="Card" />
-                        <ComboBoxItem Content="Online" />
-                    </ComboBox>
+                    <TextBox Name="PaymentMethodComboBox" Height="30" Margin="0,5" Text="{Binding PaymentMethod}" IsReadOnly="True"/>
                 </StackPanel>
 
                 <!-- Status -->
                 <StackPanel Margin="0,0,0,10">
                     <TextBlock Text="Order Status:" FontWeight="Bold" />
-                    <ComboBox Name="StatusComboBox" Height="30" Margin="0,5" Text="{Binding Status}">
-                        <ComboBoxItem Content="Pending" />
-                        <ComboBoxItem Content="Completed" />
-                        <ComboBoxItem Content="Canceled" />
-                    </ComboBox>
+                    <TextBox Name="StatusComboBox" Height="30" Margin="0,5" Text="{Binding Status}" IsReadOnly="True"/>
                 </StackPanel>
 
                 <!-- Note -->
                 <StackPanel Margin="0,0,0,10">
                     <TextBlock Text="Note:" FontWeight="Bold" />
-                    <TextBox Name="NoteTextBox" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,5" Text="{Binding Note}" />
+                    <TextBox Name="NoteTextBox" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,5" Text="{Binding Note}" IsReadOnly="True"/>
                 </StackPanel>
             </StackPanel>
 
@@ -83,41 +75,28 @@
                 <TextBlock Text="Order Products" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" />
 
                 <!-- Product List DataGrid -->
-                <DataGrid Name="ProductsDataGrid" AutoGenerateColumns="False" Height="250" Margin="0,0,0,10">
+                <DataGrid Name="ProductsDataGrid" AutoGenerateColumns="False" Height="250" Margin="0,0,0,10" IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding ProductId}" Width="*" IsReadOnly="True" />
                         <DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}" Width="*" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Size" Binding="{Binding Size, Mode=TwoWay}" Width="*" />
                         <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="*" IsReadOnly="True" />
                         <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity, Mode=TwoWay}" Width="*" />
-                        <DataGridTemplateColumn Header="Status" Width="*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <ComboBox Text="{Binding OrderDetailStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Width="120">
-                                        <ComboBoxItem Content="Pending" />
-                                        <ComboBoxItem Content="Processing" />
-                                        <ComboBoxItem Content="Completed" />
-                                        <ComboBoxItem Content="Canceled" />
-                                    </ComboBox>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Status" Width="*" Binding="{Binding Status}" />
                     </DataGrid.Columns>
                 </DataGrid>
 
-                <!-- Add Product Section -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <ComboBox Name="ProductComboBox" Width="200" Margin="0,0,10,0" />
-                    <Button Content="Add Product" Name="AddProductButton" Width="100" Background="#32CD32" Foreground="White" Click="AddProductButton_Click" />
-                    <Button Content="Remove" Name="RemoveProductButton" Width="100" Background="#FF6347" Foreground="White" Click="RemoveProductButton_Click" Margin="20,0,10,0"/>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,10" HorizontalAlignment="Right">
+                    <TextBlock Text="Total:" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
+                    <TextBlock Name="SubtotalTextBlock" Text="0" FontSize="14" VerticalAlignment="Center" Margin="10,0,0,0" />
                 </StackPanel>
             </StackPanel>
         </Grid>
 
         <!-- Footer -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-            <Button Content="Save Order" Name="SaveOrderButton" Width="120" Margin="5" Padding="5" Background="#1E90FF" Foreground="White" Click="SaveOrderButton_Click" />
-            <Button Content="Cancel" Name="CancelButton" Width="120" Margin="5" Padding="5" Background="#FFD700" Foreground="Black" Click="CancelButton_Click" />
+            <Button Content="Print" Name="SaveOrderButton" Width="120" Margin="5" Padding="5" Background="#1E90FF" Foreground="White" Click="SaveOrderButton_Click"/>
+            <Button Content="Cancel" Name="CancelButton" Width="120" Margin="5" Padding="5" Background="#FFD700" Foreground="Black" Click="CancelButton_Click"/>
         </StackPanel>
     </Grid>
 </Window>
