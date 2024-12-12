@@ -35,7 +35,7 @@ namespace MilkTeaCashier.Data.Base
 
         public async Task AddAsync(T entity)
         {
-            await _context.Set<T>().AddAsync(entity); // Add entity asynchronously
+            await _dbSet.AddAsync(entity); // Add entity asynchronously
         }
 
         public void PrepareUpdate(T entity)
@@ -63,12 +63,12 @@ namespace MilkTeaCashier.Data.Base
 
         public IEnumerable<T> FindByCondition(Expression<Func<T, bool>> expression)
         {
-            return _context.Set<T>().Where(expression).AsNoTracking();
+            return _dbSet.Where(expression).AsNoTracking();
         }
 
         public virtual async Task<IEnumerable<T>> FindByConditionAsync(Expression<Func<T, bool>> expression)
         {
-            return await _context.Set<T>().Where(expression).AsNoTracking().ToListAsync();
+            return await _dbSet.Where(expression).AsNoTracking().ToListAsync();
         }
         public async Task<IEnumerable<T>> FindByConditionAsync
         (
@@ -76,7 +76,7 @@ namespace MilkTeaCashier.Data.Base
             Func<IQueryable<T>, IQueryable<T>> include = null
         )
         {
-            IQueryable<T> query = _context.Set<T>().Where(expression).AsNoTracking();
+            IQueryable<T> query = _dbSet.Where(expression).AsNoTracking();
 
             // Apply the include function if provided
             if (include != null)
@@ -89,12 +89,12 @@ namespace MilkTeaCashier.Data.Base
 
         public List<T> GetAll()
         {
-            return _context.Set<T>().ToList();
+            return _dbSet.ToList();
         }
 
         public async Task<List<T>> GetAllAsync()
         {
-            return await _context.Set<T>().ToListAsync();
+            return await _dbSet.ToListAsync();
         }
 		public async Task<List<Order>> GetAllOrdersAsync()
 		{
@@ -106,7 +106,7 @@ namespace MilkTeaCashier.Data.Base
 
 		public List<T> GetAll(params Expression<Func<T, object>>[] includes)
         {
-            var query = _context.Set<T>().AsQueryable();
+            var query = _dbSet.AsQueryable();
             foreach (var include in includes)
             {
                 query = query.Include(include);
@@ -116,7 +116,7 @@ namespace MilkTeaCashier.Data.Base
 
         public async Task<List<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
         {
-            var query = _context.Set<T>().AsQueryable();
+            var query = _dbSet.AsQueryable();
             foreach (var include in includes)
             {
                 query = query.Include(include);
@@ -167,22 +167,22 @@ namespace MilkTeaCashier.Data.Base
 
         public T GetById(int id)
         {
-            return _context.Set<T>().Find(id);
+            return _dbSet.Find(id);
         }
 
         public async Task<T> GetByIdAsync(int id)
         {
-            return await _context.Set<T>().FindAsync(id);
+            return await _dbSet.FindAsync(id);
         }
 
         public T GetById(string code)
         {
-            return _context.Set<T>().Find(code);
+            return _dbSet.Find(code);
         }
 
         public async Task<T> GetByIdAsync(string code)
         {
-            return await _context.Set<T>().FindAsync(code);
+            return await _dbSet.FindAsync(code);
         }
         #region ___HELPER METHODS___
 
@@ -227,7 +227,7 @@ namespace MilkTeaCashier.Data.Base
             return _dbSet.AsNoTracking().GroupBy(keySelector).Select(g => g.First()).ToList();
         }
 
-        #endregion New Methods
+        #endregion 
     }
 }
 

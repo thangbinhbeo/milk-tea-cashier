@@ -1,4 +1,5 @@
-﻿using Microsoft.Office.Interop.Excel;
+﻿using LiveCharts;
+using LiveCharts.Wpf;
 using MilkTeaCashier.Data.DTOs;
 using MilkTeaCashier.Service.Interfaces;
 using MilkTeaCashier.WPF.Utilities;
@@ -20,6 +21,11 @@ namespace MilkTeaCashier.WPF.ViewModels
         public const string SALE_REPORT_PDF_FILE_NAME = "SaleReport.pdf";
         private readonly IReportingService _reportingService;
         private readonly IFileExportService _fileExportService;
+
+        public SeriesCollection RevenueChartSeries { get; set; }
+        public SeriesCollection TopSellingChartSeries { get; set; }
+        public List<string> RevenueChartLabels { get; set; }
+        public List<string> TopSellingChartLabels { get; set; }
 
         public ObservableRangeCollection<RevenueReportDto> RevenueReports { get; set; }
         public ObservableRangeCollection<TopSellingProductDto> TopSellingProducts { get; set; }
@@ -50,6 +56,11 @@ namespace MilkTeaCashier.WPF.ViewModels
         {
             _reportingService = reportingService;
             _fileExportService = fileExportService;
+
+            RevenueChartSeries = new SeriesCollection();
+            TopSellingChartSeries = new SeriesCollection();
+            RevenueChartLabels = new List<string>();
+            TopSellingChartLabels = new List<string>();
 
             RevenueReports = new ObservableRangeCollection<RevenueReportDto>();
             TopSellingProducts = new ObservableRangeCollection<TopSellingProductDto>();
@@ -121,7 +132,10 @@ namespace MilkTeaCashier.WPF.ViewModels
                
 
                 AddRevenueReports(revenueReports);
+                UpdateRevenueChart(revenueReports);
+
                 AddTopSellingProducts(topSellingProducts);
+                UpdateTopSellingChart(topSellingProducts);
                 // Store the original list for filtering
                 AllTopSellingProducts = topSellingProducts.ToList();
 
@@ -136,8 +150,27 @@ namespace MilkTeaCashier.WPF.ViewModels
                 IsOperationInProgress = false;
             }
         }
+        private void UpdateRevenueChart(List<RevenueReportDto> revenueReports)
+        {
+            RevenueChartSeries.Clear();
+            RevenueChartLabels.Clear();
 
+            var revenueValues = new ChartValues<double>(revenueReports.Select(r => r.TotalRevenue));
+            RevenueChartSeries.Add(new LineSeries { Title = "Total Revenue", Values = revenueValues });
 
+            RevenueChartLabels.AddRange(revenueReports.Select(r => r.ReportDate.ToShortDateString()));
+        }
+
+        private void UpdateTopSellingChart(List<TopSellingProductDto> topSellingProducts)
+        {
+            TopSellingChartSeries.Clear();
+            TopSellingChartLabels.Clear();
+
+            var productValues = new ChartValues<int>(topSellingProducts.Select(p => p.QuantitySold));
+            TopSellingChartSeries.Add(new ColumnSeries { Title = "Quantity Sold", Values = productValues });
+
+            TopSellingChartLabels.AddRange(topSellingProducts.Select(p => p.ProductName));
+        }
         private void ApplyFilters()
         {
             try
