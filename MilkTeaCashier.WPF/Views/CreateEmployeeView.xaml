@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MilkTeaCashier.WPF.Views"
         mc:Ignorable="d"
         Title="Create Employee"
-        Height="350"
+        Height="400"
         Width="600"
         WindowStartupLocation="CenterScreen" Background="#87cefa">
     <Grid Margin="10">

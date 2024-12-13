@@ -35,9 +35,9 @@
             <Label x:Name="IdLabel" Content="Product ID:" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Margin="5"/>
             <TextBox x:Name="ProductIdTextBox" Grid.Row="0" Grid.Column="1" Margin="5"/>
 
-            <!-- CategoryId (TextBox instead of ComboBox) -->
-            <Label Content="Category:" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0" Margin="5"/>
-            <ComboBox x:Name="CategoryTextBox" Grid.Row="1" Grid.Column="1" Margin="5,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="585" SelectedValuePath="CategoryId" DisplayMemberPath="CategoryName"/>
+            <!-- CategoryId -->
+            <Label Content="Category:" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0" Margin="5" />
+            <ComboBox x:Name="CategoryComboBox" Grid.Row="1" Grid.Column="1" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Width="570" SelectedValuePath="CategoryId" DisplayMemberPath="CategoryName" ItemsSource="{Binding Categories}" SelectedValue="{Binding SelectedCategoryId, Mode=TwoWay}" />
 
             <!-- Name -->
             <Label Content="Name:" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0" Margin="5"/>
@@ -71,8 +71,6 @@
                 <!-- Button to select image -->
                 <Button Content="Select Image" Grid.Row="1" Width="100" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" Click="SelectImageButton_Click" Background="#FFD700" Foreground="Black"/>
             </Grid>
-
-
 
             <StackPanel Orientation="Horizontal" Grid.Row="6" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0,20,0,0">
                 <Button Content="Save" Width="60" Height="30" Margin="5" Click="SaveButton_Click" Background="#32CD32" Foreground="White"/>
