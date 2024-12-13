@@ -61,20 +61,20 @@
                   SelectionMode="Single">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding ProductId}" Width="50"/>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*"/>
                 <DataGridTextColumn Header="Category Name" Binding="{Binding Category.CategoryName}" Width="100"/>
-                <DataGridTextColumn Header="Size" Binding="{Binding Size}" Width="100"/>
+                <DataGridTextColumn Header="Size" Binding="{Binding Size}" Width="*"/>
                 <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat={}{0:C}}" Width="100"/>
-                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
-                <DataGridTemplateColumn Header="Image" Width="100">
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
+                <DataGridTemplateColumn Header="Image" Width="2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Image Source="{Binding Image}" Width="80" Height="80" Stretch="UniformToFill"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Created At" Binding="{Binding CreatedAt, StringFormat='dd/MM/yyyy'}" Width="150"/>
-                <DataGridTextColumn Header="Updated At" Binding="{Binding UpdatedAt, StringFormat='dd/MM/yyyy'}" Width="150"/>
+                <DataGridTextColumn Header="Created At" Binding="{Binding CreatedAt, StringFormat='dd/MM/yyyy'}" Width="2*"/>
+                <DataGridTextColumn Header="Updated At" Binding="{Binding UpdatedAt, StringFormat='dd/MM/yyyy'}" Width="2*"/>
 
             </DataGrid.Columns>
         </DataGrid>
