@@ -52,7 +52,7 @@ namespace MilkTeaCashier.WPF.Views
 			string status = StatusTextBox.SelectedItem != null ? StatusTextBox.SelectedItem.ToString() : null;
 
             // Validate the inputs
-            if (string.IsNullOrEmpty(name) || SizeTextBox.SelectedItem == null || string.IsNullOrEmpty(PriceTextBox.Text) || CategoryTextBox.SelectedItem == null)
+            if (string.IsNullOrEmpty(name) || SizeTextBox.SelectedItem == null || string.IsNullOrEmpty(PriceTextBox.Text) || CategoryComboBox.SelectedItem == null)
 			{
 				MessageBox.Show("Please fill in all fields.");
 				return;
@@ -93,7 +93,7 @@ namespace MilkTeaCashier.WPF.Views
 				return;
 			}
 
-			var selected = CategoryTextBox.SelectedItem as Category;
+			var selected = CategoryComboBox.SelectedItem as Category;
 			category = selected.CategoryId;
 
             if (EditProduct == null)
@@ -193,7 +193,7 @@ namespace MilkTeaCashier.WPF.Views
 			{
 				ProductIdTextBox.Text = EditProduct.ProductId.ToString();
 				NameTextBox.Text = EditProduct.Name;
-				CategoryTextBox.Text = EditProduct.CategoryId.ToString();
+				CategoryComboBox.Text = EditProduct.CategoryId.ToString();
 				SizeTextBox.Text = EditProduct.Size;
 				PriceTextBox.Text = EditProduct.Price.ToString();
 				StatusTextBox.Text = EditProduct.Status.ToString();
@@ -209,7 +209,7 @@ namespace MilkTeaCashier.WPF.Views
 		public async void LoadCatgories()
 		{
 			var categories = await _categoryService.GetAllCategory();
-			CategoryTextBox.ItemsSource = categories;
+			CategoryComboBox.ItemsSource = categories;
 
             var currentItems = StatusTextBox.ItemsSource as List<string>;
 			if (currentItems != null)
@@ -264,11 +264,19 @@ namespace MilkTeaCashier.WPF.Views
 					}
 				}
 
+				foreach (var item in CategoryComboBox.ItemsSource)
+				{
+					if (item.Equals(category))
+					{
+						CategoryComboBox.SelectedItem = category;
+					}
+				}
+
 				var cate = await _categoryService.GetById(category);
 
                 if (cate != null)
                 {
-                    CategoryTextBox.SelectedValue = cate.CategoryId;
+					CategoryComboBox.SelectedValue = cate.CategoryId;
                 }
             } 
 			else
@@ -278,6 +286,7 @@ namespace MilkTeaCashier.WPF.Views
 				StatusLabel.Visibility = Visibility.Collapsed;
 				StatusTextBox.Visibility = Visibility.Collapsed;
             }
+
 		}
 	}
 }

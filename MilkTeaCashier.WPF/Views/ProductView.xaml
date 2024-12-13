@@ -38,7 +38,7 @@
                      VerticalAlignment="Center"
                      HorizontalAlignment="Left"
                      Margin="10"
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" TextChanged="SearchTextBox_TextChanged" />
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
                 <!-- Placeholder text -->
                 <TextBlock Text="Search by name"
