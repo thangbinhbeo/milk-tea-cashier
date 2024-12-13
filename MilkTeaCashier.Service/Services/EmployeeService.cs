@@ -40,8 +40,7 @@ namespace MilkTeaCashier.Service.Services
             if (employee == null)
                 throw new ArgumentNullException(nameof(employee));
 
-            await _unitOfWork.EmployeeRepository.AddAsync(employee);
-            await _unitOfWork.EmployeeRepository.SaveAsync();
+            await _unitOfWork.EmployeeRepository.CreateAsync(employee);
         }
 
         public async Task UpdateEmployeeAsync(Employee employee)

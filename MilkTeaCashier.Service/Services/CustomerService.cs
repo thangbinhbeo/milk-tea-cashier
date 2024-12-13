@@ -60,8 +60,7 @@ namespace MilkTeaCashier.Service.Services
                 UpdatedBy = currentEmployee.FullName ?? "System"
             };
 
-            await _unitOfWork.CustomerRepository.AddAsync(newCustomer);
-            await _unitOfWork.CustomerRepository.SaveAsync();
+            var rs = await _unitOfWork.CustomerRepository.CreateAsync(newCustomer);
 
             return newCustomer;
         }
