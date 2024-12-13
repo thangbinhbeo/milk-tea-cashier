@@ -43,7 +43,8 @@ namespace MilkTeaCashier.Service.Services
         public async Task<double> GetAnnualSalesAsync(int year)
         {
             var orders = await _unitOfWork.OrderRepository.FindByConditionAsync(
-                o => o.CreatedAt.Value.Year == year && o.Status == OrderStatus.Completed.ToString());
+                o => o.CreatedAt.Value.Year == year && 
+                (o.Status == OrderStatus.Completed.ToString() || o.Status == OrderStatus.Pending.ToString()));
 
             return orders.Sum(o => o.TotalAmount);
         }

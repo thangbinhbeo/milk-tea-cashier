@@ -191,9 +191,11 @@ namespace MilkTeaCashier.WPF.Views
 
 			if (EditProduct != null)
 			{
-				ProductIdTextBox.Text = EditProduct.ProductId.ToString();
+				var category = _categoryService.GetById(EditProduct.CategoryId);
+
+                ProductIdTextBox.Text = EditProduct.ProductId.ToString();
 				NameTextBox.Text = EditProduct.Name;
-				CategoryComboBox.Text = EditProduct.CategoryId.ToString();
+				CategoryComboBox.Text = category != null ? category.Result.CategoryName : "";
 				SizeTextBox.Text = EditProduct.Size;
 				PriceTextBox.Text = EditProduct.Price.ToString();
 				StatusTextBox.Text = EditProduct.Status.ToString();
