@@ -101,7 +101,8 @@ namespace MilkTeaCashier.Service.Services
 
             try
             {
-                await _context.SaveChangesAsync();
+                _unitOfWork.CustomerRepository.PrepareUpdate(existingCustomer);
+                await _unitOfWork.CustomerRepository.SaveAsync();
             }
             catch (Exception ex)
             {
