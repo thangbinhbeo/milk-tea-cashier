@@ -47,6 +47,7 @@ namespace MilkTeaCashier.WPF.Views
             if (result == true && addCustomerWindow.Tag is Customer newCustomer)
             {
                 _customers.Add(newCustomer);
+                LoadCustomersAsync();
             }
         }
 
