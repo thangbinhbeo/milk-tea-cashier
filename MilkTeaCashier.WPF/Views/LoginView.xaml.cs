@@ -41,10 +41,11 @@ namespace MilkTeaCashier.WPF.Views
 
             try
             {
-         
                 var employeeService = new EmployeeService();
 
                 var employee = await employeeService.AuthenticateAsync(username, password);
+
+                CustomerService.SessionService.SetCurrentEmployee(employee);
                 if (employee.Status == "Inactive")
                 {
                     MessageBox.Show("Account is not active!!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);

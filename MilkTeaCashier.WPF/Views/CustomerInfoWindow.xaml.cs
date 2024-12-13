@@ -83,7 +83,11 @@ namespace MilkTeaCashier.WPF.Views
                     try
                     {
                         await _customerService.DeleteCustomerAsync(customer.CustomerId);
-                        await LoadCustomersAsync(); 
+                        await LoadCustomersAsync();
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        MessageBox.Show(ex.Message, "Deletion Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                     catch (Exception ex)
                     {

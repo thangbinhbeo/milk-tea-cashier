@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         Title="Sales Reporting" Height="800" Width="1000"
-        Background="#f4f4f4" WindowStartupLocation="CenterScreen">
+        Background="#87cefa" WindowStartupLocation="CenterScreen">
     <Grid Margin="10">
         <!-- Grid Definitions -->
         <Grid.RowDefinitions>
@@ -18,7 +18,7 @@
         </Grid.RowDefinitions>
 
         <!-- Filter Section -->
-        <Border Grid.Row="0" Padding="10" Background="White" CornerRadius="8" BorderBrush="#ccc" BorderThickness="1" Margin="0,0,0,10">
+        <Border Grid.Row="0" Padding="10" Background="#FFF3A7A7" CornerRadius="8" BorderBrush="#ccc" BorderThickness="1" Margin="0,0,0,10">
             <StackPanel Orientation="Vertical">
                 <!-- Date Range -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
@@ -81,7 +81,7 @@
         <TabControl Grid.Row="2" Background="White" Margin="0,0,0,10" BorderBrush="#ccc" BorderThickness="1">
             <TabItem Header="Revenue Reports">
                 <Border Padding="10" Background="White">
-                    <DataGrid IsReadOnly="true" ItemsSource="{Binding RevenueReports}" AutoGenerateColumns="False">
+                    <DataGrid IsReadOnly="true" ItemsSource="{Binding RevenueReports}" AutoGenerateColumns="False" Background="#FF608CB4">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Date" Binding="{Binding ReportDate}" />
                             <DataGridTextColumn Header="Total Revenue" Binding="{Binding TotalRevenue}" />

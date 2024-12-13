@@ -109,19 +109,25 @@ namespace MilkTeaCashier.Service.Services
                 throw new Exception("An error occurred while saving the updated customer.", ex);
             }
         }
-
         public async Task DeleteCustomerAsync(int customerId)
         {
             var customer = await _unitOfWork.CustomerRepository.GetByIdAsync(customerId);
+
             if (customer == null)
             {
                 throw new KeyNotFoundException($"Customer with ID {customerId} not found.");
             }
 
+
+            var hasOrders = await _context.Orders.AnyAsync(o => o.CustomerId == customerId);
+            if (hasOrders)
+            {
+                throw new InvalidOperationException("Cannot delete customer that has orders.");
+            }
+
             _unitOfWork.CustomerRepository.Remove(customer);
             await _unitOfWork.CustomerRepository.SaveAsync();
         }
-
         public async Task<IEnumerable<Customer>> SearchCustomerByNameAndPhoneAsync(string name, string phone)
         {
             List<Customer> result = await _context.Customers.Include("Orders").ToListAsync();
