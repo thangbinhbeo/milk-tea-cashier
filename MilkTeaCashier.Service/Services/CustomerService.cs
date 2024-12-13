@@ -33,8 +33,8 @@ namespace MilkTeaCashier.Service.Services
        
         public async Task<List<Customer>> GetAllCustomersAsync()
         {
-            var customers = await _context.Customers.Include(C => C.Orders).ToListAsync(); 
-            Debug.WriteLine($"Fetched {customers.Count()} customers.");
+            var customers = await _unitOfWork.CustomerRepository.GetAllAsync();
+            Console.WriteLine($"Fetched {customers.Count()} customers.");
             return customers;
         }
 
@@ -80,7 +80,7 @@ namespace MilkTeaCashier.Service.Services
 
 
             var currentEmployee = await _unitOfWork.EmployeeRepository.GetByIdAsync(employeeID);
-
+            Console.WriteLine("xxx current employee "+currentEmployee.FullName);
             if (!string.IsNullOrEmpty(name))
             {
                 existingCustomer.Name = name;
@@ -98,7 +98,7 @@ namespace MilkTeaCashier.Service.Services
 
             existingCustomer.UpdatedAt = DateTime.UtcNow;
             existingCustomer.UpdatedBy = currentEmployee?.FullName ?? "System";
-
+            Console.WriteLine("xxx UpdateCustomerAsync updated by "+ currentEmployee?.FullName ?? "System");
             try
             {
                 _unitOfWork.CustomerRepository.PrepareUpdate(existingCustomer);

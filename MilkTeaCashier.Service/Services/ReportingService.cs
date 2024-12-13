@@ -44,7 +44,7 @@ namespace MilkTeaCashier.Service.Services
         {
             var orders = await _unitOfWork.OrderRepository.FindByConditionAsync(
                 o => o.CreatedAt.Value.Year == year && 
-                (o.Status == OrderStatus.Completed.ToString() || o.Status == OrderStatus.Pending.ToString()));
+                (o.Status == OrderStatus.Completed.ToString()));
 
             return orders.Sum(o => o.TotalAmount);
         }

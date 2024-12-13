@@ -103,6 +103,7 @@ namespace MilkTeaCashier.WPF.Views
 
                     var updatedCustomer = await _customerService.GetCustomerByIdAsync(CurrentCustomer.CustomerId);
                     this.Tag = updatedCustomer;
+                    Console.WriteLine("xxx SaveButton_Click updated by "+updatedCustomer.UpdatedBy);
                 }
                 else
                 {

@@ -12,8 +12,8 @@ namespace MilkTeaCashier.WPF.Views
 {
     public partial class CustomerInfoWindow : Window
     {
-        private readonly CustomerService _customerService;
-        private readonly ObservableCollection<Customer> _customers;
+        private CustomerService _customerService;
+        private ObservableCollection<Customer> _customers;
 
         private int _employeeID;
 
@@ -21,7 +21,7 @@ namespace MilkTeaCashier.WPF.Views
         {
             InitializeComponent();
             _customerService = new CustomerService();
-            _customers = new ObservableCollection<Customer>();
+            //_customers = new ObservableCollection<Customer>();
             LoadCustomersAsync();
             _employeeID = employeeID;
         }
@@ -31,7 +31,8 @@ namespace MilkTeaCashier.WPF.Views
             try
             {
                 var customers = await _customerService.GetAllCustomersAsync();
-                dgCustomer.ItemsSource = customers; 
+                _customers = new ObservableCollection<Customer>(customers);
+                dgCustomer.ItemsSource = _customers; 
             }
             catch (Exception ex)
             {
@@ -59,12 +60,15 @@ namespace MilkTeaCashier.WPF.Views
                 CreateCustomerWindow editCustomerWindow = new CreateCustomerWindow(selectedCustomer, _employeeID);
                 var result = editCustomerWindow.ShowDialog();
 
-                if (result == true)
+                if (result == true && editCustomerWindow.Tag is Customer newCustomer)
                 {
-                    await LoadCustomersAsync(); 
-                    var updatedCustomer = _customers.FirstOrDefault(c => c.CustomerId == selectedCustomer.CustomerId);
-                    Debug.WriteLine($"UpdatedBy after refresh: {updatedCustomer?.UpdatedBy}");
-
+                    await LoadCustomersAsync();
+                    var updatedCustomer = _customers.ToList().Find(c => c.CustomerId == selectedCustomer.CustomerId);
+                    if(updatedCustomer != null)
+                    {
+                        Console.WriteLine($"UpdatedBy after refresh: {updatedCustomer?.UpdatedBy}");
+                        updatedCustomer.UpdatedBy = newCustomer.UpdatedBy;
+                    }
                     dgCustomer.Items.Refresh();
                 }
             }
