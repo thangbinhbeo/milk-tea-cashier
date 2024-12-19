@@ -1,4 +1,4 @@
-# milk-tea-cashier
+# Milk-tea-cashier POS APP
 
 ## Setting Up Firebase Key Path in System Environment Settings
 
